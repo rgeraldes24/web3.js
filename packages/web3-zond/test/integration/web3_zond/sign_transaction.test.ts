@@ -51,7 +51,7 @@ describe('Web3Zond.signTransaction', () => {
 		const response = await web3Zond.signTransaction(transaction);
 		const expectedResponse: { tx: Transaction } = {
 			tx: {
-				type: BigInt(2),
+				type: '0x2',
 				nonce: BigInt(nonce),
 				//gasPrice: BigInt(1000000001),
 				maxFeePerGas: BigInt(108571383800),
