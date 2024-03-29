@@ -289,12 +289,7 @@ describe('[Common]: Hardfork logic', () => {
 	});
 
 	it('HF consensus updates', () => {
-		let c = new Common({ chain: Chain.Goerli, hardfork: Hardfork.Byzantium });
-		expect(c.consensusType()).toEqual(ConsensusType.ProofOfAuthority);
-		expect(c.consensusAlgorithm()).toEqual(ConsensusAlgorithm.Clique);
-		expect(c.consensusConfig()['period']).toBe(15);
-
-		c = new Common({ chain: Chain.Goerli, hardfork: Hardfork.Merge });
+		let c = new Common({ chain: Chain.Goerli, hardfork: Hardfork.Merge });
 		expect(c.consensusType()).toEqual(ConsensusType.ProofOfStake);
 		expect(c.consensusAlgorithm()).toEqual(ConsensusAlgorithm.Casper);
 		expect(c.consensusConfig()).toEqual({});

@@ -75,7 +75,6 @@ function parseGzondParams(json: any, mergeForkIdPostMerge = true) {
 	const {
 		name,
 		config,
-		difficulty,
 		mixHash,
 		gasLimit,
 		coinbase,
@@ -83,7 +82,6 @@ function parseGzondParams(json: any, mergeForkIdPostMerge = true) {
 	}: {
 		name: string;
 		config: any;
-		difficulty: string;
 		mixHash: string;
 		gasLimit: string;
 		coinbase: string;
@@ -126,10 +124,8 @@ function parseGzondParams(json: any, mergeForkIdPostMerge = true) {
 		genesis: {
 			timestamp,
 			// eslint-disable-next-line radix
-			gasLimit: parseInt(gasLimit), // gzond gasLimit and difficulty are hex strings while ours are `number`s
+			gasLimit: parseInt(gasLimit), // gzond gasLimit is a hex string while ours is a `number`
 			// eslint-disable-next-line radix
-			difficulty: parseInt(difficulty),
-			nonce,
 			extraData,
 			mixHash,
 			coinbase,

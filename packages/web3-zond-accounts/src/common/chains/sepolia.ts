@@ -13,8 +13,6 @@ export default {
 	"genesis": {
 		"timestamp": "0x6159af19",
 		"gasLimit": 30000000,
-		"difficulty": 131072,
-		"nonce": "0x0000000000000000",
 		"extraData": "0x5365706f6c69612c20417468656e732c204174746963612c2047726565636521"
 	},
 	"hardforks": [

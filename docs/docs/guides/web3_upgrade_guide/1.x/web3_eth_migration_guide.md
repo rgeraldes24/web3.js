@@ -20,7 +20,6 @@ All the API level interfaces returning or accepting `null` in 1.x, use `undefine
 
 -   `web3.eth.getBlockNumber`
 -   `web3.eth.getBlockTransactionCount`
--   `web3.eth.getBlockUncleCount`
 -   `web3.eth.getTransactionCount`
 -   `web3.eth.estimateGas`
 
@@ -35,21 +34,6 @@ All the API level interfaces returning or accepting `null` in 1.x, use `undefine
     -   `number`
     -   `size`
     -   `timestamp`
--   Returns a `BigInt` instead of a number string for the following properties:
-    -   `difficulty`
-    -   `totalDifficulty`
-
-#### web3.eth.getUncle
-
--   Returns a `BigInt` instead of a number for the following properties:
-    -   `baseFeePerGas`
-    -   `gasLimit`
-    -   `gasUsed`
-    -   `number`
-    -   `size`
-    -   `timestamp`
--   Returns a `BigInt` instead of a number string for the following properties:
-    -   `difficulty`
 
 #### web3.eth.getTransaction
 

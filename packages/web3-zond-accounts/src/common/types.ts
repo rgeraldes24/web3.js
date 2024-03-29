@@ -32,8 +32,6 @@ export type CasperConfig = Record<string, unknown>;
 export interface GenesisBlockConfig {
 	timestamp?: string;
 	gasLimit: number;
-	difficulty: number;
-	nonce: string;
 	extraData: string;
 	baseFeePerGas?: string;
 }

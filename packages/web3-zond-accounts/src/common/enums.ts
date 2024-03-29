@@ -41,10 +41,10 @@ export enum Hardfork {
 	ShardingForkDev = 'shardingFork',
 }
 
+// TODO(rgeraldes24): remove ProofOfWork
 export enum ConsensusType {
 	ProofOfStake = 'pos',
 	ProofOfWork = 'pow',
-	ProofOfAuthority = 'poa',
 }
 
 export enum ConsensusAlgorithm {

@@ -40,7 +40,6 @@ export type Address = HexString;
 export type Topic = HexString32Bytes;
 
 export type TransactionHash = HexString;
-export type Uncles = HexString32Bytes[];
 export enum BlockTags {
 	EARLIEST = 'earliest',
 	LATEST = 'latest',
@@ -123,8 +122,6 @@ export interface BlockInput {
 	readonly size: HexString;
 	readonly timestamp: HexString;
 	readonly number?: HexString;
-	readonly difficulty?: HexString;
-	readonly totalDifficulty?: HexString;
 	readonly transactions?: TransactionInput[];
 	readonly miner?: HexString;
 	readonly baseFeePerGas?: HexString;
@@ -136,8 +133,6 @@ export interface BlockOutput {
 	readonly size: bigint | number;
 	readonly timestamp: bigint | number;
 	readonly number?: bigint | number;
-	readonly difficulty?: bigint | number;
-	readonly totalDifficulty?: bigint | number;
 	readonly transactions?: TransactionOutput[];
 	readonly miner?: HexString;
 	readonly baseFeePerGas?: bigint | number;
@@ -160,25 +155,20 @@ export interface BlockHeaderOutput {
 	readonly transactionsRoot?: HexString32Bytes;
 	readonly withdrawalsRoot?: HexString32Bytes;
 	readonly logsBloom?: Bytes;
-	readonly difficulty?: Numbers;
 	readonly number?: Numbers;
 	readonly gasLimit: Numbers;
 	readonly gasUsed: Numbers;
 	readonly timestamp: Numbers;
 	readonly extraData?: Bytes;
-	readonly nonce?: Numbers;
-	readonly sha3Uncles: HexString32Bytes[];
 	readonly baseFeePerGas?: Numbers;
 
 	// These fields are returned when the RPC client is Nethermind,
 	// but aren't available in other clients such as Gzond
 	readonly author?: Address;
-	readonly totalDifficulty?: Numbers;
 	readonly size?: Numbers;
 	readonly excessDataGas?: Numbers;
 	readonly mixHash?: HexString32Bytes;
 	readonly transactions?: TransactionOutput[];
-	readonly uncles?: Uncles;
 	readonly withdrawals?: Withdrawals[];
 }
 
@@ -441,25 +431,20 @@ export interface BlockBase<
 	logsBloomType,
 > {
 	readonly parentHash: ByteType;
-	readonly sha3Uncles: ByteType;
 	readonly miner: HexStringType;
 	readonly stateRoot: ByteType;
 	readonly transactionsRoot: ByteType;
 	readonly receiptsRoot: ByteType;
 	readonly logsBloom?: logsBloomType;
-	readonly difficulty?: NumberType;
 	readonly number: NumberType;
 	readonly gasLimit: NumberType;
 	readonly gasUsed: NumberType;
 	readonly timestamp: NumberType;
 	readonly extraData: extraDataType;
 	readonly mixHash: ByteType;
-	readonly nonce: NumberType;
-	readonly totalDifficulty: NumberType;
 	readonly baseFeePerGas?: NumberType;
 	readonly size: NumberType;
 	readonly transactions: TransactionTypes;
-	readonly uncles: Uncles;
 	readonly hash?: ByteType;
 }
 

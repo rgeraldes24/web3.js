@@ -236,9 +236,6 @@ export const blockSchema = {
 		parentHash: {
 			format: 'bytes32',
 		},
-		sha3Uncles: {
-			format: 'bytes32',
-		},
 		miner: {
 			format: 'bytes',
 		},
@@ -253,9 +250,6 @@ export const blockSchema = {
 		},
 		logsBloom: {
 			format: 'bytes256',
-		},
-		difficulty: {
-			format: 'uint',
 		},
 		number: {
 			format: 'uint',
@@ -274,12 +268,6 @@ export const blockSchema = {
 		},
 		mixHash: {
 			format: 'bytes32',
-		},
-		nonce: {
-			format: 'uint',
-		},
-		totalDifficulty: {
-			format: 'uint',
 		},
 		baseFeePerGas: {
 			format: 'uint',
@@ -302,12 +290,6 @@ export const blockSchema = {
 					},
 				},
 			],
-		},
-		uncles: {
-			type: 'array',
-			items: {
-				format: 'bytes32',
-			},
 		},
 		hash: {
 			format: 'bytes32',
@@ -363,12 +345,6 @@ export const blockHeaderSchema = {
 		logsBloom: {
 			format: 'bytes256',
 		},
-		difficulty: {
-			format: 'uint',
-		},
-		totalDifficulty: {
-			format: 'uint',
-		},
 		number: {
 			format: 'uint',
 		},
@@ -384,12 +360,6 @@ export const blockHeaderSchema = {
 		extraData: {
 			format: 'bytes',
 		},
-		nonce: {
-			format: 'uint',
-		},
-		sha3Uncles: {
-			format: 'bytes32',
-		},
 		size: {
 			format: 'uint',
 		},
@@ -403,12 +373,6 @@ export const blockHeaderSchema = {
 			format: 'bytes32',
 		},
 		transactions: {
-			type: 'array',
-			items: {
-				format: 'bytes32',
-			},
-		},
-		uncles: {
 			type: 'array',
 			items: {
 				format: 'bytes32',

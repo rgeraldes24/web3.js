@@ -68,12 +68,6 @@ describe('[Common/Chains]: Initialization / Chain params', () => {
 		expect(c.consensusType()).toEqual(ConsensusType.ProofOfWork);
 		expect(c.consensusAlgorithm()).toEqual(ConsensusAlgorithm.Ethash);
 		expect(c.consensusConfig()).toEqual({});
-
-		c = new Common({ chain: 'goerli', hardfork: 'chainstart' });
-		expect(c.hardforks()[3]['block']).toBe(0);
-		expect(c.consensusType()).toEqual(ConsensusType.ProofOfAuthority);
-		expect(c.consensusAlgorithm()).toEqual(ConsensusAlgorithm.Clique);
-		expect(c.consensusConfig().epoch).toBe(30000);
 	});
 
 	it('Should provide DNS network information in a uniform way', () => {
