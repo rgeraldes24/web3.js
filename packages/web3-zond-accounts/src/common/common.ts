@@ -313,6 +313,7 @@ export class Common extends EventEmitter {
 		}
 	}
 
+	// TODO(rgeraldes24)
 	/**
 	 * Returns the hardfork based on the block number or an optional
 	 * total difficulty (Merge HF) provided.
