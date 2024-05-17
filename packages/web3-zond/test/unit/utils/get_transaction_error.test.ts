@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Web3Context } from '@theqrl/web3-core';
 import {
-	InvalidResponseError,
+	// InvalidResponseError,
 	TransactionRevertedWithoutReasonError,
 	TransactionRevertInstructionError,
 	TransactionRevertWithCustomError,

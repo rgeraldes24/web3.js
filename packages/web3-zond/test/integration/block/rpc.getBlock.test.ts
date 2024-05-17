@@ -32,12 +32,14 @@ import {
 	getSystemTestBackend,
 	describeIf,
 	createNewAccount,
+	createAccountProvider,
 	refillAccount,
 } from '../../fixtures/system_test_utils';
 import { BasicAbi, BasicBytecode } from '../../shared_fixtures/build/Basic';
 import { toAllVariants } from '../../shared_fixtures/utils';
 import { sendFewTxes } from '../helper';
 import { blockSchema } from '../../../src/schemas';
+import { Wallet } from '@theqrl/web3-zond-accounts';
 
 describe('rpc with block', () => {
 	let web3Zond: Web3Zond;
@@ -70,24 +72,30 @@ describe('rpc with block', () => {
 		contract = new Contract(BasicAbi, undefined, {
 			provider: clientUrl,
 		});
+		const accountProvider = createAccountProvider(contract);
+		const wallet = new Wallet(accountProvider);
+		tempAcc = await createNewAccount();
+		wallet.add(tempAcc.seed);
+		contract['_wallet'] = wallet;
 
 		deployOptions = {
 			data: BasicBytecode,
 			arguments: [10, 'string init value'],
 		};
-		tempAcc = await createNewAccount();
+
+		
 		await refillAccount(
 			(
 				await createTempAccount()
-			).address,
+			),
 			tempAcc.address,
 			'100000000000000000000',
 		);
-		sendOptions = { from: tempAcc.address, /*gas: '1000000'*/ type: 2 };
+		sendOptions = { from: tempAcc.address, /*gas: '1000000',*/ type: '0x2', value: '0x0' };
 
 		await contract.deploy(deployOptions).send(sendOptions);
 		const [receipt]: TransactionReceipt[] = await sendFewTxes({
-			from: tempAcc.address,
+			from: tempAcc,
 			value: '0x1',
 			times: 1,
 		});

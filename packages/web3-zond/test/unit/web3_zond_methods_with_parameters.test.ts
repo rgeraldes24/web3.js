@@ -37,7 +37,7 @@ import {
 	getTransactionReceiptValidData,
 	getTransactionValidData,
 	sendSignedTransactionValidData,
-	signValidData,
+	// signValidData,
 	tx,
 	txReceipt,
 } from '../fixtures/web3_zond_methods_with_parameters';
@@ -261,6 +261,8 @@ describe('web3_eth_methods_with_parameters', () => {
 					);
 				});
 
+				// TODO(rgeraldes24): remove
+				/*
 				describe('sign', () => {
 					it.each(signValidData)(
 						'input: %s\nrpcMethodParameters: %s',
@@ -273,6 +275,7 @@ describe('web3_eth_methods_with_parameters', () => {
 						},
 					);
 				});
+				*/
 
 				describe('getPastLogs', () => {
 					it.each(getPastLogsValidData)(

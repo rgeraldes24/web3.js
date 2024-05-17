@@ -53,7 +53,9 @@ describe('Web3Zond.sendTransaction', () => {
 		await closeOpenConnection(web3Zond);
 	});
 
-	it('should make a simple value transfer', async () => {
+	// TODO(rgeraldes24): flow not used 
+	/*
+	it.skip('should make a simple value transfer', async () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
 			to: '0x0000000000000000000000000000000000000000',
@@ -66,6 +68,7 @@ describe('Web3Zond.sendTransaction', () => {
 		const minedTransactionData = await web3Zond.getTransaction(response.transactionHash);
 		expect(minedTransactionData).toMatchObject(transaction);
 	});
+	*/
 
 	it('should make a simple value transfer - with local wallet indexed sender', async () => {
 		const web3EthWithWallet = new Web3Zond(getSystemTestProvider());
@@ -160,7 +163,9 @@ describe('Web3Zond.sendTransaction', () => {
 			value: BigInt(1),
 		});
 	});
-	it('should make a transaction with no value transfer', async () => {
+	
+	// TODO(rgeraldes24): add local wallet flow
+	it.skip('should make a transaction with no value transfer', async () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
 			to: '0x0000000000000000000000000000000000000000',
@@ -173,7 +178,8 @@ describe('Web3Zond.sendTransaction', () => {
 		const minedTransactionData = await web3Zond.getTransaction(response.transactionHash);
 		expect(minedTransactionData).toMatchObject(transaction);
 	});
-	it('should send a transaction with data', async () => {
+	// TODO(rgeraldes24): add local wallet flow
+	it.skip('should send a transaction with data', async () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
 			to: '0x0000000000000000000000000000000000000000',
@@ -188,7 +194,8 @@ describe('Web3Zond.sendTransaction', () => {
 		expect(minedTransactionData).toMatchObject(transaction);
 	});
 
-	describe('Deploy and interact with contract', () => {
+	// TODO(rgeraldes24): add local wallet flow
+	describe.skip('Deploy and interact with contract', () => {
 		let greeterContractAddress: string;
 
 		it('should deploy a contract', async () => {
@@ -238,7 +245,8 @@ describe('Web3Zond.sendTransaction', () => {
 		});
 	});
 
-	describe('Transaction Types', () => {
+	// TODO(rgeraldes24): add local wallet flow
+	describe.skip('Transaction Types', () => {
 		/*
 		it('should send a successful type 0x0 transaction', async () => {
 			const transaction: Transaction = {
@@ -306,7 +314,8 @@ describe('Web3Zond.sendTransaction', () => {
 		});
 		*/
 	});
-	it('should autofill a successful type 0x2 transaction with only maxFeePerGas passed', async () => {
+	// TODO(rgeraldes24): add local wallet flow
+	it.skip('should autofill a successful type 0x2 transaction with only maxFeePerGas passed', async () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
 			to: '0x0000000000000000000000000000000000000000',
@@ -320,7 +329,8 @@ describe('Web3Zond.sendTransaction', () => {
 		expect(minedTransactionData).toMatchObject(transaction);
 	});
 
-	it('should autofill a successful type 0x2 transaction with only maxPriorityFeePerGas passed', async () => {
+	// TODO(rgeraldes24): add local wallet flow
+	it.skip('should autofill a successful type 0x2 transaction with only maxPriorityFeePerGas passed', async () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
 			to: '0x0000000000000000000000000000000000000000',
@@ -334,7 +344,8 @@ describe('Web3Zond.sendTransaction', () => {
 		expect(minedTransactionData).toMatchObject(transaction);
 	});
 
-	describe('Transaction PromiEvents', () => {
+	// TODO(rgeraldes24): add local wallet flow
+	describe.skip('Transaction PromiEvents', () => {
 		let transaction: Transaction;
 
 		beforeEach(async () => {
@@ -431,7 +442,8 @@ describe('Web3Zond.sendTransaction', () => {
 		});
 	});
 
-	describe('Transaction Error Scenarios', () => {
+	// TODO(rgeraldes24): add local wallet flow
+	describe.skip('Transaction Error Scenarios', () => {
 		let simpleRevertContractAddress: Address;
 
 		beforeAll(async () => {

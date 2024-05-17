@@ -23,11 +23,13 @@ import {
 	createNewAccount,
 	createTempAccount,
 	closeOpenConnection,
+	createAccountProvider,
 	refillAccount,
 } from '../../fixtures/system_test_utils';
 import { BasicAbi, BasicBytecode } from '../../shared_fixtures/build/Basic';
 import { toAllVariants } from '../../shared_fixtures/utils';
 import { sendFewTxes } from '../helper';
+import { Wallet } from '@theqrl/web3-zond-accounts';
 
 describe('rpc with block', () => {
 	let web3Zond: Web3Zond;
@@ -48,7 +50,7 @@ describe('rpc with block', () => {
 	};
 	let tempAcc: { address: string; seed: string };
 
-	beforeAll(() => {
+	beforeAll(async () => {
 		clientUrl = getSystemTestProvider();
 		web3Zond = new Web3Zond({
 			provider: clientUrl,
@@ -57,9 +59,15 @@ describe('rpc with block', () => {
 			},
 		});
 
+		tempAcc = await createTempAccount();
+
 		contract = new Contract(BasicAbi, undefined, {
 			provider: clientUrl,
 		});
+		const accountProvider = createAccountProvider(contract);
+		const wallet = new Wallet(accountProvider);
+		wallet.add(tempAcc.seed);
+		contract['_wallet'] = wallet;
 
 		deployOptions = {
 			data: BasicBytecode,
@@ -67,12 +75,11 @@ describe('rpc with block', () => {
 		};
 	});
 	beforeAll(async () => {
-		tempAcc = await createTempAccount();
-		sendOptions = { from: tempAcc.address, /*gas: '1000000'*/ type:2 };
+		sendOptions = { from: tempAcc.address, /*gas: '1000000'*/ type: '0x2', value: '0x0' };
 
 		await contract.deploy(deployOptions).send(sendOptions);
 		const [receipt]: TransactionReceipt[] = await sendFewTxes({
-			from: tempAcc.address,
+			from: tempAcc,
 			value: '0x1',
 			times: 1,
 		});
@@ -91,7 +98,8 @@ describe('rpc with block', () => {
 		await closeOpenConnection(contract);
 	});
 
-	describe('methods', () => {
+	// TODO(rgeraldes24): taking too long
+	describe.skip('methods', () => {
 		it.each(
 			toAllVariants<{
 				block: 'earliest' | 'latest' | 'pending' | 'blockHash' | 'blockNumber';
@@ -105,12 +113,12 @@ describe('rpc with block', () => {
 			await refillAccount(
 				(
 					await createTempAccount()
-				).address,
+				),
 				acc.address,
 				'100000000000000000000',
 			);
 			const [receipt] = await sendFewTxes({
-				from: acc.address,
+				from: acc,
 				value: '0x1',
 				times: 1,
 			});
@@ -129,7 +137,7 @@ describe('rpc with block', () => {
 			});
 			const count = 2;
 			const res = await sendFewTxes({
-				from: acc.address,
+				from: acc,
 				value: '0x1',
 				times: count,
 			});

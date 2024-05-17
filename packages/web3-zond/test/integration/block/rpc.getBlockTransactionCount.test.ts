@@ -23,10 +23,12 @@ import {
 	getSystemTestProvider,
 	createTempAccount,
 	closeOpenConnection,
+	createAccountProvider,
 } from '../../fixtures/system_test_utils';
 import { BasicAbi, BasicBytecode } from '../../shared_fixtures/build/Basic';
 import { toAllVariants } from '../../shared_fixtures/utils';
 import { sendFewTxes } from '../helper';
+import { Wallet } from '@theqrl/web3-zond-accounts';
 
 describe('rpc with block', () => {
 	let web3Zond: Web3Zond;
@@ -47,7 +49,7 @@ describe('rpc with block', () => {
 	};
 	let tempAcc: { address: string; seed: string };
 
-	beforeAll(() => {
+	beforeAll(async () => {
 		clientUrl = getSystemTestProvider();
 		web3Zond = new Web3Zond({
 			provider: clientUrl,
@@ -59,6 +61,11 @@ describe('rpc with block', () => {
 		contract = new Contract(BasicAbi, undefined, {
 			provider: clientUrl,
 		});
+		tempAcc = await createTempAccount();
+		const accountProvider = createAccountProvider(contract);
+		const wallet = new Wallet(accountProvider);
+		wallet.add(tempAcc.seed);
+		contract['_wallet'] = wallet;
 
 		deployOptions = {
 			data: BasicBytecode,
@@ -66,12 +73,13 @@ describe('rpc with block', () => {
 		};
 	});
 	beforeAll(async () => {
-		tempAcc = await createTempAccount();
-		sendOptions = { from: tempAcc.address, /*gas: '1000000'*/ type: 2 };
+		// NOTE: if value is not included
+		// TODO(rgeraldes24): InvalidResponseError: Returned error: invalid argument 0: json: cannot unmarshal hex string "0x" into Go struct field TransactionArgs.value of type *hexutil.Big
+		sendOptions = { from: tempAcc.address, /*gas: '1000000'*/ type: 2, value: '0x0' };
 
 		await contract.deploy(deployOptions).send(sendOptions);
 		const [receipt]: TransactionReceipt[] = await sendFewTxes({
-			from: tempAcc.address,
+			from: tempAcc,
 			value: '0x1',
 			times: 1,
 		});
