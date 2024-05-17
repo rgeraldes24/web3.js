@@ -14,6 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
+import { Wallet } from '@theqrl/web3-zond-accounts';
 import { DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 import { Web3PromiEvent } from '@theqrl/web3-core';
 import { SupportedProviders, TransactionReceipt } from '@theqrl/web3-types';
@@ -25,6 +26,7 @@ import {
 	describeIf,
 	getSystemTestProvider,
 	isHttp,
+	createAccountProvider,
 } from '../fixtures/system_test_utils';
 
 const waitConfirmations = 3;
@@ -48,6 +50,10 @@ describeIf(isHttp)('watch polling transaction', () => {
 		it('polling', async () => {
 			const web3Zond = new Web3Zond(clientUrl);
 			web3Zond.setConfig({ transactionConfirmationBlocks: waitConfirmations });
+			const accountProvider = createAccountProvider(web3Zond);
+			const wallet = new Wallet(accountProvider);
+			wallet.add(tempAcc.seed);
+			web3Zond['_wallet'] = wallet;
 
 			const from = tempAcc.address;
 			const to = tempAcc2.address;

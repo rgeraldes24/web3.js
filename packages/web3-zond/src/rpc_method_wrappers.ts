@@ -499,20 +499,6 @@ export function sendTransaction<
 							throw new Error('Unsigned transactions are not supported!')
 						}
 
-						const signedTransaction = await wallet.signTransaction(
-							transactionFormatted,
-						);
-
-						transactionHash = await trySendTransaction(
-							web3Context,
-							async (): Promise<string> =>
-								zondRpcMethods.sendRawTransaction(
-									web3Context.requestManager,
-									signedTransaction.rawTransaction,
-								),
-							signedTransaction.transactionHash,
-						);
-
 						const transactionHashFormatted = format(
 							{ format: 'bytes32' },
 							transactionHash as Bytes,

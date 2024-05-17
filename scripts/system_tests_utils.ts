@@ -55,6 +55,7 @@ import HttpProvider from '@theqrl/web3-providers-http';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
 import accountsString from './accounts.json';
+import { Wallet } from '@theqrl/web3-zond-accounts';
 
 /**
  * Get the env variable from Cypress if it exists or node process
@@ -97,6 +98,7 @@ export const isBrowser: boolean = ['chrome', 'firefox'].includes(getSystemTestEn
 
 export const getSystemTestMnemonic = (): string => getEnvVar('WEB3_SYSTEM_TEST_MNEMONIC') ?? '';
 
+// TODO(rgeraldes24): add default system backend?
 export const getSystemTestBackend = (): string => getEnvVar('WEB3_SYSTEM_TEST_BACKEND') ?? '';
 
 export const createAccount = _createAccount;
@@ -205,11 +207,15 @@ export const createAccountProvider = (context: Web3Context<ZondExecutionAPI>) =>
 	};
 };
 
-export const refillAccount = async (from: string, to: string, value: string | number) => {
+export const refillAccount = async (acc: {address: string, seed: string}, to: string, value: string | number) => {
 	const web3Zond = new Web3Zond(DEFAULT_SYSTEM_PROVIDER);
+	const accountProvider = createAccountProvider(web3Zond);
+	const wallet = new Wallet(accountProvider);
+	wallet.add(acc.seed);
+	web3Zond['_wallet'] = wallet;
 
 	await web3Zond.sendTransaction({
-		from,
+		from: acc.address,
 		to,
 		value,
 		type: BigInt(2),
@@ -346,7 +352,7 @@ export const signAndSendContractMethodEIP2930 = async (
 
 export const createLocalAccount = async (web3: Web3) => {
 	const account = web3.zond.accounts.create();
-	await refillAccount((await createTempAccount()).address, account.address, '100000000000000000000');
+	await refillAccount(await createTempAccount(), account.address, '100000000000000000000');
 	web3.zond.accounts.wallet.add(account);
 	return account;
 };

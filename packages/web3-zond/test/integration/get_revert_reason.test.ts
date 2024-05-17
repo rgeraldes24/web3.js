@@ -26,7 +26,9 @@ import {
 	createTempAccount,
 	getSystemTestBackend,
 	getSystemTestProvider,
+	createAccountProvider,
 } from '../fixtures/system_test_utils';
+import { Wallet } from '@theqrl/web3-zond-accounts';
 
 describe('Web3Zond.getRevertReason', () => {
 	let tempAccount: { address: string; seed: string };
@@ -36,6 +38,10 @@ describe('Web3Zond.getRevertReason', () => {
 	beforeAll(async () => {
 		tempAccount = await createTempAccount();
 		web3Zond = new Web3Zond(getSystemTestProvider());
+		const accountProvider = createAccountProvider(web3Zond);
+		const wallet = new Wallet(accountProvider);
+		wallet.add(tempAccount.seed);
+		web3Zond['_wallet'] = wallet;
 
 		const simpleRevertDeployTransaction: Transaction = {
 			from: tempAccount.address,

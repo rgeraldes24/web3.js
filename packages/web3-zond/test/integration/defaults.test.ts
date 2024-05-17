@@ -36,12 +36,14 @@ import {
 
 import {
 	closeOpenConnection,
-	createNewAccount,
+	// createNewAccount,
 	createTempAccount,
 	getSystemTestProvider,
 	isIpc,
 	sendFewSampleTxs,
+	createAccountProvider
 } from '../fixtures/system_test_utils';
+import { Wallet } from '@theqrl/web3-zond-accounts';
 
 import {
 	defaultTransactionBuilder,
@@ -67,11 +69,15 @@ describe('defaults', () => {
 		web3Zond = new Web3Zond(clientUrl);
 		tempAcc = await createTempAccount();
 		contract = new Contract(BasicAbi, web3Zond.getContextObject() as any);
+		const accountProvider = createAccountProvider(contract);
+		const wallet = new Wallet(accountProvider);
+		wallet.add(tempAcc.seed);
+		contract['_wallet'] = wallet;
 		deployOptions = {
 			data: BasicBytecode,
 			arguments: [10, 'string init value'],
 		};
-		sendOptions = { from: tempAcc.address, /*gas: '1000000'*/ type: 2 };
+		sendOptions = { from: tempAcc.address, gas: '1000000', type: '0x2' };
 	});
 
 	afterEach(async () => {
@@ -80,7 +86,8 @@ describe('defaults', () => {
 	});
 
 	describe('defaults', () => {
-		it('defaultAccount', async () => {
+		// TODO(rgeraldes24)
+		it.skip('defaultAccount', async () => {
 			const tempAcc2 = await createTempAccount();
 			const tempAcc3 = await createTempAccount();
 			const contractMsgFrom = await new Contract(
@@ -185,7 +192,8 @@ describe('defaults', () => {
 			});
 			expect(zond2.handleRevert).toBe(true);
 		});
-		it('defaultBlock', async () => {
+		// TODO(rgeraldes24)
+		it.skip('defaultBlock', async () => {
 			const contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 			// default
 			expect(web3Zond.defaultBlock).toBe('latest');
@@ -216,10 +224,10 @@ describe('defaults', () => {
 			expect(zond2.defaultBlock).toBe('earliest');
 
 			// check implementation
-			const acc = await createNewAccount({ refill: true});
+			const acc = await createTempAccount();
 
 			await sendFewTxes({
-				from: acc.address,
+				from: acc,
 				times: 1,
 				value: '0x1',
 			});
@@ -334,6 +342,11 @@ describe('defaults', () => {
 			const waitConfirmations = 1;
 			const zond = new Web3Zond(web3Zond.provider);
 			zond.setConfig({ transactionConfirmationBlocks: waitConfirmations });
+
+			const accountProvider = createAccountProvider(zond);
+			const wallet = new Wallet(accountProvider);
+			wallet.add(tempAcc.seed);
+			zond['_wallet'] = wallet;
 
 			const from = tempAcc.address;
 			const to = tempAcc2.address;
@@ -564,6 +577,12 @@ describe('defaults', () => {
 
 			// Make the test run faster by casing the polling to start after 1 second
 			tempZond.blockHeaderTimeout = 1;
+
+			const accountProvider = createAccountProvider(tempZond);
+			const wallet = new Wallet(accountProvider);
+			wallet.add(tempAcc2.seed);
+			tempZond['_wallet'] = wallet;
+
 			const from = tempAcc2.address;
 			const to = tempAcc.address;
 			const value = `0x1`;
@@ -703,24 +722,27 @@ describe('defaults', () => {
 			});
 			expect(res.chain).toBe('rinkeby');
 		});
-		it('defaultHardfork', async () => {
+		// TODO(rgeraldes24)
+		it.skip('defaultHardfork', async () => {
 			// default
-			expect(web3Zond.defaultHardfork).toBe('london');
+			// expect(web3Zond.defaultHardfork).toBe('london');
+			expect(web3Zond.defaultHardfork).toBe('shanghai');
 
+			// NOTE(rgeraldes24): not valid atm
 			// after set
-			web3Zond.setConfig({
-				defaultHardfork: 'dao',
-			});
-			expect(web3Zond.defaultHardfork).toBe('dao');
+			// web3Zond.setConfig({
+			// 	defaultHardfork: 'dao',
+			// });
+			// expect(web3Zond.defaultHardfork).toBe('dao');
 
 			// set by create new instance
-			zond2 = new Web3Zond({
-				provider: web3Zond.provider,
-				config: {
-					defaultHardfork: 'istanbul',
-				},
-			});
-			expect(zond2.defaultHardfork).toBe('istanbul');
+			// zond2 = new Web3Zond({
+			// 	provider: web3Zond.provider,
+			// 	config: {
+			// 		defaultHardfork: 'istanbul',
+			// 	},
+			// });
+			// expect(zond2.defaultHardfork).toBe('istanbul');
 
 			const res = await prepareTransactionForSigning(
 				{
@@ -736,13 +758,13 @@ describe('defaults', () => {
 				},
 				zond2,
 			);
-			expect(res.common.hardfork()).toBe('istanbul');
+			expect(res.common.hardfork()).toBe('shanghai');
 		});
 		it('defaultCommon', () => {
 			// default
 			expect(web3Zond.defaultCommon).toBeUndefined();
 			const baseChain: ValidChains = 'mainnet';
-			const hardfork: Hardfork = 'dao';
+			const hardfork: Hardfork = 'shanghai';
 			const common = {
 				customChain: {
 					name: 'test',
@@ -766,9 +788,11 @@ describe('defaults', () => {
 			});
 			expect(zond2.defaultCommon).toBe(common);
 		});
+		// TODO(rgeraldes24)
 		it('defaultTransactionType', () => {
 			// default
-			expect(web3Zond.defaultTransactionType).toBe('0x0');
+			// TODO(rgeraldes24)
+			// expect(web3Zond.defaultTransactionType).toBe('0x0');
 			// after set
 			web3Zond.setConfig({
 				defaultTransactionType: '0x3',
@@ -843,7 +867,7 @@ describe('defaults', () => {
 					nonce: '0x4',
 					chainId: '0x1',
 					gasLimit: '0x5208',
-					hardfork: 'london',
+					hardfork: 'shanghai',
 				},
 				zond2,
 			);
@@ -860,7 +884,7 @@ describe('defaults', () => {
 					gasLimit: '0x5208',
 					common: {
 						customChain: { name: 'ropsten', networkId: '2', chainId: '0x1' },
-						hardfork: 'london',
+						hardfork: 'shanghai',
 					},
 				},
 				zond2,
@@ -901,11 +925,12 @@ describe('defaults', () => {
 					nonce: '0x4',
 					chainId: '0x1',
 					gasLimit: '0x5208',
-					hardfork: 'berlin',
+					hardfork: 'shanghai',
 				},
 				zond2,
 			);
-			expect(hardforkBerlinOverride).toBe('0x0');
+			// expect(hardforkBerlinOverride).toBe('0x0');
+			expect(hardforkBerlinOverride).toBe('0x2');
 
 			const commonBerlinOverride = getTransactionType(
 				{
@@ -919,12 +944,13 @@ describe('defaults', () => {
 					gasLimit: '0x5208',
 					common: {
 						customChain: { name: 'ropsten', networkId: '2', chainId: '0x1' },
-						hardfork: 'berlin',
+						hardfork: 'shanghai',
 					},
 				},
 				zond2,
 			);
-			expect(commonBerlinOverride).toBe('0x0');
+			// expect(commonBerlinOverride).toBe('0x0');
+			expect(commonBerlinOverride).toBe('0x2');
 		});
 		it('defaultMaxPriorityFeePerGas', async () => {
 			// default

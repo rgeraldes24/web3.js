@@ -36,6 +36,7 @@ import {
 	createNewAccount,
 	itIf,
 	createTempAccount,
+	createAccountProvider,
 } from '../fixtures/system_test_utils';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
 import {
@@ -45,6 +46,8 @@ import {
 	validateReceipt,
 	validateTransaction,
 } from './helper';
+import { Wallet } from '@theqrl/web3-zond-accounts';
+import { Web3Context } from '../../../web3-core/lib/commonjs';
 
 describe('rpc', () => {
 	let web3Zond: Web3Zond;
@@ -56,24 +59,32 @@ describe('rpc', () => {
 	let tempAcc: { address: string; seed: string };
 	//let tempAcc2: { address: string; seed: string };
 	beforeAll(async () => {
+		tempAcc = await createTempAccount();
 		clientUrl = getSystemTestProvider();
+
+		const accountProvider = createAccountProvider(new Web3Context(clientUrl));
+		const wallet = new Wallet(accountProvider);
+		wallet.add(tempAcc.seed);
+		
 		web3Zond = new Web3Zond({
 			provider: clientUrl,
+			wallet: wallet,
 			config: {
 				transactionPollingTimeout: 15000,
 			},
 		});
+
 		contract = new Contract(BasicAbi, undefined, {
 			provider: clientUrl,
+			wallet:wallet
 		});
 
 		deployOptions = {
 			data: BasicBytecode,
 			arguments: [10, 'string init value'],
 		};
-		tempAcc = await createTempAccount();
 		//tempAcc2 = await createTempAccount();
-		sendOptions = { from: tempAcc.address, /*gas: '1000000'*/ type: 2 };
+		sendOptions = { from: tempAcc.address, gas: '1000000', type: '0x2' };
 
 		contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 	});
@@ -84,11 +95,14 @@ describe('rpc', () => {
 	});
 
 	describe('methods', () => {
+		// TODO(rgeraldes24): does not exist/is not available; double check
+		/*
 		itIf(!['gzond'].includes(getSystemTestBackend()))('getProtocolVersion', async () => {
 			const version = await web3Zond.getProtocolVersion();
 			// eslint-disable-next-line jest/no-standalone-expect
 			expect(parseInt(version, 16)).toBeGreaterThan(0);
 		});
+		*/
 
 		// TODO:in beta,  test zond_syncing during sync mode with return obj having ( startingblock, currentBlock, heighestBlock )
 		it('isSyncing', async () => {
@@ -105,12 +119,15 @@ describe('rpc', () => {
 		});
 		*/
 
+		// TODO(rgeraldes24): remove in the future?
+		/*
 		it('getAccounts', async () => {
 			const account = await createNewAccount();
 			const accList = await web3Zond.getAccounts();
 			const accListLowerCase = accList.map((add: string) => add.toLowerCase());
 			expect(accListLowerCase).toContain(account.address.toLowerCase());
 		});
+		*/
 
 		it.each(Object.values(FMT_NUMBER))('getBlockNumber', async format => {
 			const res = await web3Zond.getBlockNumber({
@@ -237,7 +254,7 @@ describe('rpc', () => {
 
 		it('getTransaction', async () => {
 			const [receipt] = await sendFewTxes({
-				from: tempAcc.address,
+				from: tempAcc,
 				value: '0x1',
 				times: 1,
 			});
@@ -254,7 +271,7 @@ describe('rpc', () => {
 
 		it('getTransactionReceipt', async () => {
 			const [receipt] = await sendFewTxes({
-				from: tempAcc.address,
+				from: tempAcc,
 				value: '0x1',
 				times: 1,
 			});

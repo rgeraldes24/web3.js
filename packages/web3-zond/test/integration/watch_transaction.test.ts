@@ -60,15 +60,18 @@ describeIf(isSocket)('watch subscription transaction', () => {
 				to: account2.address,
 				value: '0x1',
 				gas,
+				type: '0x2',
 			});
 
 			const receiptPromise = new Promise((resolve: Resolve) => {
 				// Tx promise is handled separately
 				// eslint-disable-next-line no-void
-				void sentTx.on('receipt', (params: TransactionReceipt) => {
+				void sentTx
+				.on('receipt', (params: TransactionReceipt) => {
 					expect(params.status).toBe(BigInt(1));
 					resolve();
-				});
+				})
+				.on('error', console.error);
 			});
 
 			let shouldBe = 1;
@@ -83,6 +86,7 @@ describeIf(isSocket)('watch subscription transaction', () => {
 					}
 				});
 			});
+
 			await receiptPromise;
 			await sendFewSampleTxs(isIpc ? 2 * waitConfirmations : waitConfirmations);
 			await confirmationPromise;

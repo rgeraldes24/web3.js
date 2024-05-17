@@ -57,7 +57,7 @@ describe('getTransactionFromOrToAttr', () => {
 				const web3Zond = new Web3Zond('http://localhost:8545');
 				const accountProvider = createAccountProvider(web3Zond);
 				const wallet = new Wallet(accountProvider);
-				web3Zond.wallet?.add(seed);
+				wallet.add(seed);
 				web3Zond['_wallet'] = wallet;
 
 				const { role, transaction } = input;

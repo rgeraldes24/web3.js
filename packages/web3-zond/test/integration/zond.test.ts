@@ -58,7 +58,8 @@ describe('zond', () => {
 	});
 
 	describe('methods', () => {
-		it('setProvider', async () => {
+		// TODO(rgeraldes24): send not supported anymore
+		it.skip('setProvider', async () => {
 			deployOptions = {
 				data: BasicBytecode,
 				arguments: [10, 'string init value'],

@@ -29,26 +29,35 @@ import {
 	getSystemTestProviderUrl,
 	isSocket,
 	isWs,
+	createAccountProvider,
 } from '../fixtures/system_test_utils';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
 import { eventAbi, Resolve } from './helper';
+import { Wallet } from '@theqrl/web3-zond-accounts';
 
 const checkEventCount = 2;
 
 type MakeFewTxToContract = {
-	sendOptions: Record<string, unknown>;
+	from: string;
+	contractAddress: string;
 	contract: Contract<typeof BasicAbi>;
+	web3Zond: Web3Zond
 	testDataString: string;
 };
 const makeFewTxToContract = async ({
 	contract,
-	sendOptions,
+	from,
+	contractAddress,
+	web3Zond,
 	testDataString,
 }: MakeFewTxToContract): Promise<void> => {
 	const prs = [];
 	for (let i = 0; i < checkEventCount; i += 1) {
 		// eslint-disable-next-line no-await-in-loop
-		prs.push(await contract.methods?.firesStringEvent(testDataString).send(sendOptions));
+		const contractFireStringEvent = contract.methods?.firesStringEvent(testDataString)
+		const txObj = {type: '0x2', gas: '100000', from: from, data: contractFireStringEvent.encodeABI(), to: contractAddress}
+
+		prs.push(await web3Zond.sendTransaction(txObj, undefined, { checkRevertBeforeSending: true }));
 	}
 };
 describeIf(isSocket)('subscription', () => {
@@ -56,9 +65,7 @@ describeIf(isSocket)('subscription', () => {
 	let web3Zond: Web3Zond;
 	let provider: WebSocketProvider | IpcProvider;
 	let contract: Contract<typeof BasicAbi>;
-	let contractDeployed: Contract<typeof BasicAbi>;
 	let deployOptions: Record<string, unknown>;
-	let sendOptions: Record<string, unknown>;
 	const testDataString = 'someTestString';
 	let tempAcc: { address: string; seed: string };
 
@@ -76,19 +83,33 @@ describeIf(isSocket)('subscription', () => {
 	});
 
 	describe('logs', () => {
+		// TODO(rgeraldes24): revisit with the .deploy().send() method
 		it(`wait for ${checkEventCount} logs`, async () => {
 			web3Zond = new Web3Zond(provider as Web3BaseProvider);
+			const accountProvider = createAccountProvider(web3Zond);
+			const wallet = new Wallet(accountProvider);
+			wallet?.add(tempAcc.seed);
+			web3Zond['_wallet'] = wallet;
+
 			const from = tempAcc.address;
+			
 			deployOptions = {
 				data: BasicBytecode,
 				arguments: [10, 'string init value'],
 			};
+			const contractDeploy = contract.deploy(deployOptions);
+			const txObj = {type: '0x2', gas: '1000000', from: from, data: contractDeploy.encodeABI()}
 
-			sendOptions = { from, gas: '1000000' };
-			contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
+			let contractAddress: string;
+			contractAddress = await new Promise(async (resolve) => {
+				await web3Zond.sendTransaction(txObj, undefined, { checkRevertBeforeSending: false })
+				.on('receipt', (receipt: any) => {
+					resolve(receipt.contractAddress);
+				})
+			});
 
 			const sub: LogsSubscription = await web3Zond.subscribe('logs', {
-				address: contractDeployed.options.address,
+				address: contractAddress,
 			});
 
 			let count = 0;
@@ -109,9 +130,11 @@ describeIf(isSocket)('subscription', () => {
 				sub.on('error', reject);
 
 				makeFewTxToContract({
-					contract: contractDeployed,
-					sendOptions,
+					contract: contract,
+					from,
+					contractAddress,
 					testDataString,
+					web3Zond,
 				}).catch(e => reject(e));
 			});
 

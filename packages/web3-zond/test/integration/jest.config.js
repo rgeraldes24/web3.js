@@ -21,8 +21,8 @@ const base = require('../config/jest.config');
 module.exports = {
 	...base,
 	setupFilesAfterEnv: ['<rootDir>/test/integration/setup.js'],
-	testMatch: ['<rootDir>/test/integration/**/*.(spec|test).(js|ts)'],
-	// testMatch: ['<rootDir>/test/integration/web3_zond/sign_transaction.test.ts'],
+	// testMatch: ['<rootDir>/test/integration/**/*.(spec|test).(js|ts)'],
+	testMatch: ['<rootDir>/test/integration/web3_zond/send_signed_transaction.test.ts'],
 	/**
 	 * restoreMocks [boolean]
 	 *

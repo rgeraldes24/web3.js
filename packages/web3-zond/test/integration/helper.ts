@@ -32,7 +32,7 @@ import {
 
 type SendFewTxParams = {
 	to?: string;
-	from: string;
+	from: {address: string, seed: string };
 	value: string;
 	times?: number;
 	waitReceipt?: boolean;
@@ -49,13 +49,14 @@ export const sendFewTxes = async ({
 	const res: TransactionReceipt[] = [];
 	const toAddress = to ?? createAccount().address;
 	const web3 = new Web3(getSystemTestProvider());
+	web3.zond.wallet?.add(from.seed);
 	for (let i = 0; i < times; i += 1) {
 		res.push(
 			// eslint-disable-next-line no-await-in-loop
 			await web3.zond.sendTransaction({
 				to: toAddress,
 				value,
-				from,
+				from: from.address,
 				//gas: gas ?? '300000',
 				type: BigInt(2),
 			}),
