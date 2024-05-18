@@ -66,7 +66,7 @@ export class AccessListEIP2930Transaction extends BaseTransaction<AccessListEIP2
 	 *
 	 * @hidden
 	 */
-	protected DEFAULT_HARDFORK = 'berlin';
+	protected DEFAULT_HARDFORK = 'shanghai';
 
 	/**
 	 * Instantiate a transaction from a data dictionary.

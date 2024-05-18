@@ -15,28 +15,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 // import { hexToBytes } from '@theqrl/web3-utils';
-// import { Chain, Common, ConsensusAlgorithm, ConsensusType, Hardfork } from '../../../src/common';
+import { Chain, Common, /*ConsensusAlgorithm, ConsensusType,*/ Hardfork } from '../../../src/common';
 // import gzondGenesisKiln from '../../fixtures/common/gzond-genesis-kiln.json';
 
-/*
-describe('[Common]: Hardfork logic', () => {
+
+describe.skip('[Common]: Hardfork logic', () => {
 	it('Hardfork access', () => {
 		const supportedHardforks = [
-			Hardfork.Chainstart,
-			Hardfork.Homestead,
-			Hardfork.Dao,
-			Hardfork.Chainstart,
-			Hardfork.SpuriousDragon,
-			Hardfork.Byzantium,
-			Hardfork.Constantinople,
-			Hardfork.Petersburg,
-			Hardfork.Istanbul,
-			Hardfork.Berlin,
-			Hardfork.London,
-			Hardfork.ArrowGlacier,
-			Hardfork.GrayGlacier,
 			Hardfork.Shanghai,
-			Hardfork.Merge,
 		];
 		let c;
 
@@ -49,33 +35,17 @@ describe('[Common]: Hardfork logic', () => {
 	it('getHardforkByBlockNumber() / setHardforkByBlockNumber()', () => {
 		let c = new Common({ chain: Chain.Mainnet });
 
-		expect(c.getHardforkByBlockNumber(0)).toEqual(Hardfork.Chainstart);
-		expect(c.getHardforkByBlockNumber(1149999)).toEqual(Hardfork.Chainstart);
-		expect(c.getHardforkByBlockNumber(1150000)).toEqual(Hardfork.Homestead);
-		expect(c.getHardforkByBlockNumber(1400000)).toEqual(Hardfork.Homestead);
-		expect(c.getHardforkByBlockNumber(9200000)).toEqual(Hardfork.MuirGlacier);
-		expect(c.getHardforkByBlockNumber(12244000)).toEqual(Hardfork.Berlin);
-		expect(c.getHardforkByBlockNumber(12965000)).toEqual(Hardfork.London);
-		expect(c.getHardforkByBlockNumber(13773000)).toEqual(Hardfork.ArrowGlacier);
-		expect(c.getHardforkByBlockNumber(15050000)).toEqual(Hardfork.GrayGlacier);
-		// merge is now specified at 15537394 in config
-		expect(c.getHardforkByBlockNumber(999999999999)).toEqual(Hardfork.Merge);
-
-		expect(c.setHardforkByBlockNumber(0)).toEqual(Hardfork.Chainstart);
-		expect(c.setHardforkByBlockNumber(1149999)).toEqual(Hardfork.Chainstart);
-		expect(c.setHardforkByBlockNumber(1150000)).toEqual(Hardfork.Homestead);
-		expect(c.setHardforkByBlockNumber(1400000)).toEqual(Hardfork.Homestead);
-		expect(c.setHardforkByBlockNumber(12244000)).toEqual(Hardfork.Berlin);
-		expect(c.setHardforkByBlockNumber(12965000)).toEqual(Hardfork.London);
-		expect(c.setHardforkByBlockNumber(13773000)).toEqual(Hardfork.ArrowGlacier);
-		expect(c.setHardforkByBlockNumber(15050000)).toEqual(Hardfork.GrayGlacier);
-		// merge is now specified at 15537394 in config
-		expect(c.setHardforkByBlockNumber(999999999999)).toEqual(Hardfork.Merge);
-
-		c = new Common({ chain: Chain.Sepolia });
+		expect(c.getHardforkByBlockNumber(0)).toEqual(Hardfork.Shanghai);
+		
+		expect(c.setHardforkByBlockNumber(0)).toEqual(Hardfork.Shanghai);
+		expect(c.setHardforkByBlockNumber(1149999)).toEqual(Hardfork.Shanghai);
+		
+		c = new Common({ chain: Chain.Mainnet });
 		expect(c.setHardforkByBlockNumber(1735371)).toBe('mergeForkIdTransition');
 	});
 
+	// TODO(rgeraldes24)
+	/*
 	it('should throw if no hardfork qualifies', () => {
 		const hardforks = [
 			{
@@ -305,5 +275,5 @@ describe('[Common]: Hardfork logic', () => {
 		c.setHardfork(Hardfork.MergeForkIdTransition);
 		expect(c.consensusType()).toEqual(ConsensusType.ProofOfWork);
 	});
+	*/
 });
-*/

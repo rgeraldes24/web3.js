@@ -14,14 +14,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*
-import { Chain, Common, ConsensusType, CustomChain, Hardfork } from '../../../src/common';
+
+import { Chain, Common, /*ConsensusType, CustomChain,*/ Hardfork } from '../../../src/common';
 
 import * as testnet from '../../fixtures/common/testnet.json';
-import * as testnet2 from '../../fixtures/common/testnet2.json';
-import * as testnet3 from '../../fixtures/common/testnet3.json';
+// import * as testnet2 from '../../fixtures/common/testnet2.json';
+// import * as testnet3 from '../../fixtures/common/testnet3.json';
 
-describe('[Common]: Custom chains', () => {
+describe.skip('[Common]: Custom chains', () => {
 	it('chain -> object: should provide correct access to private network chain parameters', () => {
 		const c = new Common({ chain: testnet, hardfork: Hardfork.Shanghai });
 		expect(c.chainName()).toBe('testnet');
@@ -62,6 +62,7 @@ describe('[Common]: Custom chains', () => {
 		expect(customChainCommon.hardfork()).toBe('byzantium');
 	});
 
+	/*
 	it('custom() -> behavior', () => {
 		let common = Common.custom({ chainId: 123 });
 		expect(common.networkId()).toEqual(BigInt(1));
@@ -129,9 +130,11 @@ describe('[Common]: Custom chains', () => {
 		expect(c.chainName()).toBe('testnet');
 		expect(c.consensusType()).toEqual(ConsensusType.ProofOfWork);
 	});
+	*/
 });
 
-describe('custom chain setup with hardforks', () => {
+/*
+describe.skip('custom chain setup with hardforks', () => {
 	const undefinedHardforks = [
 		{
 			name: 'shanghai',
