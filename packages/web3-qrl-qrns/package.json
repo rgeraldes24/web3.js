@@ -1,6 +1,6 @@
 {
 	"name": "@theqrl/web3-qrl-qrns",
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -45,7 +45,7 @@
 		"test:integration": "jest --config=./test/integration/jest.config.js"
 	},
 	"devDependencies": {
-		"@theqrl/eslint-config-base-web3": "^0.3.0",
+		"@theqrl/eslint-config-base-web3": "^0.3.1",
 		"@types/jest": "^28.1.6",
 		"@typescript-eslint/eslint-plugin": "^5.30.7",
 		"@typescript-eslint/parser": "^5.30.7",
@@ -60,14 +60,14 @@
 	},
 	"dependencies": {
 		"@adraffy/ens-normalize": "^1.8.8",
-		"@theqrl/web3-core": "^0.3.3",
-		"@theqrl/web3-errors": "^0.3.3",
-		"@theqrl/web3-net": "^0.3.3",
-		"@theqrl/web3-types": "^0.3.3",
-		"@theqrl/web3-utils": "^0.3.3",
-		"@theqrl/web3-validator": "^0.3.3",
-		"@theqrl/web3-qrl": "^0.3.3",
-		"@theqrl/web3-qrl-contract": "^0.3.3"
+		"@theqrl/web3-core": "^0.3.4",
+		"@theqrl/web3-errors": "^0.3.4",
+		"@theqrl/web3-net": "^0.3.4",
+		"@theqrl/web3-qrl": "^0.3.4",
+		"@theqrl/web3-qrl-contract": "^0.3.4",
+		"@theqrl/web3-types": "^0.3.4",
+		"@theqrl/web3-utils": "^0.3.4",
+		"@theqrl/web3-validator": "^0.3.4"
 	},
 	"gitHead": "d4f3246946fec86d908a215b27568aa8faea88d7"
 }

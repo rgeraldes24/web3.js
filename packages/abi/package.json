@@ -1,6 +1,6 @@
 {
 	"name": "@theqrl/abi",
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"description": "Utilities and Classes for parsing, formatting and managing QRL ABIs.",
 	"license": "MIT",
 	"main": "./lib/commonjs/index.js",
@@ -54,10 +54,10 @@
 		"@ethersproject/logger": "^5.7.0",
 		"@ethersproject/properties": "^5.7.0",
 		"@ethersproject/strings": "^5.7.0",
-		"@theqrl/web3-utils": "^0.3.3"
+		"@theqrl/web3-utils": "^0.3.4"
 	},
 	"devDependencies": {
-		"@theqrl/eslint-config-base-web3": "^0.3.0",
+		"@theqrl/eslint-config-base-web3": "^0.3.1",
 		"@types/jest": "^28.1.6",
 		"@typescript-eslint/eslint-plugin": "^5.30.7",
 		"@typescript-eslint/parser": "^5.30.7",
