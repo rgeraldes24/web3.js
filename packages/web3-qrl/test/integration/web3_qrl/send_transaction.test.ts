@@ -222,7 +222,7 @@ describe('Web3QRL.sendTransaction', () => {
 		});
 
 		it('should update greet in contract', async () => {
-			// setGreeting('42'): selector + VM64-encoded string argument
+			// setGreeting('42'): selector + VM-encoded string argument
 			const contractFunctionCall = `0xa4136862${encodeParameter('string', '42').slice(2)}`;
 			const transaction: Transaction = {
 				from: tempAcc.address,

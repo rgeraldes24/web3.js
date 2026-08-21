@@ -15,7 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { ContractExecutionError } from '@theqrl/web3-errors';
-import { isNullish } from '@theqrl/web3-utils';
 import { Contract } from '../../src';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
 import { getSystemTestProvider, createTempAccount } from '../fixtures/system_test_utils';
@@ -158,9 +157,7 @@ describe('contract', () => {
 						logsBloom:
 							'0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
 						status: BigInt(0),
-						to: isNullish(contractDeployed.options.address)
-							? contractDeployed.options.address
-							: `Q${contractDeployed.options.address.slice(1).toLowerCase()}`,
+						to: contractDeployed.options.address,
 						transactionIndex: BigInt(0),
 						type: BigInt(2),
 					},
