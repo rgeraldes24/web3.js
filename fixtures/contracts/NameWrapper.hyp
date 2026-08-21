@@ -1,0 +1,10 @@
+// SPDX-License-Identifier: GNU
+pragma hyperion >=0.0;
+
+contract NameWrapper {
+	mapping(uint256 => address) owners;
+
+	function ownerOf(uint256 tokenId) public view returns (address) {
+		return owners[tokenId];
+	}
+}

@@ -64,7 +64,8 @@ describe('qrns', () => {
 	let accountOne: string;
 
 	const ZERO_NODE: Bytes = '0x0000000000000000000000000000000000000000000000000000000000000000';
-	const addressOne: Address = 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
+	const addressOne: Address =
+		'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
 
 	const contentHash = '0x0000000000000000000000000000000000000000000000000000000000000001';
 
@@ -225,7 +226,7 @@ describe('qrns', () => {
 		// NOTE(rgeraldes24): resolver.methods.addr(node, coin) return type is 'bytes';
 		// value is not converted automatically to the 'address' type via ABI
 		const res = await resolver.methods.addr(domainNode, DEFAULT_COIN_TYPE).call(sendOptions);
-		expect(hexToAddress(res.toString())).toBe(accounts[1]);
+		expect(hexToAddress(res.toString())).toBe(`Q${accounts[1].slice(1).toLowerCase()}`);
 	});
 
 	it('fetches address', async () => {
@@ -238,6 +239,8 @@ describe('qrns', () => {
 		// NOTE(rgeraldes24): qrns.getAddress(domain) return type is 'bytes';
 		// value is not converted automatically to the 'address' type via ABI
 		const resultAddress = await qrns.getAddress(domain);
-		expect(hexToAddress(resultAddress.toString())).toBe(accountOne);
+		expect(hexToAddress(resultAddress.toString())).toBe(
+			`Q${accountOne.slice(1).toLowerCase()}`,
+		);
 	});
 });

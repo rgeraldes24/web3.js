@@ -1,0 +1,70 @@
+// SPDX-License-Identifier: GNU
+pragma hyperion >=0.0;
+
+contract PublicResolver {
+	mapping(bytes32 => address) addresses;
+	mapping(bytes32 => mapping(uint256 => bytes)) coinAddresses;
+	mapping(bytes32 => bytes32) pubkeyX;
+	mapping(bytes32 => bytes32) pubkeyY;
+	mapping(bytes32 => bytes) contentHashes;
+
+	event AddrChanged(bytes32 indexed node, address a);
+	event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress);
+	event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y);
+	event ContenthashChanged(bytes32 indexed node, bytes hash);
+
+	constructor(address, address, address, address) {}
+
+	function supportsInterface(bytes4 interfaceID) public pure returns (bool) {
+		return
+			interfaceID == 0x3b3b57de ||
+			interfaceID == 0xf1cb7e06 ||
+			interfaceID == 0x691f3431 ||
+			interfaceID == 0x2203ab56 ||
+			interfaceID == 0xc8690233 ||
+			interfaceID == 0x59d1d43c ||
+			interfaceID == 0xbc1c58d1 ||
+			interfaceID == 0xa8fa5682 ||
+			interfaceID == 0x5c98042b ||
+			interfaceID == 0x01ffc9a7;
+	}
+
+	function addr(bytes32 node) public view returns (address) {
+		return addresses[node];
+	}
+
+	function addr(bytes32 node, uint256 coinType) public view returns (bytes memory) {
+		return coinAddresses[node][coinType];
+	}
+
+	function setAddr(bytes32 node, address newAddress) public {
+		addresses[node] = newAddress;
+		coinAddresses[node][60] = abi.encodePacked(newAddress);
+		emit AddrChanged(node, newAddress);
+		emit AddressChanged(node, 60, coinAddresses[node][60]);
+	}
+
+	function setAddr(bytes32 node, uint256 coinType, bytes memory newAddress) public {
+		coinAddresses[node][coinType] = newAddress;
+		emit AddressChanged(node, coinType, newAddress);
+	}
+
+	function pubkey(bytes32 node) public view returns (bytes32 x, bytes32 y) {
+		return (pubkeyX[node], pubkeyY[node]);
+	}
+
+	function setPubkey(bytes32 node, bytes32 x, bytes32 y) public {
+		pubkeyX[node] = x;
+		pubkeyY[node] = y;
+		emit PubkeyChanged(node, x, y);
+	}
+
+	function contenthash(bytes32 node) public view returns (bytes memory) {
+		return contentHashes[node];
+	}
+
+	function setContenthash(bytes32 node, bytes memory hash) public {
+		contentHashes[node] = hash;
+		emit ContenthashChanged(node, hash);
+	}
+}
