@@ -30,11 +30,10 @@ describe('resolver', () => {
 	let registry: Registry;
 	let resolver: Resolver;
 	let contract: Contract<typeof PublicResolverAbi>;
-	const mockAddress = 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+	const mockAddress =
+		'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 	// A structurally valid, non-zero QRL address (Q + 128 hex chars).
 	const nonZeroAddress = `Q${'0'.repeat(127)}1`;
-	// The QRL zero address (Q + 128 zeros) — must be rejected as a resolved target.
-	const zeroAddress = `Q${'0'.repeat(128)}`;
 	const QRNS_NAME = 'web3js.qrl';
 
 	beforeAll(() => {
@@ -134,46 +133,6 @@ describe('resolver', () => {
 				interfaceIds[methodsInInterface.addr],
 			);
 			expect(addrMock).toHaveBeenCalledWith(namehash(QRNS_NAME), 60);
-		});
-
-		it('getAddress rejects a zero resolved target', async () => {
-			jest.spyOn(contract.methods, 'supportsInterface').mockReturnValue({
-				call: async () => Promise.resolve(true),
-			} as unknown as NonPayableMethodObject<any, any>);
-
-			jest.spyOn(contract.methods, 'addr').mockReturnValue({
-				call: async () => Promise.resolve(zeroAddress),
-			} as unknown as NonPayableMethodObject<any, any>);
-
-			jest.spyOn(registry, 'getResolver').mockImplementation(async () => {
-				return new Promise(resolve => {
-					resolve(contract);
-				});
-			});
-
-			await expect(resolver.getAddress(QRNS_NAME)).rejects.toThrow(
-				'QRNS resolver returned zero address',
-			);
-		});
-
-		it('getAddress rejects an invalid resolved target', async () => {
-			jest.spyOn(contract.methods, 'supportsInterface').mockReturnValue({
-				call: async () => Promise.resolve(true),
-			} as unknown as NonPayableMethodObject<any, any>);
-
-			jest.spyOn(contract.methods, 'addr').mockReturnValue({
-				call: async () => Promise.resolve(true),
-			} as unknown as NonPayableMethodObject<any, any>);
-
-			jest.spyOn(registry, 'getResolver').mockImplementation(async () => {
-				return new Promise(resolve => {
-					resolve(contract);
-				});
-			});
-
-			await expect(resolver.getAddress(QRNS_NAME)).rejects.toThrow(
-				'QRNS resolver returned invalid address',
-			);
 		});
 	});
 
