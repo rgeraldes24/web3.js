@@ -23,7 +23,7 @@ import * as accountProvider from '../../src/account';
 describe('Wallet', () => {
 	let wallet: Wallet;
 	beforeEach(() => {
-		wallet = new Wallet(accountProvider as Web3AccountProvider<any>);
+		wallet = new Wallet(accountProvider as unknown as Web3AccountProvider<any>);
 	});
 
 	describe('constructor', () => {
@@ -215,7 +215,7 @@ describe('Wallet', () => {
 		it('should encrypt all accounts and return array', async () => {
 			const account1 = accountProvider.create();
 			const account2 = accountProvider.create();
-			const options = { m: 65536, t: 1, p: 1 };
+			const options = { m: 19456, t: 2, p: 1 };
 			wallet.add(account1);
 			wallet.add(account2);
 
@@ -230,7 +230,7 @@ describe('Wallet', () => {
 		it('should decrypt all accounts and add to wallet', async () => {
 			const account1 = accountProvider.create();
 			const account2 = accountProvider.create();
-			const options = { m: 65536, t: 1, p: 1 };
+			const options = { m: 19456, t: 2, p: 1 };
 			wallet.add(account1);
 			wallet.add(account2);
 			const result = await wallet.encrypt('password', options);
@@ -248,7 +248,7 @@ describe('Wallet', () => {
 		itIf(!(isBrowser || isElectron))(
 			'should throw error if local storage not present',
 			async () => {
-				const options = { m: 65536, t: 1, p: 1 };
+				const options = { m: 19456, t: 2, p: 1 };
 				return expect(wallet.save('password', undefined, options)).rejects.toThrow(
 					'Local storage not available.',
 				);
@@ -258,7 +258,7 @@ describe('Wallet', () => {
 		itIf(isBrowser || isElectron)(
 			'should encrypt wallet and load it with given key',
 			async () => {
-				const options = { m: 65536, t: 1, p: 1 };
+				const options = { m: 19456, t: 2, p: 1 };
 				const account = accountProvider.create();
 				wallet.add(account);
 				expect(await wallet.save('password', 'myKey', options)).toBe(true);
@@ -271,7 +271,7 @@ describe('Wallet', () => {
 		itIf(isBrowser || isElectron)(
 			'should encrypt wallet and load it with default key',
 			async () => {
-				const options = { m: 65536, t: 1, p: 1 };
+				const options = { m: 19456, t: 2, p: 1 };
 				const account = accountProvider.create();
 				wallet.add(account);
 				expect(await wallet.save('password', undefined, options)).toBe(true);

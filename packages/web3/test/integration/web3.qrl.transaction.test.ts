@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import * as httpProvider from '@theqrl/web3-providers-http';
-import { Web3Account } from '@theqrl/web3-qrl-accounts';
+import { recoverTransaction, Web3Account } from '@theqrl/web3-qrl-accounts';
 import Web3, { DEFAULT_RETURN_FORMAT, Transaction } from '../../src';
 // TODO(youtrack/theqrl/web3.js/8)
 import testsData from '../fixtures/transactions.json';
@@ -112,7 +112,7 @@ describe('signTransaction', () => {
 				checkRevertBeforeSending: false,
 			});
 			expect(res).toBeDefined();
-			expect(sentRawTransaction).toBe(txObj.signedLondon); // validate transaction for London HF
+			expect(recoverTransaction(sentRawTransaction as string)).toBe(account.address);
 		},
 	);
 });

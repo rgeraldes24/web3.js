@@ -47,7 +47,7 @@ describeIf(isWs)('Support of Basic Auth', () => {
 			logLevel: 'silent',
 		});
 
-		app.use(wsProxy);
+		app.use(wsProxy as unknown as express.RequestHandler);
 		server = app.listen(port, host);
 
 		server.on('upgrade', (req, socket, head) => {
