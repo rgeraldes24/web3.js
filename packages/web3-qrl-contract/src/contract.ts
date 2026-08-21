@@ -41,7 +41,6 @@ import {
 	encodeEventSignature,
 	encodeFunctionSignature,
 	decodeContractErrorData,
-	hashToLogTopic,
 	isAbiErrorFragment,
 	isAbiEventFragment,
 	isAbiFunctionFragment,
@@ -776,7 +775,16 @@ export class Contract<Abi extends ContractAbi>
 				if (typeof log === 'string') return true;
 
 				return filterKeys.every((key: string) => {
+					const inputAbi = abi.inputs?.find(input => input.name === key);
 					if (Array.isArray(filter[key])) {
+						if (inputAbi?.indexed && inputAbi.type === 'string') {
+							return (filter[key] as string[]).some(
+								value =>
+									keccak256(value).toUpperCase() ===
+									String(log.returnValues[key]).toUpperCase(),
+							);
+						}
+
 						return (filter[key] as Numbers[]).some(
 							(v: Numbers) =>
 								String(log.returnValues[key]).toUpperCase() ===
@@ -784,11 +792,8 @@ export class Contract<Abi extends ContractAbi>
 						);
 					}
 
-					const inputAbi = abi.inputs?.filter(input => input.name === key)[0];
 					if (inputAbi?.indexed && inputAbi.type === 'string') {
-						// `returnValues` holds the raw 64-byte topic for an indexed string,
-						// so compare against the left-aligned hash, not the bare one.
-						const hashedIndexedString = hashToLogTopic(keccak256(filter[key] as string));
+						const hashedIndexedString = keccak256(filter[key] as string);
 						if (hashedIndexedString === String(log.returnValues[key])) return true;
 					}
 

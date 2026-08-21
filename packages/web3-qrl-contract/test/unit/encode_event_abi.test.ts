@@ -46,7 +46,8 @@ const abiEventFragment: AbiEventFragment & { signature: string } = {
 	],
 	name: 'MultiValueIndexedEventWithStringIndexed',
 	type: 'event',
-	signature: '0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd50000000000000000000000000000000000000000000000000000000000000000',
+	signature:
+		'0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd50000000000000000000000000000000000000000000000000000000000000000',
 };
 
 describe('encodeEventAbi', () => {
@@ -76,11 +77,15 @@ describe('encodeEventAbi', () => {
 
 	it('should set topics array for filter to given topics array', () => {
 		const encodedEventFilter = encodeEventABI(contractOptions, abiEventFragment, {
-			topics: ['0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca0000000000000000000000000000000000000000000000000000000000000000'],
+			topics: [
+				'0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca0000000000000000000000000000000000000000000000000000000000000000',
+			],
 		});
 
 		expect(encodedEventFilter).toMatchObject({
-			topics: ['0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca0000000000000000000000000000000000000000000000000000000000000000'],
+			topics: [
+				'0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca0000000000000000000000000000000000000000000000000000000000000000',
+			],
 			address:
 				'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 		});
@@ -93,7 +98,8 @@ describe('encodeEventAbi', () => {
 				anonymous: false,
 				name: 'ALLEVENTS',
 				type: 'event',
-				signature: '0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd50000000000000000000000000000000000000000000000000000000000000000',
+				signature:
+					'0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd50000000000000000000000000000000000000000000000000000000000000000',
 			},
 			{
 				fromBlock: 1000,
@@ -122,7 +128,8 @@ describe('encodeEventAbi', () => {
 			],
 			name: 'IndexedArrayEvent',
 			type: 'event',
-			signature: '0x71aefd401e4886a78931d42be506247958b9751348fa91aa2f9dbbd557e9208e0000000000000000000000000000000000000000000000000000000000000000',
+			signature:
+				'0x71aefd401e4886a78931d42be506247958b9751348fa91aa2f9dbbd557e9208e0000000000000000000000000000000000000000000000000000000000000000',
 		};
 
 		encodeEventABI(contractOptions, _abiEventFragment, {
@@ -159,7 +166,8 @@ describe('encodeEventAbi', () => {
 			],
 			name: 'IndexedMultiValArrayEvent',
 			type: 'event',
-			signature: '0x9b5a12617e7ca791109ef5e09b8cc23cb4034e0e3dfb4aadac37b55fd28718f60000000000000000000000000000000000000000000000000000000000000000',
+			signature:
+				'0x9b5a12617e7ca791109ef5e09b8cc23cb4034e0e3dfb4aadac37b55fd28718f60000000000000000000000000000000000000000000000000000000000000000',
 		};
 
 		encodeEventABI(contractOptions, _abiEventFragment, {
@@ -214,7 +222,7 @@ describe('encodeEventAbi', () => {
 	describe('full-width indexed topics', () => {
 		// Only dynamic (`string`) indexed arguments are topic-encoded as a left-aligned Keccak
 		// hash. Value types go through `encodeParameter`, which already emits a complete 64-byte
-		// VM64 word, and must reach the filter untouched — no extra padding, no hashing, no
+		// VM word, and must reach the filter untouched — no extra padding, no hashing, no
 		// truncation. The three cases below pin the three distinct word layouts:
 		//
 		//   address  fills the word exactly (go-qrl `common.AddressToLogTopic`; AddressLength

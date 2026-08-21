@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { AbiEventFragment, LogsInput } from '@theqrl/web3-types';
 
-// Every log below is shaped the way a node serializes one: topics are complete 64-byte VM64
+// Every log below is shaped the way a node serializes one: topics are complete 64-byte VM
 // words, and a 32-byte event signature hash is left-aligned within its topic (go-qrl
 // `common.HashToLogTopic`). The `data` payloads are the current coder's own output for the
 // argument values named in each case, so the expectations are a genuine round trip.

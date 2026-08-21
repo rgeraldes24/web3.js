@@ -19,9 +19,10 @@ import { HexString, AbiParameter, DecodedParams } from '@theqrl/web3-types';
 import { decodeParameter, decodeParametersWith } from './parameters_api.js';
 
 const STATIC_TYPES = ['bool', 'string', 'int', 'uint', 'address', 'fixed', 'ufixed'];
+const FIXED_BYTES_TYPE = /^bytes(?:[1-9]|[12][0-9]|3[0-2])$/;
 
 const _decodeParameter = (inputType: string, clonedTopic: string) =>
-	inputType === 'string' ? clonedTopic : decodeParameter(inputType, clonedTopic);
+	inputType === 'string' ? clonedTopic.slice(0, 66) : decodeParameter(inputType, clonedTopic);
 
 /**
  * Decodes ABI-encoded log data and indexed topic data.
@@ -92,7 +93,7 @@ export const decodeLog = <ReturnType extends DecodedParams>(
 	const offset = clonedTopics.length - Object.keys(indexedInputs).length;
 
 	const decodedIndexedInputs = Object.values(indexedInputs).map((input, index) =>
-		STATIC_TYPES.some(s => input.type.startsWith(s))
+		STATIC_TYPES.some(s => input.type.startsWith(s)) || FIXED_BYTES_TYPE.test(input.type)
 			? _decodeParameter(input.type, clonedTopics[index + offset])
 			: clonedTopics[index + offset],
 	);

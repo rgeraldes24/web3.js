@@ -69,7 +69,7 @@ const LOG_TOPIC_HEX_LENGTH = 128;
 /**
  * Left-aligns a 32-byte Keccak hash inside a 64-byte log topic, i.e. `hash || zero padding`.
  *
- * QRVM log topics are full 64-byte VM64 words (go-qrl `common.LogTopicLength`). Keccak hashes
+ * QRVM log topics are full 64-byte VM words (go-qrl `common.LogTopicLength`). Keccak hashes
  * used as topics — event signature hashes and hashed dynamic indexed arguments — are ABI
  * `bytes32` values, so the node places them in the HIGH bytes of the topic word and zero-pads
  * the remainder (go-qrl `common.HashToLogTopic` / `common.BytesToLeftAlignedLogTopic`).

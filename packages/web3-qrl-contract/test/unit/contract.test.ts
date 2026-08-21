@@ -36,6 +36,8 @@ import { processAsync } from '../shared_fixtures/utils';
 
 jest.mock('@theqrl/web3-qrl');
 
+// The VM-encoded constructor arg ('My Greeting') is kept as an independent literal so the
+// deploy-encoding assertions do not derive their expectation from the encoder under test.
 const GREETER_DEPLOYMENT_DATA = `${GreeterBytecode}000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b4d79204772656574696e670000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000`;
 
 describe('Contract', () => {
@@ -1078,7 +1080,9 @@ describe('Contract', () => {
 			const pastEvent = await deployedContract.getPastEvents(getPastEventsData.event as any, {
 				fromBlock,
 				toBlock,
-				topics: ['0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e0000000000000000000000000000000000000000000000000000000000000000'],
+				topics: [
+					'0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e0000000000000000000000000000000000000000000000000000000000000000',
+				],
 			});
 
 			expect(pastEvent).toStrictEqual(getPastEventsData.response);
@@ -1218,7 +1222,9 @@ describe('Contract', () => {
 				.send(sendOptions);
 
 			const pastEvent = await deployedContract.getPastEvents({
-				topics: ['0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e0000000000000000000000000000000000000000000000000000000000000000'],
+				topics: [
+					'0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e0000000000000000000000000000000000000000000000000000000000000000',
+				],
 			});
 			expect(pastEvent).toHaveLength(1);
 			expect(pastEvent[0]).toStrictEqual(AllGetPastEventsData.response[1]);
@@ -1283,9 +1289,7 @@ describe('Contract', () => {
 			});
 
 			const result = deploy.encodeABI();
-			expect(result).toBe(
-				GREETER_DEPLOYMENT_DATA,
-			);
+			expect(result).toBe(GREETER_DEPLOYMENT_DATA);
 
 			spyTx.mockClear();
 		});
@@ -1306,9 +1310,7 @@ describe('Contract', () => {
 					expect(_block).toBe('latest');
 					expect(_tx.to).toBeUndefined();
 					expect(_tx.from).toStrictEqual(sendOptions.from);
-					expect(_tx.input).toBe(
-						GREETER_DEPLOYMENT_DATA,
-					);
+					expect(_tx.input).toBe(GREETER_DEPLOYMENT_DATA);
 					expect(returnFormat).toBe(QRL_DATA_FORMAT);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -1343,9 +1345,7 @@ describe('Contract', () => {
 					expect(_block).toBe('latest');
 					expect(_tx.to).toBeUndefined();
 					expect(_tx.from).toStrictEqual(sendOptions.from);
-					expect(_tx.data).toBe(
-						GREETER_DEPLOYMENT_DATA,
-					);
+					expect(_tx.data).toBe(GREETER_DEPLOYMENT_DATA);
 					expect(returnFormat).toBe(QRL_DATA_FORMAT);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -1386,12 +1386,8 @@ describe('Contract', () => {
 					expect(_block).toBe('latest');
 					expect(_tx.to).toBeUndefined();
 					expect(_tx.from).toStrictEqual(sendOptions.from);
-					expect(_tx.data).toBe(
-						GREETER_DEPLOYMENT_DATA,
-					);
-					expect(_tx.input).toBe(
-						GREETER_DEPLOYMENT_DATA,
-					);
+					expect(_tx.data).toBe(GREETER_DEPLOYMENT_DATA);
+					expect(_tx.input).toBe(GREETER_DEPLOYMENT_DATA);
 					expect(returnFormat).toBe(QRL_DATA_FORMAT);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -1431,9 +1427,7 @@ describe('Contract', () => {
 					expect(_block).toBe('latest');
 					expect(_tx.to).toBeUndefined();
 					expect(_tx.from).toStrictEqual(sendOptions.from);
-					expect(_tx.data).toBe(
-						GREETER_DEPLOYMENT_DATA,
-					);
+					expect(_tx.data).toBe(GREETER_DEPLOYMENT_DATA);
 					expect(returnFormat).toBe(QRL_DATA_FORMAT);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
