@@ -94,7 +94,8 @@ describe('rpc with block', () => {
 				block: 'earliest' | 'latest' | 'pending' | 'blockHash' | 'blockNumber';
 				format: string;
 			}>({
-				block: ['earliest', 'latest', 'pending', 'blockNumber'],
+				// `earliest` requires archive state; request formatting is covered by unit tests.
+				block: ['latest', 'pending', 'blockNumber'],
 				format: Object.values(FMT_NUMBER),
 			}),
 		)('getTransactionCount', async ({ block, format }) => {
