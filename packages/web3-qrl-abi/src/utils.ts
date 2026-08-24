@@ -27,6 +27,7 @@ import {
 	AbiEventFragment,
 	AbiFunctionFragment,
 	AbiConstructorFragment,
+	HexString,
 } from '@theqrl/web3-types';
 import ethersAbiCoder from './ethers_abi_coder.js';
 
@@ -59,6 +60,13 @@ export const isAbiConstructorFragment = (item: unknown): item is AbiConstructorF
 	typeof item === 'object' &&
 	!isNullish((item as { type: string }).type) &&
 	(item as { type: string }).type === 'constructor';
+
+const LOG_TOPIC_HEX_LENGTH = 128;
+
+/**
+ * Matches go-qrl `common.HashToLogTopic`: `hash || zero padding`.
+ */
+export const hashToLogTopic = (hash: HexString): HexString => rightPad(hash, LOG_TOPIC_HEX_LENGTH);
 
 /**
  * Check if type is simplified struct format

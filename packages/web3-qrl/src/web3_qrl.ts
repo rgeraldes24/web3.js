@@ -1133,11 +1133,11 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 * ```ts
 	 * web3.qrl.getPastLogs({
 	 *      address: "Q0B425Ed8E7399aF5dEFFE13a09e7F1776996a32466aa3c1BB1a34ad61760A2Eb72705C904aB988e3e089E55d1D8081DA21F20544E04CB5f0ac85aA6d5940e38D",
-	 *      topics: ["0x033456732123ffff2342342dd12342434324234234fd234fd23fd4f23d4234"]
+	 *      topics: ["0x033456732123ffff2342342dd12342434324234234fd234fd23fd4f23d4234000000000000000000000000000000000000000000000000000000000000000000"]
 	 *  }).then(console.log);
 	 * > [{
 	 *       data: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
-	 *       topics: ['0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ead7', '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385']
+	 *       topics: ['0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ea0000000000000000000000000000000000000000000000000000000000000000', '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a9130000000000000000000000000000000000000000000000000000000000000000']
 	 *       logIndex: 0n,
 	 *       transactionIndex: 0n,
 	 *       transactionHash: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
@@ -1150,13 +1150,13 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 * web3.qrl.getPastLogs(
 	 *     {
 	 *       address: "Q0B425Ed8E7399aF5dEFFE13a09e7F1776996a32466aa3c1BB1a34ad61760A2Eb72705C904aB988e3e089E55d1D8081DA21F20544E04CB5f0ac85aA6d5940e38D",
-	 *       topics: ["0x033456732123ffff2342342dd12342434324234234fd234fd23fd4f23d4234"]
+	 *       topics: ["0x033456732123ffff2342342dd12342434324234234fd234fd23fd4f23d4234000000000000000000000000000000000000000000000000000000000000000000"]
 	 *     },
 	 *     { number: FMT_NUMBER.NUMBER , bytes: FMT_BYTES.HEX }
 	 * ).then(console.log);
 	 * > [{
 	 *       data: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
-	 *       topics: ['0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ead7', '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385']
+	 *       topics: ['0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ea0000000000000000000000000000000000000000000000000000000000000000', '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a9130000000000000000000000000000000000000000000000000000000000000000']
 	 *       logIndex: 0,
 	 *       transactionIndex: 0,
 	 *       transactionHash: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
@@ -1462,7 +1462,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 * // Subscribe to `logs`
 	 * const logSubscription = web3.qrl.subscribe('logs', {
 	 *     address: 'Qd5812F6Cf4a0f645aa620cd57319a0Ed649dd8f5519A9dde7770ae5b0E49e547985f35eB972A2a07041561aa39c65A3991478f9B1e6749e05277dcf58A9A8B72',
-	 *     topics: ['0x033456732123ffff2342342dd12342434324234234fd234fd23fd4f23d4234']
+	 *     topics: ['0x033456732123ffff2342342dd12342434324234234fd234fd23fd4f23d4234000000000000000000000000000000000000000000000000000000000000000000']
 	 * });
 	 * logSubscription.on('data', (data: any) => console.log(data));
 	 * logSubscription.on('error', (error: any) => console.log(error));

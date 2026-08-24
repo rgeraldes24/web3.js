@@ -39,6 +39,7 @@ import {
 	encodeFunctionSignature,
 	encodeParameter,
 	encodeParameters,
+	hashToLogTopic,
 	isAbiConstructorFragment,
 	jsonInterfaceMethodToString,
 } from '@theqrl/web3-qrl-abi';
@@ -50,6 +51,10 @@ import { Web3ContractError } from '@theqrl/web3-errors';
 import { ContractOptions, ContractAbiWithSignature, EventLog } from './types.js';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+
+const encodeIndexedTopic = (type: string, value: unknown) =>
+	type === 'string' ? hashToLogTopic(keccak256(value as string)) : encodeParameter(type, value);
+
 export const encodeEventABI = (
 	{ address }: ContractOptions,
 	event: AbiEventFragment & { signature: string },
@@ -91,7 +96,7 @@ export const encodeEventABI = (
 				}
 
 				const value = filter[input.name];
-				if (!value) {
+				if (isNullish(value)) {
 					// eslint-disable-next-line no-null/no-null
 					opts.topics.push(null);
 					continue;
@@ -100,11 +105,9 @@ export const encodeEventABI = (
 				// TODO: https://github.com/ethereum/web3.js/issues/344
 				// TODO: deal properly with components
 				if (Array.isArray(value)) {
-					opts.topics.push(value.map(v => encodeParameter(input.type, v)));
-				} else if (input.type === 'string') {
-					opts.topics.push(keccak256(value as string));
+					opts.topics.push(value.map(v => encodeIndexedTopic(input.type, v)));
 				} else {
-					opts.topics.push(encodeParameter(input.type, value));
+					opts.topics.push(encodeIndexedTopic(input.type, value));
 				}
 			}
 		}

@@ -688,10 +688,10 @@ export class Contract<Abi extends ContractAbi>
 	 *   },
 	 *   raw: {
 	 *       data: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
-	 *       topics: ['0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ead7', '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385']
+	 *       topics: ['0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ea0000000000000000000000000000000000000000000000000000000000000000', '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a9130000000000000000000000000000000000000000000000000000000000000000']
 	 *   },
 	 *   event: 'MyEvent',
-	 *   signature: '0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ead7',
+	 *   signature: '0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ea0000000000000000000000000000000000000000000000000000000000000000',
 	 *   logIndex: 0,
 	 *   transactionIndex: 0,
 	 *   transactionHash: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
@@ -775,7 +775,16 @@ export class Contract<Abi extends ContractAbi>
 				if (typeof log === 'string') return true;
 
 				return filterKeys.every((key: string) => {
+					const inputAbi = abi.inputs?.find(input => input.name === key);
 					if (Array.isArray(filter[key])) {
+						if (inputAbi?.indexed && inputAbi.type === 'string') {
+							return (filter[key] as string[]).some(
+								value =>
+									keccak256(value).toUpperCase() ===
+									String(log.returnValues[key]).toUpperCase(),
+							);
+						}
+
 						return (filter[key] as Numbers[]).some(
 							(v: Numbers) =>
 								String(log.returnValues[key]).toUpperCase() ===
@@ -783,7 +792,6 @@ export class Contract<Abi extends ContractAbi>
 						);
 					}
 
-					const inputAbi = abi.inputs?.filter(input => input.name === key)[0];
 					if (inputAbi?.indexed && inputAbi.type === 'string') {
 						const hashedIndexedString = keccak256(filter[key] as string);
 						if (hashedIndexedString === String(log.returnValues[key])) return true;
