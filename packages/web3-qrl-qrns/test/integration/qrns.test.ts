@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { getBlock } from '@theqrl/web3-qrl';
 import { Contract, PayableTxOptions } from '@theqrl/web3-qrl-contract';
 import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
-import { sha3, toChecksumAddress } from '@theqrl/web3-utils';
+import { sha3 } from '@theqrl/web3-utils';
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
 import { QRNS } from '../../src';
 import { namehash } from '../../src/utils';
@@ -34,17 +34,14 @@ import {
 } from '../fixtures/system_tests_utils';
 
 import { PublicResolverAbi as PublicResolver } from '../../src/abi/qrns/PublicResolver';
-import { QRNSRegistryAbi } from '../fixtures/qrns/abi/QRNSRegistry';
-import { NameWrapperAbi } from '../fixtures/qrns/abi/NameWrapper';
-import { PublicResolverAbi } from '../fixtures/qrns/abi/PublicResolver';
+import { QRNSRegistryAbi } from '../../../../fixtures/build/QRNSRegistry';
+import { PublicResolverAbi } from '../../../../fixtures/build/PublicResolver';
 import { QRNSRegistryBytecode } from '../fixtures/qrns/bytecode/QRNSRegistryBytecode';
-import { NameWrapperBytecode } from '../fixtures/qrns/bytecode/NameWrapperBytecode';
 import { PublicResolverBytecode } from '../fixtures/qrns/bytecode/PublicResolverBytecode';
 
 describe('qrns', () => {
 	let registry: Contract<typeof QRNSRegistryAbi>;
 	let resolver: Contract<typeof PublicResolverAbi>;
-	let nameWrapper: Contract<typeof NameWrapperAbi>;
 
 	type ResolverContract = Contract<typeof PublicResolverAbi>;
 
@@ -61,26 +58,19 @@ describe('qrns', () => {
 	const fullDomain = `${subdomain}.${domain}`;
 	const web3jsName = 'web3js.test';
 
-	let accounts: string[];
 	let qrns: QRNS;
 	let defaultAccount: string;
-	let accountOne: string;
 
 	const ZERO_NODE: Bytes = '0x0000000000000000000000000000000000000000000000000000000000000000';
-	const addressOne: Address = 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
+	const addressOne: Address =
+		'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
 
 	beforeAll(async () => {
-		accounts = await getSystemTestAccounts();
-
-		[defaultAccount, accountOne] = accounts;
+		[defaultAccount] = await getSystemTestAccounts();
 
 		sendOptions = { from: defaultAccount, gas: '10000000' };
 
 		const Registry = new Contract(QRNSRegistryAbi, undefined, {
-			provider: getSystemTestProvider(),
-		});
-
-		const NameWrapper = new Contract(NameWrapperAbi, undefined, {
 			provider: getSystemTestProvider(),
 		});
 
@@ -90,17 +80,7 @@ describe('qrns', () => {
 
 		registry = await Registry.deploy({ data: QRNSRegistryBytecode }).send(sendOptions);
 
-		nameWrapper = await NameWrapper.deploy({ data: NameWrapperBytecode }).send(sendOptions);
-
-		resolver = await Resolver.deploy({
-			data: PublicResolverBytecode,
-			arguments: [
-				registry.options.address as string,
-				nameWrapper.options.address as string,
-				accountOne,
-				defaultAccount,
-			],
-		}).send(sendOptions);
+		resolver = await Resolver.deploy({ data: PublicResolverBytecode }).send(sendOptions);
 
 		await registry.methods.setSubnodeOwner(ZERO_NODE, label, defaultAccount).send(sendOptions);
 		await registry.methods
@@ -138,7 +118,6 @@ describe('qrns', () => {
 			await closeOpenConnection(getQrnsResolver);
 			await closeOpenConnection(registry);
 			await closeOpenConnection(resolver);
-			await closeOpenConnection(nameWrapper);
 		}
 	});
 
@@ -152,7 +131,7 @@ describe('qrns', () => {
 	it('should return the subnode owner of "resolver"', async () => {
 		const owner = await qrns.getOwner('resolver');
 
-		expect(owner).toEqual(toChecksumAddress(defaultAccount));
+		expect(owner).toEqual(`Q${defaultAccount.slice(1).toLowerCase()}`);
 	});
 
 	it('should return the registered resolver for the subnode "resolver"', async () => {
@@ -164,7 +143,7 @@ describe('qrns', () => {
 	it('should get the owner record for a name', async () => {
 		const web3jsOwner = await qrns.getOwner(web3jsName);
 
-		expect(web3jsOwner).toEqual(toChecksumAddress(defaultAccount));
+		expect(web3jsOwner).toEqual(`Q${defaultAccount.slice(1).toLowerCase()}`);
 	});
 
 	it('should get TTL', async () => {
