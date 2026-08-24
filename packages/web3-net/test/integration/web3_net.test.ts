@@ -50,6 +50,6 @@ describe('Web3 net', () => {
 
 	it('should fetch peer count', async () => {
 		const peerCount = await web3Net.getPeerCount();
-		expect(peerCount).toBeGreaterThanOrEqual(BigInt(0));
+		expect(peerCount).toBe(BigInt(0));
 	});
 });
