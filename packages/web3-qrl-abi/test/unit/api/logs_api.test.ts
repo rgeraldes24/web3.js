@@ -20,6 +20,19 @@ import { validDecodeLogsData } from '../../fixtures/data';
 
 describe('logs_api', () => {
 	describe('decodeLog', () => {
+		it.each([33, 63, 64])('decodes indexed bytes%d without VM word padding', size => {
+			const value = `0x${'ab'.repeat(size)}`;
+			const topic = `${value}${'00'.repeat(64 - size)}`;
+
+			const decoded = decodeLog(
+				[{ name: 'value', type: `bytes${size}`, indexed: true }],
+				'0x',
+				[topic],
+			);
+
+			expect(decoded.value).toBe(value);
+		});
+
 		describe('valid data', () => {
 			it.each(validDecodeLogsData)(
 				'should pass for valid values: %j',

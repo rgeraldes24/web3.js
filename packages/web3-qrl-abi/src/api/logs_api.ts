@@ -19,7 +19,7 @@ import { HexString, AbiParameter, DecodedParams } from '@theqrl/web3-types';
 import { decodeParameter, decodeParametersWith } from './parameters_api.js';
 
 const STATIC_TYPES = ['bool', 'string', 'int', 'uint', 'address', 'fixed', 'ufixed'];
-const FIXED_BYTES_TYPE = /^bytes(?:[1-9]|[12][0-9]|3[0-2])$/;
+const FIXED_BYTES_TYPE = /^bytes(?:[1-9]|[1-5][0-9]|6[0-4])$/;
 
 const _decodeParameter = (inputType: string, clonedTopic: string) =>
 	inputType === 'string' ? clonedTopic.slice(0, 66) : decodeParameter(inputType, clonedTopic);
