@@ -14,36 +14,19 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { SupportedProviders, TransactionReceipt, FMT_BYTES, FMT_NUMBER } from '@theqrl/web3-types';
-import { Contract } from '@theqrl/web3-qrl-contract';
+import { SupportedProviders, FMT_BYTES, FMT_NUMBER } from '@theqrl/web3-types';
 import { Web3QRL } from '../../../src';
 import {
 	getSystemTestProvider,
 	createTempAccount,
 	closeOpenConnection,
 } from '../../fixtures/system_test_utils';
-import { BasicAbi, BasicBytecode } from '../../shared_fixtures/build/Basic';
 import { toAllVariants } from '../../shared_fixtures/utils';
 import { sendFewTxes } from '../helper';
 
 describe('rpc with block', () => {
 	let web3QRL: Web3QRL;
 	let clientUrl: string | SupportedProviders;
-
-	let contract: Contract<typeof BasicAbi>;
-	let deployOptions: Record<string, unknown>;
-	let sendOptions: Record<string, unknown>;
-
-	let blockData: {
-		earliest: 'earliest';
-		latest: 'latest';
-		pending: 'pending';
-		blockNumber: number | bigint;
-		blockHash: string;
-		transactionHash: string;
-		transactionIndex: number | bigint;
-	};
-	let tempAcc: { address: string; seed: string };
 
 	beforeAll(() => {
 		clientUrl = getSystemTestProvider();
@@ -53,45 +36,15 @@ describe('rpc with block', () => {
 				transactionPollingTimeout: 5000,
 			},
 		});
-
-		contract = new Contract(BasicAbi, undefined, {
-			provider: clientUrl,
-		});
-
-		deployOptions = {
-			data: BasicBytecode,
-			arguments: [10, 'string init value'],
-		};
-	});
-	beforeAll(async () => {
-		tempAcc = await createTempAccount();
-		sendOptions = { from: tempAcc.address, /* gas: '1000000' */ type: 2 };
-
-		await contract.deploy(deployOptions).send(sendOptions);
-		const [receipt]: TransactionReceipt[] = await sendFewTxes({
-			from: tempAcc.address,
-			value: '0x1',
-			times: 1,
-		});
-		blockData = {
-			pending: 'pending',
-			latest: 'latest',
-			earliest: 'earliest',
-			blockNumber: Number(receipt.blockNumber),
-			blockHash: String(receipt.blockHash),
-			transactionHash: String(receipt.transactionHash),
-			transactionIndex: Number(receipt.transactionIndex),
-		};
 	});
 	afterAll(async () => {
 		await closeOpenConnection(web3QRL);
-		await closeOpenConnection(contract);
 	});
 
 	describe('methods', () => {
 		it.each(
 			toAllVariants<{
-				block: 'earliest' | 'latest' | 'pending' | 'blockHash' | 'blockNumber';
+				block: 'earliest' | 'latest' | 'pending' | 'blockNumber';
 				format: string;
 			}>({
 				block: ['earliest', 'latest', 'pending', 'blockNumber'],
@@ -104,16 +57,8 @@ describe('rpc with block', () => {
 				value: '0x1',
 				times: 1,
 			});
-			const data = {
-				pending: 'pending',
-				latest: 'latest',
-				earliest: 'earliest',
-				blockNumber: Number(receipt.blockNumber),
-				blockHash: String(receipt.blockHash),
-				transactionHash: String(receipt.transactionHash),
-				transactionIndex: Number(receipt.transactionIndex),
-			};
-			const countBefore = await web3QRL.getTransactionCount(acc.address, data[block], {
+			const beforeBlock = block === 'blockNumber' ? Number(receipt.blockNumber) : block;
+			const countBefore = await web3QRL.getTransactionCount(acc.address, beforeBlock, {
 				number: format as FMT_NUMBER,
 				bytes: FMT_BYTES.HEX,
 			});
@@ -124,22 +69,12 @@ describe('rpc with block', () => {
 				times: count,
 			});
 			const receiptAfter = res[res.length - 1];
-			const dataAfter = {
-				pending: 'pending',
-				latest: 'latest',
-				earliest: 'earliest',
-				blockNumber: Number(receiptAfter.blockNumber),
-				blockHash: String(receiptAfter.blockHash),
-				transactionHash: String(receiptAfter.transactionHash),
-				transactionIndex: Number(receiptAfter.transactionIndex),
-			};
-			const countAfter = await web3QRL.getTransactionCount(acc.address, dataAfter[block], {
+			const afterBlock = block === 'blockNumber' ? Number(receiptAfter.blockNumber) : block;
+			const countAfter = await web3QRL.getTransactionCount(acc.address, afterBlock, {
 				number: format as FMT_NUMBER,
 				bytes: FMT_BYTES.HEX,
 			});
-			expect(Number(countAfter) - Number(countBefore)).toBe(
-				blockData[block] === 'earliest' ? 0 : count,
-			);
+			expect(Number(countAfter) - Number(countBefore)).toBe(block === 'earliest' ? 0 : count);
 		});
 	});
 });

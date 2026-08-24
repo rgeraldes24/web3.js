@@ -63,7 +63,7 @@ describeIf(isSocket)('subscription', () => {
 						}
 					});
 					receipts = (await sendFewSampleTxs(checkTxCount)).map(r =>
-						String(r?.transactionHash),
+						String((r as { transactionHash?: string }).transactionHash),
 					);
 					if (receipts.length > 0 && waitList.length > 0) {
 						for (const hash of waitList) {
@@ -91,9 +91,8 @@ describeIf(isSocket)('subscription', () => {
 		it(`clear`, async () => {
 			const web3QRL = new Web3QRL(getSystemTestProvider());
 			await waitForOpenConnection(web3QRL);
-			const sub: NewPendingTransactionsSubscription = await web3QRL.subscribe(
-				'pendingTransactions',
-			);
+			const sub: NewPendingTransactionsSubscription =
+				await web3QRL.subscribe('pendingTransactions');
 			expect(sub.id).toBeDefined();
 			await web3QRL.subscriptionManager?.removeSubscription(sub);
 			expect(sub.id).toBeUndefined();

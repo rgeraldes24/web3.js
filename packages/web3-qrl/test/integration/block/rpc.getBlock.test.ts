@@ -127,7 +127,8 @@ describe('rpc with block', () => {
 				})),
 			};
 			if (blockData[block] === 'pending') {
-				b.miner = 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+				b.miner =
+					'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 			}
 
 			expect(validator.validateJSONSchema(blockSchema, b)).toBeUndefined();
@@ -138,19 +139,11 @@ describe('rpc with block', () => {
 		});
 	});
 
-	describeIf(getSystemTestBackend() === 'gqrl')(
-		'getBlock calls with POS tags in POA node',
-		() => {
-			it.each(['safe', 'finalized'])(
-				// only gqrl throws this error
-				'getBlock',
-				async blockTag => {
-					const request = await web3QRL.getBlock(blockTag);
+	describeIf(getSystemTestBackend() === 'gqrl')('getBlock calls with PoS tags on gqrl', () => {
+		it.each(['safe', 'finalized'])('getBlock(%s)', async blockTag => {
+			const block = await web3QRL.getBlock(blockTag);
 
-					expect(request).toBeDefined();
-					expect(validator.validateJSONSchema(blockSchema, request)).toBeUndefined();
-				},
-			);
-		},
-	);
+			expect(validator.validateJSONSchema(blockSchema, block)).toBeUndefined();
+		});
+	});
 });
