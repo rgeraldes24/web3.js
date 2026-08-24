@@ -219,6 +219,10 @@ describe('defaults', () => {
 			// Check implementation against recent state retained by pruned local nodes.
 			// const acc = await createNewAccount({ refill: true });
 			const acc = await createTempAccount();
+			const transactionCountAtDefaultBlock = await web3QRL.getTransactionCount(
+				acc.address,
+				blockBeforeDeploy,
+			);
 
 			await sendFewTxes({
 				from: acc.address,
@@ -235,7 +239,7 @@ describe('defaults', () => {
 			expect(storage === '0x' ? 0 : Number(hexToNumber(storage))).toBe(0);
 			expect(code).toBe('0x');
 			// expect(balance).toBe(BigInt(0));
-			expect(transactionCount).toBe(BigInt(0));
+			expect(transactionCount).toBe(transactionCountAtDefaultBlock);
 
 			// pass blockNumber to rewrite defaultBlockNumber
 			const balanceWithBlockNumber = await qrl2.getBalance(acc.address, 'latest');
