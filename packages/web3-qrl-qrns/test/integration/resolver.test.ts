@@ -236,11 +236,7 @@ describe('qrns', () => {
 
 		await resolver.methods.setAddr(domainNode, accountOne).send(sendOptions);
 
-		// NOTE(rgeraldes24): qrns.getAddress(domain) return type is 'bytes';
-		// value is not converted automatically to the 'address' type via ABI
 		const resultAddress = await qrns.getAddress(domain);
-		expect(hexToAddress(resultAddress.toString())).toBe(
-			`Q${accountOne.slice(1).toLowerCase()}`,
-		);
+		expect(resultAddress).toBe(`Q${accountOne.slice(1).toLowerCase()}`);
 	});
 });

@@ -34,6 +34,7 @@ describe('resolver', () => {
 		'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 	// A structurally valid, non-zero QRL address (Q + 128 hex chars).
 	const nonZeroAddress = `Q${'0'.repeat(127)}1`;
+	const nonZeroAddressBytes = `0x${nonZeroAddress.slice(1)}`;
 	const QRNS_NAME = 'web3js.qrl';
 
 	beforeAll(() => {
@@ -116,7 +117,7 @@ describe('resolver', () => {
 				} as unknown as NonPayableMethodObject<any, any>);
 
 			const addrMock = jest.spyOn(contract.methods, 'addr').mockReturnValue({
-				call: async () => Promise.resolve(nonZeroAddress),
+				call: async () => Promise.resolve(nonZeroAddressBytes),
 			} as unknown as NonPayableMethodObject<any, any>);
 
 			// todo when moving this mock in beforeAll, jest calls the actual implementation, how to fix that
@@ -133,6 +134,27 @@ describe('resolver', () => {
 				interfaceIds[methodsInInterface.addr],
 			);
 			expect(addrMock).toHaveBeenCalledWith(namehash(QRNS_NAME), 60);
+		});
+
+		it('preserves non-QRL coin address bytes', async () => {
+			const supportsInterfaceMock = jest
+				.spyOn(contract.methods, 'supportsInterface')
+				.mockReturnValue({
+					call: async () => Promise.resolve(true),
+				} as unknown as NonPayableMethodObject<any, any>);
+
+			const nonQrlAddress = '0x1234';
+			const addrMock = jest.spyOn(contract.methods, 'addr').mockReturnValue({
+				call: async () => Promise.resolve(nonQrlAddress),
+			} as unknown as NonPayableMethodObject<any, any>);
+
+			jest.spyOn(registry, 'getResolver').mockResolvedValue(contract);
+
+			await expect(resolver.getAddress(QRNS_NAME, 0)).resolves.toBe(nonQrlAddress);
+			expect(supportsInterfaceMock).toHaveBeenCalledWith(
+				interfaceIds[methodsInInterface.addr],
+			);
+			expect(addrMock).toHaveBeenCalledWith(namehash(QRNS_NAME), 0);
 		});
 	});
 

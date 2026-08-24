@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { ResolverMethodMissingError } from '@theqrl/web3-errors';
 import { Contract } from '@theqrl/web3-qrl-contract';
-import { isNullish, sha3 } from '@theqrl/web3-utils';
+import { bytesToHex, hexToAddress, isNullish, sha3 } from '@theqrl/web3-utils';
 import { isHexStrict } from '@theqrl/web3-validator';
 import { PublicResolverAbi } from './abi/qrns/PublicResolver.js';
 import { interfaceIds, methodsInInterface } from './config.js';
@@ -83,7 +83,9 @@ export class Resolver {
 
 		await this.checkInterfaceSupport(resolverContract, methodsInInterface.addr);
 
-		return resolverContract.methods.addr(namehash(QRNSName), coinType).call();
+		const address = await resolverContract.methods.addr(namehash(QRNSName), coinType).call();
+
+		return coinType === 60 ? hexToAddress(bytesToHex(address)) : address;
 	}
 
 	public async getPubkey(QRNSName: string) {
