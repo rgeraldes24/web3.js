@@ -140,8 +140,8 @@ describe('rpc with block', () => {
 	});
 
 	describeIf(getSystemTestBackend() === 'gqrl')('getBlock calls with PoS tags on gqrl', () => {
-		it('getBlock(safe)', async () => {
-			const block = await web3QRL.getBlock('safe');
+		it.each(['safe', 'finalized'])('getBlock(%s)', async blockTag => {
+			const block = await web3QRL.getBlock(blockTag);
 
 			expect(validator.validateJSONSchema(blockSchema, block)).toBeUndefined();
 		});

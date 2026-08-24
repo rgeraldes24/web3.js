@@ -185,7 +185,6 @@ describe('defaults', () => {
 			expect(qrl2.handleRevert).toBe(true);
 		});
 		it('defaultBlock', async () => {
-			const blockBeforeDeploy = await web3QRL.getBlockNumber();
 			const contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 			// default
 			expect(web3QRL.defaultBlock).toBe('latest');
@@ -210,10 +209,10 @@ describe('defaults', () => {
 			qrl2 = new Web3QRL({
 				provider: web3QRL.provider,
 				config: {
-					defaultBlock: blockBeforeDeploy,
+					defaultBlock: 'earliest',
 				},
 			});
-			expect(qrl2.defaultBlock).toBe(blockBeforeDeploy);
+			expect(qrl2.defaultBlock).toBe('earliest');
 
 			const code = await qrl2.getCode(contractDeployed?.options?.address as string);
 			const storage = await qrl2.getStorageAt(

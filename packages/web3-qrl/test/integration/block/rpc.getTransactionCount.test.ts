@@ -44,10 +44,10 @@ describe('rpc with block', () => {
 	describe('methods', () => {
 		it.each(
 			toAllVariants<{
-				block: 'latest' | 'pending' | 'blockNumber';
+				block: 'earliest' | 'latest' | 'pending' | 'blockNumber';
 				format: string;
 			}>({
-				block: ['latest', 'pending', 'blockNumber'],
+				block: ['earliest', 'latest', 'pending', 'blockNumber'],
 				format: Object.values(FMT_NUMBER),
 			}),
 		)('getTransactionCount', async ({ block, format }) => {
@@ -74,7 +74,7 @@ describe('rpc with block', () => {
 				number: format as FMT_NUMBER,
 				bytes: FMT_BYTES.HEX,
 			});
-			expect(Number(countAfter) - Number(countBefore)).toBe(count);
+			expect(Number(countAfter) - Number(countBefore)).toBe(block === 'earliest' ? 0 : count);
 		});
 	});
 });
