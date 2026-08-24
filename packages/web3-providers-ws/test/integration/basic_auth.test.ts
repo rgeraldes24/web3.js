@@ -41,10 +41,11 @@ describeIf(isWs)('Support of Basic Auth', () => {
 			target: clientWsUrl,
 			changeOrigin: true,
 			ws: true,
-			onError: () => {
-				console.warn('************** proxy error');
+			on: {
+				error: () => {
+					console.warn('************** proxy error');
+				},
 			},
-			logLevel: 'silent',
 		});
 
 		app.use(wsProxy);
