@@ -44,6 +44,7 @@ describe('Web3QRL.call', () => {
 	let web3QRL: Web3QRL;
 	let greeterContractAddress: string;
 	let tempAcc: { address: string; seed: string };
+	let blockBeforeDeploy: bigint;
 
 	beforeAll(async () => {
 		web3QRL = new Web3QRL(getSystemTestProvider());
@@ -55,6 +56,7 @@ describe('Web3QRL.call', () => {
 			data: greeterContractDeploymentData,
 			type: BigInt(2),
 		};
+		blockBeforeDeploy = await web3QRL.getBlockNumber();
 		const response = await web3QRL.sendTransaction(transaction);
 		greeterContractAddress = response.contractAddress as string;
 	});
@@ -76,14 +78,14 @@ describe('Web3QRL.call', () => {
 	});
 
 	describe('blockNumber parameter', () => {
-		it('should return no data (0x) for call to deployed Greeter contract with blockNumber = EARLIEST', async () => {
+		it('should return no data (0x) for call before the Greeter deployment', async () => {
 			const transaction: TransactionCall = {
 				from: tempAcc.address,
 				to: greeterContractAddress,
 				data: greetCallData,
 				type: BigInt(2),
 			};
-			const response = await web3QRL.call(transaction, BlockTags.EARLIEST);
+			const response = await web3QRL.call(transaction, blockBeforeDeploy);
 			expect(response).toBe('0x');
 		});
 
@@ -115,19 +117,19 @@ describe('Web3QRL.call', () => {
 			expect(decodedResult).toBe(expectedDecodedGreet);
 		});
 
-		it('should return no data (0x) for call to deployed Greeter contract with blockNumber = 0x0', async () => {
+		it('should accept a hex block number from before the Greeter deployment', async () => {
 			const transaction: TransactionCall = {
 				from: tempAcc.address,
 				to: greeterContractAddress,
 				data: greetCallData,
 				type: BigInt(2),
 			};
-			const response = await web3QRL.call(transaction, '0x0');
+			const response = await web3QRL.call(transaction, `0x${blockBeforeDeploy.toString(16)}`);
 			expect(response).toBe('0x');
 		});
 
-		it('should return no data (0x) for call to deployed Greeter contract with web3Context.defaultBlock = EARLIEST', async () => {
-			web3QRL.defaultBlock = BlockTags.EARLIEST;
+		it('should use a retained historical block from web3Context.defaultBlock', async () => {
+			web3QRL.defaultBlock = blockBeforeDeploy;
 
 			const transaction: TransactionCall = {
 				from: tempAcc.address,
