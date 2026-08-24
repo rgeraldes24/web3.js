@@ -21,5 +21,7 @@ for path in "${paths[@]}"; do
 	rm -rf "$path"
 done
 
-find packages tools -type d \( -name coverage -o -name lib -o -name dist \) -prune -exec rm -rf {} +
+find packages tools \
+	-type d -name node_modules -prune -o \
+	-type d \( -name coverage -o -name lib -o -name dist \) -prune -exec rm -rf {} +
 find . -name '*.tsbuildinfo' -type f -delete
