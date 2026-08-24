@@ -186,6 +186,7 @@ describe('defaults', () => {
 			expect(qrl2.handleRevert).toBe(true);
 		});
 		it('defaultBlock', async () => {
+			const blockBeforeDeploy = await web3QRL.getBlockNumber();
 			const contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 			// default
 			expect(web3QRL.defaultBlock).toBe('latest');
@@ -210,12 +211,12 @@ describe('defaults', () => {
 			qrl2 = new Web3QRL({
 				provider: web3QRL.provider,
 				config: {
-					defaultBlock: 'earliest',
+					defaultBlock: blockBeforeDeploy,
 				},
 			});
-			expect(qrl2.defaultBlock).toBe('earliest');
+			expect(qrl2.defaultBlock).toBe(blockBeforeDeploy);
 
-			// check implementation
+			// Check implementation against recent state retained by pruned local nodes.
 			// const acc = await createNewAccount({ refill: true });
 			const acc = await createTempAccount();
 
