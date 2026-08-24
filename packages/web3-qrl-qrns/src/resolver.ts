@@ -24,6 +24,8 @@ import { interfaceIds, methodsInInterface } from './config.js';
 import { Registry } from './registry.js';
 import { namehash } from './utils.js';
 
+const QRL_ZERO_ADDRESS = `Q${'0'.repeat(128)}`;
+
 //  Default public resolver
 //  https://github.com/ensdomains/resolvers/blob/master/contracts/PublicResolver.sol
 
@@ -85,7 +87,19 @@ export class Resolver {
 
 		const address = await resolverContract.methods.addr(namehash(QRNSName), coinType).call();
 
-		return coinType === 60 ? hexToAddress(bytesToHex(address)) : address;
+		if (coinType !== 60) return address;
+
+		const addressBytes = bytesToHex(address);
+		if (addressBytes.length !== 130) {
+			throw new Error(`QRNS resolver returned invalid address: ${addressBytes}`);
+		}
+
+		const qrlAddress = hexToAddress(addressBytes);
+		if (qrlAddress.toLowerCase() === QRL_ZERO_ADDRESS.toLowerCase()) {
+			throw new Error('QRNS resolver returned zero address');
+		}
+
+		return qrlAddress;
 	}
 
 	public async getPubkey(QRNSName: string) {

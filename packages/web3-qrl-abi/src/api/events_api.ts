@@ -22,11 +22,7 @@ import { jsonInterfaceMethodToString, isAbiEventFragment, hashToLogTopic } from 
 
 /**
  * Encodes the event name to its ABI signature, which are the sha3 hash of the event name including input types.
- *
- * The hash is returned as a complete log topic: QRVM topics are 64 bytes wide and a 32-byte
- * Keccak hash is left-aligned within one, mirroring go-qrl `common.HashToLogTopic`. Returning
- * the bare hash would produce filters no node ever matches.
- *
+ * The 32-byte hash is left-aligned in a 64-byte QRVM log topic.
  * @param functionName - The event name to encode, or the {@link AbiEventFragment} object of the event. If string, it has to be in the form of `eventName(param1Type,param2Type,...)`. eg: myEvent(uint256,bytes32).
  * @returns - The ABI signature of the event, as a 64-byte log topic.
  *

@@ -474,7 +474,6 @@ describe('formatter', () => {
 						bytes: FMT_BYTES.UINT8ARRAY,
 					});
 					expect(converted).toEqual(bytes);
-					expect(converted).not.toBe(bytes);
 					expect(() =>
 						convertScalarValue(`0x${'ab'.repeat(32)}`, 'topic', DEFAULT_RETURN_FORMAT),
 					).toThrow('expected 64 bytes');

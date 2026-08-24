@@ -13,19 +13,12 @@ contract PublicResolver {
 	event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y);
 	event ContenthashChanged(bytes32 indexed node, bytes hash);
 
-	constructor(address, address, address, address) {}
-
 	function supportsInterface(bytes4 interfaceID) public pure returns (bool) {
 		return
 			interfaceID == 0x3b3b57de ||
 			interfaceID == 0xf1cb7e06 ||
-			interfaceID == 0x691f3431 ||
-			interfaceID == 0x2203ab56 ||
 			interfaceID == 0xc8690233 ||
-			interfaceID == 0x59d1d43c ||
 			interfaceID == 0xbc1c58d1 ||
-			interfaceID == 0xa8fa5682 ||
-			interfaceID == 0x5c98042b ||
 			interfaceID == 0x01ffc9a7;
 	}
 

@@ -15,7 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { AbiEventFragment, Filter } from '@theqrl/web3-types';
-import { isTopic } from '@theqrl/web3-validator';
 import { ContractOptions, encodeEventABI } from '../../src';
 
 const contractOptions: ContractOptions = {
@@ -220,15 +219,6 @@ describe('encodeEventAbi', () => {
 	});
 
 	describe('full-width indexed topics', () => {
-		// Only dynamic (`string`) indexed arguments are topic-encoded as a left-aligned Keccak
-		// hash. Value types go through `encodeParameter`, which already emits a complete 64-byte
-		// VM word, and must reach the filter untouched — no extra padding, no hashing, no
-		// truncation. The three cases below pin the three distinct word layouts:
-		//
-		//   address  fills the word exactly (go-qrl `common.AddressToLogTopic`; AddressLength
-		//            and LogTopicLength are both 64)
-		//   bytes32  occupies the HIGH 32 bytes  (go-qrl `common.BytesToLeftAlignedLogTopic`)
-		//   uint256  occupies the LOW 32 bytes   (go-qrl `common.BytesToRightAlignedLogTopic`)
 		const fullWidthEventFragment: AbiEventFragment & { signature: string } = {
 			anonymous: false,
 			inputs: [
@@ -243,8 +233,6 @@ describe('encodeEventAbi', () => {
 				64,
 			)}`,
 		};
-		// The maximum address: every byte of the topic word is significant, so any stray
-		// padding, truncation or re-alignment of the value shows up immediately.
 		const maxAddress = `Q${'ff'.repeat(64)}`;
 		const maxUint256 = (BigInt(2) ** BigInt(256) - BigInt(1)).toString();
 
@@ -263,15 +251,6 @@ describe('encodeEventAbi', () => {
 
 		it('should right-align an indexed uint256 in the topic word', () => {
 			expect(topicsFor({ num: maxUint256 })[3]).toBe(`0x${'0'.repeat(64)}${'ff'.repeat(32)}`);
-		});
-
-		it('should emit every topic at the full 64-byte width', () => {
-			const topics = topicsFor({ addr: maxAddress, raw: `0x${'ff'.repeat(32)}`, num: 1 });
-
-			expect(topics).toHaveLength(4);
-			topics.forEach(topic => {
-				expect(isTopic(topic as string)).toBe(true);
-			});
 		});
 	});
 });

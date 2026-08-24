@@ -44,7 +44,6 @@ import { isSupportedProvider, Web3Context, Web3ContextInitOptions } from '@theqr
 import { TransactionNotFound } from '@theqrl/web3-errors';
 import { toChecksumAddress, isNullish, qrlUnitMap } from '@theqrl/web3-utils';
 import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
-import { validator } from '@theqrl/web3-validator';
 
 import * as rpcMethodsWrappers from './rpc_method_wrappers.js';
 import { SendTransactionOptions } from './types.js';
@@ -1495,9 +1494,6 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 		args?: ConstructorParameters<RegisteredSubscription[T]>[0],
 		returnFormat: ReturnType = DEFAULT_RETURN_FORMAT as ReturnType,
 	): Promise<InstanceType<RegisteredSubscription[T]>> {
-		if (name === 'logs' && !isNullish(args)) {
-			validator.validate(['filter'], [args]);
-		}
 		const subscription = await this.subscriptionManager?.subscribe(name, args, returnFormat);
 		if (
 			subscription instanceof LogsSubscription &&

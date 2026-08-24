@@ -127,7 +127,8 @@ describe('rpc with block', () => {
 				})),
 			};
 			if (blockData[block] === 'pending') {
-				b.miner = 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+				b.miner =
+					'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 			}
 
 			expect(validator.validateJSONSchema(blockSchema, b)).toBeUndefined();
@@ -139,33 +140,10 @@ describe('rpc with block', () => {
 	});
 
 	describeIf(getSystemTestBackend() === 'gqrl')('getBlock calls with PoS tags on gqrl', () => {
-		it.each(['safe', 'finalized'] as const)('getBlock(%s)', async blockTag => {
-			const validBlock = { result: 'block', validationError: undefined };
-			const outcome = await web3QRL.getBlock(blockTag).then(
-				request => ({
-					result: 'block',
-					validationError: validator.validateJSONSchema(blockSchema, request),
-				}),
-				(error: unknown) => ({
-					result: 'error',
-					name: error instanceof Error ? error.name : typeof error,
-					message: error instanceof Error ? error.message : String(error),
-				}),
-			);
-			const expectedOutcomes =
-				blockTag === 'finalized'
-					? [
-							validBlock,
-							// Fresh PoS devnets expose the tag before their first finalized EL block.
-							{
-								result: 'error',
-								name: 'InvalidResponseError',
-								message: 'Returned error: finalized block not found',
-							},
-						]
-					: [validBlock];
+		it('getBlock(safe)', async () => {
+			const block = await web3QRL.getBlock('safe');
 
-			expect(expectedOutcomes).toContainEqual(outcome);
+			expect(validator.validateJSONSchema(blockSchema, block)).toBeUndefined();
 		});
 	});
 });

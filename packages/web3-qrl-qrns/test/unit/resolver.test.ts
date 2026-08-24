@@ -32,9 +32,9 @@ describe('resolver', () => {
 	let contract: Contract<typeof PublicResolverAbi>;
 	const mockAddress =
 		'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
-	// A structurally valid, non-zero QRL address (Q + 128 hex chars).
 	const nonZeroAddress = `Q${'0'.repeat(127)}1`;
 	const nonZeroAddressBytes = `0x${nonZeroAddress.slice(1)}`;
+	const zeroAddressBytes = `0x${'0'.repeat(128)}`;
 	const QRNS_NAME = 'web3js.qrl';
 
 	beforeAll(() => {
@@ -155,6 +155,21 @@ describe('resolver', () => {
 				interfaceIds[methodsInInterface.addr],
 			);
 			expect(addrMock).toHaveBeenCalledWith(namehash(QRNS_NAME), 0);
+		});
+
+		it.each([
+			[zeroAddressBytes, 'QRNS resolver returned zero address'],
+			['0x1234', 'QRNS resolver returned invalid address: 0x1234'],
+		])('rejects an invalid QRL target', async (resolvedAddress, error) => {
+			jest.spyOn(contract.methods, 'supportsInterface').mockReturnValue({
+				call: async () => Promise.resolve(true),
+			} as unknown as NonPayableMethodObject<any, any>);
+			jest.spyOn(contract.methods, 'addr').mockReturnValue({
+				call: async () => Promise.resolve(resolvedAddress),
+			} as unknown as NonPayableMethodObject<any, any>);
+			jest.spyOn(registry, 'getResolver').mockResolvedValue(contract);
+
+			await expect(resolver.getAddress(QRNS_NAME)).rejects.toThrow(error);
 		});
 	});
 

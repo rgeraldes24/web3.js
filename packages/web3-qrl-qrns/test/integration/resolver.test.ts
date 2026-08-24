@@ -35,17 +35,14 @@ import {
 	itIf,
 } from '../fixtures/system_tests_utils';
 
-import { QRNSRegistryAbi } from '../fixtures/qrns/abi/QRNSRegistry';
-import { PublicResolverAbi } from '../fixtures/qrns/abi/PublicResolver';
-import { NameWrapperAbi } from '../fixtures/qrns/abi/NameWrapper';
+import { QRNSRegistryAbi } from '../../../../fixtures/build/QRNSRegistry';
+import { PublicResolverAbi } from '../../../../fixtures/build/PublicResolver';
 import { QRNSRegistryBytecode } from '../fixtures/qrns/bytecode/QRNSRegistryBytecode';
-import { NameWrapperBytecode } from '../fixtures/qrns/bytecode/NameWrapperBytecode';
 import { PublicResolverBytecode } from '../fixtures/qrns/bytecode/PublicResolverBytecode';
 
 describe('qrns', () => {
 	let registry: Contract<typeof QRNSRegistryAbi>;
 	let resolver: Contract<typeof PublicResolverAbi>;
-	let nameWrapper: Contract<typeof NameWrapperAbi>;
 
 	let Resolver: Contract<typeof PublicResolverAbi>;
 
@@ -82,27 +79,13 @@ describe('qrns', () => {
 			provider: getSystemTestProvider(),
 		});
 
-		const NameWrapper = new Contract(NameWrapperAbi, undefined, {
-			provider: getSystemTestProvider(),
-		});
-
 		Resolver = new Contract(PublicResolverAbi, undefined, {
 			provider: getSystemTestProvider(),
 		});
 
 		registry = await Registry.deploy({ data: QRNSRegistryBytecode }).send(sendOptions);
 
-		nameWrapper = await NameWrapper.deploy({ data: NameWrapperBytecode }).send(sendOptions);
-
-		resolver = await Resolver.deploy({
-			data: PublicResolverBytecode,
-			arguments: [
-				registry.options.address as string,
-				nameWrapper.options.address as string,
-				accountOne,
-				defaultAccount,
-			],
-		}).send(sendOptions);
+		resolver = await Resolver.deploy({ data: PublicResolverBytecode }).send(sendOptions);
 
 		await registry.methods.setSubnodeOwner(ZERO_NODE, label, defaultAccount).send(sendOptions);
 		await registry.methods
@@ -140,7 +123,6 @@ describe('qrns', () => {
 			await closeOpenConnection(qrns?._registry?.contract);
 			await closeOpenConnection(registry);
 			await closeOpenConnection(resolver);
-			await closeOpenConnection(nameWrapper);
 		}
 	});
 	beforeEach(async () => {
@@ -153,13 +135,8 @@ describe('qrns', () => {
 	it('supports known interfaces', async () => {
 		await expect(qrns.supportsInterface('resolver', '0x3b3b57de')).resolves.toBeTruthy(); // IAddrResolver
 		await expect(qrns.supportsInterface('resolver', '0xf1cb7e06')).resolves.toBeTruthy(); // IAddressResolver
-		await expect(qrns.supportsInterface('resolver', '0x691f3431')).resolves.toBeTruthy(); // INameResolver
-		await expect(qrns.supportsInterface('resolver', '0x2203ab56')).resolves.toBeTruthy(); // IABIResolver
 		await expect(qrns.supportsInterface('resolver', '0xc8690233')).resolves.toBeTruthy(); // IPubkeyResolver
-		await expect(qrns.supportsInterface('resolver', '0x59d1d43c')).resolves.toBeTruthy(); // ITextResolver
 		await expect(qrns.supportsInterface('resolver', '0xbc1c58d1')).resolves.toBeTruthy(); // IContentHashResolver
-		await expect(qrns.supportsInterface('resolver', '0xa8fa5682')).resolves.toBeTruthy(); // IDNSRecordResolver
-		await expect(qrns.supportsInterface('resolver', '0x5c98042b')).resolves.toBeTruthy(); // IDNSZoneResolver
 		await expect(qrns.supportsInterface('resolver', '0x01ffc9a7')).resolves.toBeTruthy(); // IInterfaceResolver
 	});
 

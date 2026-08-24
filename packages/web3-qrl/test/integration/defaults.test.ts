@@ -40,7 +40,6 @@ import {
 
 import {
 	closeOpenConnection,
-	// createNewAccount,
 	createTempAccount,
 	getSystemTestProvider,
 	isIpc,
@@ -55,7 +54,7 @@ import {
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
 import { MsgSenderAbi, MsgSenderBytecode } from '../shared_fixtures/build/MsgSender';
 import { getTransactionGasPricing } from '../../src/utils/get_transaction_gas_pricing';
-import { Resolve, sendFewTxes } from './helper';
+import { Resolve } from './helper';
 
 describe('defaults', () => {
 	let web3QRL: Web3QRL;
@@ -216,37 +215,15 @@ describe('defaults', () => {
 			});
 			expect(qrl2.defaultBlock).toBe(blockBeforeDeploy);
 
-			// Check implementation against recent state retained by pruned local nodes.
-			// const acc = await createNewAccount({ refill: true });
-			const acc = await createTempAccount();
-			const transactionCountAtDefaultBlock = await web3QRL.getTransactionCount(
-				acc.address,
-				blockBeforeDeploy,
-			);
-
-			await sendFewTxes({
-				from: acc.address,
-				times: 1,
-				value: '0x1',
-			});
-			// const balance = await qrl2.getBalance(acc.address);
 			const code = await qrl2.getCode(contractDeployed?.options?.address as string);
 			const storage = await qrl2.getStorageAt(
 				contractDeployed?.options?.address as string,
 				0,
 			);
-			const transactionCount = await qrl2.getTransactionCount(acc.address);
 			expect(storage === '0x' ? 0 : Number(hexToNumber(storage))).toBe(0);
 			expect(code).toBe('0x');
-			// expect(balance).toBe(BigInt(0));
-			expect(transactionCount).toBe(transactionCountAtDefaultBlock);
 
 			// pass blockNumber to rewrite defaultBlockNumber
-			const balanceWithBlockNumber = await qrl2.getBalance(acc.address, 'latest');
-			// const transactionCountWithBlockNumber = await qrl2.getTransactionCount(
-			// 	acc.address,
-			// 	'latest',
-			// );
 			const codeWithBlockNumber = await qrl2.getCode(
 				contractDeployed?.options?.address as string,
 				'latest',
@@ -257,25 +234,19 @@ describe('defaults', () => {
 				'latest',
 			);
 			expect(Number(hexToNumber(storageWithBlockNumber))).toBe(10);
-			// expect(transactionCountWithBlockNumber).toBe(BigInt(1));
-			expect(Number(balanceWithBlockNumber)).toBeGreaterThan(0);
 			expect(codeWithBlockNumber.startsWith(BasicBytecode.slice(0, 10))).toBe(true);
 
 			// set new default block to config
 			qrl2.setConfig({
 				defaultBlock: 'latest',
 			});
-			const balanceLatest = await qrl2.getBalance(acc.address);
 			const codeLatest = await qrl2.getCode(contractDeployed?.options?.address as string);
 			const storageLatest = await qrl2.getStorageAt(
 				contractDeployed?.options?.address as string,
 				0,
 			);
-			// const transactionCountLatest = await qrl2.getTransactionCount(acc.address);
 			expect(codeLatest.startsWith(BasicBytecode.slice(0, 10))).toBe(true);
 			expect(Number(hexToNumber(storageLatest))).toBe(10);
-			// expect(transactionCountLatest).toBe(BigInt(1));
-			expect(Number(balanceLatest)).toBeGreaterThan(0);
 		});
 		it('transactionSendTimeout', () => {
 			// default

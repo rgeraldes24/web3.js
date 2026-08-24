@@ -17,13 +17,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { AbiEventFragment, LogsInput } from '@theqrl/web3-types';
 import { ContractAbiWithSignature, decodeEventABI } from '../../src';
 
-// A log exactly as a node serializes it: every topic is a full 64-byte VM word. The three
-// indexed arguments cover the three distinct word layouts a node produces, and each carries an
-// all-`ff` payload so that a truncation, a re-alignment or a stray pad cannot go unnoticed.
-//
-//   address  fills the word exactly (go-qrl `common.AddressToLogTopic`)
-//   bytes32  occupies the HIGH 32 bytes (go-qrl `common.BytesToLeftAlignedLogTopic`)
-//   uint256  occupies the LOW 32 bytes (go-qrl `common.BytesToRightAlignedLogTopic`)
 const ZERO_HALF = '0'.repeat(64);
 const FF_HALF = 'ff'.repeat(32);
 
@@ -60,27 +53,12 @@ const jsonInterface = [fullWidthEventFragment] as unknown as ContractAbiWithSign
 
 describe('decodeEventABI', () => {
 	describe('full-width indexed topics', () => {
-		it('should decode an address topic that fills the whole word', () => {
+		it('should decode each 64-byte indexed topic layout', () => {
 			const decoded = decodeEventABI(fullWidthEventFragment, fullWidthLog, jsonInterface);
 
 			expect(decoded.returnValues.addr).toBe(`Q${'ff'.repeat(64)}`);
-		});
-
-		it('should decode a left-aligned bytes32 topic', () => {
-			const decoded = decodeEventABI(fullWidthEventFragment, fullWidthLog, jsonInterface);
-
 			expect(decoded.returnValues.raw).toBe(`0x${FF_HALF}`);
-		});
-
-		it('should decode a right-aligned uint256 topic to the maximum value', () => {
-			const decoded = decodeEventABI(fullWidthEventFragment, fullWidthLog, jsonInterface);
-
 			expect(decoded.returnValues.num).toBe(BigInt(2) ** BigInt(256) - BigInt(1));
-		});
-
-		it('should resolve the event and preserve the raw topics untouched', () => {
-			const decoded = decodeEventABI(fullWidthEventFragment, fullWidthLog, jsonInterface);
-
 			expect(decoded.event).toBe('FullWidthIndexedEvent');
 			expect(decoded.signature).toBe(eventSignature);
 			expect(decoded.raw?.topics).toStrictEqual([

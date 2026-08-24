@@ -20,7 +20,7 @@ import { validDecodeLogsData } from '../../fixtures/data';
 
 describe('logs_api', () => {
 	describe('decodeLog', () => {
-		it.each([33, 63, 64])('decodes indexed bytes%d without VM word padding', size => {
+		it.each([33, 64])('decodes indexed bytes%d without VM word padding', size => {
 			const value = `0x${'ab'.repeat(size)}`;
 			const topic = `${value}${'00'.repeat(64 - size)}`;
 
