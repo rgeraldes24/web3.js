@@ -16,7 +16,8 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import * as httpProvider from '@theqrl/web3-providers-http';
-import { recoverTransaction, Web3Account } from '@theqrl/web3-qrl-accounts';
+import { recoverTransaction, TransactionFactory, Web3Account } from '@theqrl/web3-qrl-accounts';
+import { hexToBytes } from '@theqrl/web3-utils';
 import Web3, { DEFAULT_RETURN_FORMAT, Transaction } from '../../src';
 // TODO(youtrack/theqrl/web3.js/8)
 import testsData from '../fixtures/transactions.json';
@@ -112,7 +113,40 @@ describe('signTransaction', () => {
 				checkRevertBeforeSending: false,
 			});
 			expect(res).toBeDefined();
-			expect(recoverTransaction(sentRawTransaction as string)).toBe(account.address);
+			expect(typeof sentRawTransaction).toBe('string');
+
+			const raw = sentRawTransaction as string;
+			const serialized = hexToBytes(raw);
+			const decoded = TransactionFactory.fromSerializedData(serialized);
+
+			expect(decoded.type).toBe(2);
+			expect(decoded.serialize()).toEqual(serialized);
+			expect(decoded.verifySignature()).toBe(true);
+			expect(decoded.signature).toHaveLength(4627);
+			expect(decoded.publicKey).toHaveLength(2592);
+			expect(decoded.toJSON()).toEqual({
+				chainId: '0xac9f74e3',
+				nonce: '0xf',
+				maxPriorityFeePerGas: '0x91bcff',
+				maxFeePerGas: '0x58e8d1dda1',
+				gasLimit: '0x331bce0f90',
+				to: 'Qf9589a1b6adb39cd9eb381aefbf57557bcc4a5b56f4c8884068dc1d23581d4c800a9b877453f7654a21a360acc5122ce0bbbd2579e00b212d6e4d252ab48f466',
+				value: '0x91e32e2f5a',
+				data: '0xe0d1a7227d34c2ca72e3c0',
+				accessList: [
+					{
+						address:
+							'0x818571db013a56a404e8441680008405e4651b28d322b9c276a30290cfe057b7d8fdc056bdfb5a3dfdd047c61eb77cd95dca2f88c0861d89e5dcc2c8e26af1d5',
+						storageKeys: [],
+					},
+				],
+				descriptor: '0x010000',
+				extraParams: undefined,
+				signature: expect.any(String),
+				publicKey: expect.any(String),
+			});
+
+			expect(recoverTransaction(raw)).toBe(account.address);
 		},
 	);
 });
