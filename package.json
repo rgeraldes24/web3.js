@@ -54,7 +54,7 @@
 		"test:coverage:unit": "turbo run test:coverage:unit --filter=\"./packages/*\" --filter=\"./tools/*\" -- --watchman=false",
 		"test:coverage:integration": "turbo run test:coverage:integration --filter=\"./packages/*\" --filter=\"./tools/*\" -- --watchman=false",
 		"test:unit": "turbo run test:unit --filter=\"./packages/*\" --filter=\"./tools/*\" -- --watchman=false && jest --config=./scripts/jest.config.js --watchman=false",
-		"test:integration": "turbo run test:integration --filter=\"./packages/*\" --filter=\"./tools/*\"",
+		"test:integration": "turbo run test:integration --filter=\"./packages/*\" --filter=\"./tools/*\" --filter=\"!@theqrl/web3-qrl-contract\" && pnpm --filter=@theqrl/web3-qrl-contract run test:integration",
 		"test:e2e:gqrl:http": "./scripts/test-runner.sh gqrl http",
 		"test:e2e:gqrl:ws": "./scripts/test-runner.sh gqrl ws",
 		"test:e2e:coverage": "./scripts/test-runner.sh coverage",

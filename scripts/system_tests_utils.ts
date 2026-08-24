@@ -229,32 +229,71 @@ export const refillAccount = async (from: string, to: string, value: string | nu
 	});
 };
 
-let mainAcc: string;
+type SystemTestAccount = { address: string; seed: string };
+
+export const MAX_SYSTEM_TEST_WORKERS = 2;
+
+export const partitionSystemTestAccounts = (
+	accounts: SystemTestAccount[],
+	workerCount: number,
+	workerId: number,
+): { refillSource: SystemTestAccount; testAccounts: SystemTestAccount[] } => {
+	if (
+		!Number.isInteger(workerCount) ||
+		workerCount < 1 ||
+		workerCount > MAX_SYSTEM_TEST_WORKERS
+	) {
+		throw new Error(
+			`WEB3_SYSTEM_TEST_WORKERS must be an integer between 1 and ${MAX_SYSTEM_TEST_WORKERS}.`,
+		);
+	}
+	if (!Number.isInteger(workerId) || workerId < 1 || workerId > workerCount) {
+		throw new Error(`JEST_WORKER_ID must be an integer between 1 and ${workerCount}.`);
+	}
+	if (accounts.length % workerCount !== 0) {
+		throw new Error(
+			`Cannot split ${accounts.length} system test accounts across ${workerCount} workers.`,
+		);
+	}
+
+	const accountsPerWorker = accounts.length / workerCount;
+	if (accountsPerWorker < 2) {
+		throw new Error(
+			'Each system test worker needs a refill source and at least one test account.',
+		);
+	}
+
+	const firstAccountIndex = (workerId - 1) * accountsPerWorker;
+	const workerAccounts = accounts.slice(firstAccountIndex, firstAccountIndex + accountsPerWorker);
+	const [refillSource, ...testAccounts] = workerAccounts;
+
+	return { refillSource, testAccounts };
+};
+
+const configuredSystemTestWorkers = getEnvVar('WEB3_SYSTEM_TEST_WORKERS');
+const systemTestWorkerCount = Number(configuredSystemTestWorkers ?? '1');
+const systemTestWorkerId = Number(
+	configuredSystemTestWorkers ? (getEnvVar('JEST_WORKER_ID') ?? '1') : '1',
+);
+const { refillSource, testAccounts } = partitionSystemTestAccounts(
+	accountsString,
+	systemTestWorkerCount,
+	systemTestWorkerId,
+);
+
 export const createNewAccount = async (config?: {
 	refill?: boolean;
 	seed?: string;
 }): Promise<{ address: string; seed: string }> => {
 	const acc = config?.seed ? seedToAccount(config?.seed) : _createAccount();
 
-	const clientUrl = getSystemTestProviderUrl();
-
 	if (config?.refill) {
-		const web3QRL = new Web3QRL(clientUrl);
-		if (!mainAcc) {
-			[mainAcc] = await web3QRL.getAccounts();
-		}
-		await refillAccount(mainAcc, acc.address, '10000000000000000000');
+		await refillAccount(refillSource.address, acc.address, '10000000000000000000');
 	}
 
 	return { address: `Q${acc.address.slice(1).toLowerCase()}`, seed: acc.seed };
 };
-let tempAccountList: { address: string; seed: string }[] = [];
-const walletsOnWorker = 20;
-
-if (tempAccountList.length === 0) {
-	tempAccountList = accountsString;
-}
-let currentIndex = Math.floor(Math.random() * tempAccountList.length);
+let currentIndex = 0;
 export const createTempAccount = async (
 	config: {
 		refill?: boolean;
@@ -269,11 +308,11 @@ export const createTempAccount = async (
 		});
 	}
 
-	if (currentIndex >= walletsOnWorker || !tempAccountList[currentIndex]) {
+	if (currentIndex >= testAccounts.length) {
 		currentIndex = 0;
 	}
 
-	const acc = tempAccountList[currentIndex];
+	const acc = testAccounts[currentIndex];
 	await createNewAccount({
 		refill: false,
 		seed: acc.seed,
@@ -340,13 +379,7 @@ export const signAndSendContractMethodEIP1559 = async (
 
 export const createLocalAccount = async (web3: ReturnType<typeof createWeb3>) => {
 	const account = web3.qrl.accounts.create();
-	await refillAccount(
-		(
-			await createTempAccount()
-		).address,
-		account.address,
-		'100000000000000000000',
-	);
+	await refillAccount(refillSource.address, account.address, '100000000000000000000');
 	web3.qrl.accounts.wallet.add(account);
 	return account;
 };

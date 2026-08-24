@@ -151,7 +151,6 @@ describe('contract', () => {
 				).rejects.toMatchObject({
 					name: 'TransactionRevertedWithoutReasonError',
 					receipt: {
-						cumulativeGasUsed: BigInt(21537),
 						from: acc.address,
 						gasUsed: BigInt(21537),
 						logs: [],
@@ -161,7 +160,6 @@ describe('contract', () => {
 						to: isNullish(contractDeployed.options.address)
 							? contractDeployed.options.address
 							: `Q${contractDeployed.options.address.slice(1).toLowerCase()}`,
-						transactionIndex: BigInt(0),
 						type: BigInt(2),
 					},
 				});
