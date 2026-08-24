@@ -45,7 +45,7 @@
 		"test:ci": "jest --coverage=true --coverage-reporters=json --verbose",
 		"test:watch": "pnpm run test -- --watch",
 		"test:unit": "jest --config=./test/unit/jest.config.js",
-		"test:integration": "jest --config=./test/integration/jest.config.js --runInBand --forceExit",
+		"test:integration": "WEB3_SYSTEM_TEST_WORKERS=2 jest --config=./test/integration/jest.config.js --maxWorkers=2 --forceExit",
 		"test:e2e:electron": "pnpm exec cypress run --headless --browser electron --env grep='ignore',invert=true",
 		"test:e2e:chrome": "pnpm exec cypress run --headless --browser chrome --env grep='ignore',invert=true",
 		"test:e2e:firefox": "pnpm exec cypress run --headless --browser firefox --env grep='ignore',invert=true"
