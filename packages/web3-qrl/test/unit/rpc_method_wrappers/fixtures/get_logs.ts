@@ -16,6 +16,11 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { FilterResultsAPI, Filter } from '@theqrl/web3-types';
 
+const eventTopic = `0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5${'0'.repeat(
+	64,
+)}`;
+const alternateTopic = `0x${'a7'.repeat(64)}`;
+
 export const mockRpcResponse: FilterResultsAPI = [
 	{
 		logIndex: '0x1',
@@ -26,7 +31,7 @@ export const mockRpcResponse: FilterResultsAPI = [
 		address:
 			'Q3B9FF206657e09c889a09bf241c614a938fe23920590125220cB2c2768c4B2Fea6CcA5B76E3FDD52b955c491AFFA84Ee9DA6499d2dc286633801f3C6Ee9C69C5',
 		data: '0x0000000000000000000000000000000000000000000000000000000000000000',
-		topics: ['0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5'],
+		topics: [eventTopic],
 	},
 ];
 
@@ -34,14 +39,11 @@ const filter: Filter = {
 	address:
 		'Q83cd1122848dd1b2E3AF9ca60a1340e595B2C6d5b3B340AfD625e38EEf9067bc9C28db215702Aa8B3C0243Bb13785a9365A35ee1Fe8e57983b1D47d9fff835a3',
 	topics: [
-		'0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
+		eventTopic,
 		// Using "null" value intentionally for validation
 		// eslint-disable-next-line no-null/no-null
 		null,
-		[
-			'0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
-			'0x0000000000000000000000000aff3454fce5edbc8cca8697c15331677e6ebccc',
-		],
+		[eventTopic, alternateTopic],
 	],
 };
 
