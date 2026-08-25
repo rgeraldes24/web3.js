@@ -359,7 +359,11 @@ export const encrypt = async (
 		throw new InvalidKdfError();
 	}
 
-	const cipher = await createCipheriv(seedUint8Array, derivedKey, initializationVector);
+	const cipher = await createCipheriv(
+		seedUint8Array,
+		derivedKey,
+		initializationVector,
+	);
 	const ciphertext = bytesToHex(cipher).slice(2);
 	// eslint-disable-next-line no-use-before-define
 	const acc = seedToAccount(seedUint8Array);

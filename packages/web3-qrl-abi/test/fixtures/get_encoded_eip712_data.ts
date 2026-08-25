@@ -75,8 +75,7 @@ export const testData: [string, Eip712TypedData, boolean | undefined, string][] 
 				name: 'Ether Mail',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				from: {
@@ -145,8 +144,7 @@ export const testData: [string, Eip712TypedData, boolean | undefined, string][] 
 				name: 'Ether Mail',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				from: {
@@ -215,8 +213,7 @@ export const testData: [string, Eip712TypedData, boolean | undefined, string][] 
 				name: 'Ether Mail',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				from: {
@@ -275,8 +272,7 @@ export const testData: [string, Eip712TypedData, boolean | undefined, string][] 
 				name: 'Array Data',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				array1: ['string', 'string2', 'string3'],
@@ -333,8 +329,7 @@ export const testData: [string, Eip712TypedData, boolean | undefined, string][] 
 				name: 'Array Data',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				array1: ['string', 'string2', 'string3'],
@@ -391,8 +386,7 @@ export const testData: [string, Eip712TypedData, boolean | undefined, string][] 
 				name: 'Array Data',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				array1: ['string', 'string2', 'string3'],
@@ -449,8 +443,7 @@ export const testData: [string, Eip712TypedData, boolean | undefined, string][] 
 				name: 'Array Data',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				array1: ['string', 'string2', 'string3'],
@@ -499,8 +492,7 @@ export const testData: [string, Eip712TypedData, boolean | undefined, string][] 
 				name: 'Array Data',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				bytes32: '0x133d00e67f2390ce846a631aeb6718a674a3923f5320b79b6d3e2f5bf146319e',
@@ -543,8 +535,7 @@ export const testData: [string, Eip712TypedData, boolean | undefined, string][] 
 				name: 'Array Data',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				bytes32: '0x133d00e67f2390ce846a631aeb6718a674a3923f5320b79b6d3e2f5bf146319e',
@@ -587,8 +578,7 @@ export const testData: [string, Eip712TypedData, boolean | undefined, string][] 
 				name: 'Array Data',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				bytes32: '0x133d00e67f2390ce846a631aeb6718a674a3923f5320b79b6d3e2f5bf146319e',
@@ -648,8 +638,7 @@ export const erroneousTestData: [string, Eip712TypedData, boolean | undefined, E
 				name: 'Array Data',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				array1: ['string', 'string2', 'string3'],
@@ -702,14 +691,11 @@ export const erroneousTestData: [string, Eip712TypedData, boolean | undefined, E
 				name: 'Array Data',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				array1: ['string', 'string2', 'string3'],
-				array2: [
-					'Q2d09d65e6aC14659798fA27AC2aee81eC03a4Bde0aF4FdeeAee42ABc1fF2BDBDc32EaD5509D9E8426Cb1C6C48942557717d85EFf4AE7aB148f56FcAB0164B324',
-				],
+				array2: ['Q2d09d65e6aC14659798fA27AC2aee81eC03a4Bde0aF4FdeeAee42ABc1fF2BDBDc32EaD5509D9E8426Cb1C6C48942557717d85EFf4AE7aB148f56FcAB0164B324'],
 				array3: [123456, 654321, 42],
 			},
 		},
@@ -758,14 +744,11 @@ export const erroneousTestData: [string, Eip712TypedData, boolean | undefined, E
 				name: 'Array Data',
 				version: '1',
 				chainId: 1,
-				verifyingContract:
-					'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
+				verifyingContract: 'Qf66D63eB29f937925bAB98a28d5AC0effBC421Ca2fd96dE918352648ca79f678faebaCB5209D52949AAf01F849AA087A42995c1c6996C3a5504960Eb88943556',
 			},
 			message: {
 				array1: ['string', 'string2', 'string3'],
-				array2: [
-					'Q2d09d65e6aC14659798fA27AC2aee81eC03a4Bde0aF4FdeeAee42ABc1fF2BDBDc32EaD5509D9E8426Cb1C6C48942557717d85EFf4AE7aB148f56FcAB0164B324',
-				],
+				array2: ['Q2d09d65e6aC14659798fA27AC2aee81eC03a4Bde0aF4FdeeAee42ABc1fF2BDBDc32EaD5509D9E8426Cb1C6C48942557717d85EFf4AE7aB148f56FcAB0164B324'],
 				array3: undefined,
 			},
 		},

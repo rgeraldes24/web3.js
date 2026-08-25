@@ -482,9 +482,9 @@ describe('defaults', () => {
 
 		it('enableExperimentalFeatures useSubscriptionWhenCheckingBlockTimeout', () => {
 			// default
-			expect(web3QRL.enableExperimentalFeatures.useSubscriptionWhenCheckingBlockTimeout).toBe(
-				false,
-			);
+			expect(
+				web3QRL.enableExperimentalFeatures.useSubscriptionWhenCheckingBlockTimeout,
+			).toBe(false);
 
 			// after set
 			web3QRL.setConfig({
@@ -493,9 +493,9 @@ describe('defaults', () => {
 					useRpcCallSpecification: false,
 				},
 			});
-			expect(web3QRL.enableExperimentalFeatures.useSubscriptionWhenCheckingBlockTimeout).toBe(
-				true,
-			);
+			expect(
+				web3QRL.enableExperimentalFeatures.useSubscriptionWhenCheckingBlockTimeout,
+			).toBe(true);
 
 			// set by create new instance
 			qrl2 = new Web3QRL({
@@ -872,8 +872,7 @@ describe('defaults', () => {
 					maxFeePerGas: '0x4a817c800',
 					accessList: [
 						{
-							address:
-								'QdBb14ea952DfAedB0788Beae4fD92393f215CAa2c115ac22bc68805E171cfadE76CFF540c1ADC7B13017E4c66b6109135f25ff73412650da569E458E4A43800b',
+							address: 'QdBb14ea952DfAedB0788Beae4fD92393f215CAa2c115ac22bc68805E171cfadE76CFF540c1ADC7B13017E4c66b6109135f25ff73412650da569E458E4A43800b',
 							storageKeys: ['0x3535353535353535353535353535353535353535'],
 						},
 					],

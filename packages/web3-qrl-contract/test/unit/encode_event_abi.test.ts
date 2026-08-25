@@ -18,8 +18,7 @@ import { AbiEventFragment } from '@theqrl/web3-types';
 import { ContractOptions, encodeEventABI } from '../../src';
 
 const contractOptions: ContractOptions = {
-	address:
-		'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
+	address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 } as ContractOptions;
 const abiEventFragment: AbiEventFragment & { signature: string } = {
 	anonymous: false,
@@ -56,8 +55,7 @@ describe('encodeEventAbi', () => {
 
 		expect(encodedEventFilter).toMatchObject({
 			fromBlock: '0xa',
-			address:
-				'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
+			address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 		});
 	});
 
@@ -68,8 +66,7 @@ describe('encodeEventAbi', () => {
 
 		expect(encodedEventFilter).toMatchObject({
 			toBlock: '0xa',
-			address:
-				'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
+			address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 		});
 	});
 
@@ -80,8 +77,7 @@ describe('encodeEventAbi', () => {
 
 		expect(encodedEventFilter).toMatchObject({
 			topics: ['0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca'],
-			address:
-				'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
+			address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 		});
 	});
 
@@ -101,8 +97,7 @@ describe('encodeEventAbi', () => {
 
 		expect(encodedEventFilter).toMatchObject({
 			fromBlock: '0x3e8',
-			address:
-				'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
+			address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 		});
 	});
 
@@ -184,8 +179,7 @@ describe('encodeEventAbi', () => {
 				// eslint-disable-next-line no-null/no-null
 				null,
 			],
-			address:
-				'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
+			address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 		});
 	});
 
@@ -205,8 +199,7 @@ describe('encodeEventAbi', () => {
 				null,
 				'0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001',
 			],
-			address:
-				'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
+			address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 		});
 	});
 });

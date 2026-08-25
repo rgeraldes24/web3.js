@@ -230,7 +230,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	}
 
 	/**
-	 * @returns A list of accounts the node controls (canonical lowercase QRL addresses).
+		 * @returns A list of accounts the node controls (canonical lowercase QRL addresses).
 	 *
 	 * ```ts
 	 * web3.qrl.getAccounts().then(console.log);

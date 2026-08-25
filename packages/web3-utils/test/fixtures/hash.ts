@@ -187,9 +187,18 @@ export const hyperionSha3InvalidData: [any, string][] = [
 
 export const encodePackData: [TypedObject[] | TypedObjectAbbreviated[], any][] = [
 	[[{ type: 'string', value: '31323334' }], '0x3331333233333334'],
-	[[{ type: 'int[]', value: '01' }], `0x${'0'.repeat(127)}1`],
-	[[{ type: 'uint[]', value: '01' }], `0x${'0'.repeat(127)}1`],
-	[[{ type: 'int', value: 31323334 }], `0x${'0'.repeat(121)}1ddf4c6`],
+	[
+		[{ type: 'int[]', value: '01' }],
+		`0x${'0'.repeat(127)}1`,
+	],
+	[
+		[{ type: 'uint[]', value: '01' }],
+		`0x${'0'.repeat(127)}1`,
+	],
+	[
+		[{ type: 'int', value: 31323334 }],
+		`0x${'0'.repeat(121)}1ddf4c6`,
+	],
 	[[{ type: 'string', value: '' }], '0x'],
 	[
 		[
@@ -250,8 +259,14 @@ export const encodePackData: [TypedObject[] | TypedObjectAbbreviated[], any][] =
 	],
 	[[{ type: 'int8', value: -128 }], '0x80'],
 	[[{ type: 'int8', value: 127 }], '0x7f'],
-	[[{ type: 'int512', value: -(BigInt(1) << BigInt(511)) }], `0x8${'0'.repeat(127)}`],
-	[[{ type: 'int512', value: (BigInt(1) << BigInt(511)) - BigInt(1) }], `0x7${'f'.repeat(127)}`],
+	[
+		[{ type: 'int512', value: -(BigInt(1) << BigInt(511)) }],
+		`0x8${'0'.repeat(127)}`,
+	],
+	[
+		[{ type: 'int512', value: (BigInt(1) << BigInt(511)) - BigInt(1) }],
+		`0x7${'f'.repeat(127)}`,
+	],
 	[
 		[{ type: 'uint512', value: (BigInt(1) << BigInt(511)) + BigInt(1) }],
 		`0x8${'0'.repeat(126)}1`,
@@ -296,7 +311,10 @@ export const encodePackedInvalidData: [any, string][] = [
 		{ type: 'int8', value: -129 },
 		'Invalid value given "-129". Error: value is larger than size.',
 	],
-	[{ type: 'int8', value: 128 }, 'Invalid value given "128". Error: value is larger than size.'],
+	[
+		{ type: 'int8', value: 128 },
+		'Invalid value given "128". Error: value is larger than size.',
+	],
 	[
 		{ type: 'int512', value: BigInt(1) << BigInt(511) },
 		`Invalid value given "${BigInt(1) << BigInt(511)}". Error: value is larger than size.`,

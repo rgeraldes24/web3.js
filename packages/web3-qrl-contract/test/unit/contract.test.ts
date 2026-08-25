@@ -59,10 +59,7 @@ describe('Contract', () => {
 		});
 
 		it('should init with abi and address', () => {
-			const contract = new Contract(
-				[],
-				'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-			);
+			const contract = new Contract([], 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e');
 
 			expect(contract).toBeInstanceOf(Contract);
 		});
@@ -99,25 +96,16 @@ describe('Contract', () => {
 			const contract = new Contract(
 				[],
 				{ gas: '123' },
-				{
-					config: {
-						defaultAccount:
-							'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-					},
-				},
+				{ config: { defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e' } },
 			);
 
 			expect(contract).toBeInstanceOf(Contract);
 		});
 
 		it('should init with abi, address and options', () => {
-			const contract = new Contract(
-				[],
-				'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-				{
-					gas: '123',
-				},
-			);
+			const contract = new Contract([], 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e', {
+				gas: '123',
+			});
 
 			expect(contract).toBeInstanceOf(Contract);
 		});
@@ -127,12 +115,7 @@ describe('Contract', () => {
 				[],
 				'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
 				{ gas: '123' },
-				{
-					config: {
-						defaultAccount:
-							'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-					},
-				},
+				{ config: { defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e' } },
 			);
 
 			expect(contract).toBeInstanceOf(Contract);
@@ -190,8 +173,7 @@ describe('Contract', () => {
 
 			// @ts-expect-error run protected method
 			const parseAndSetAddressSpy = jest.spyOn(contract, '_parseAndSetAddress');
-			contract.options.address =
-				'Q9Fa83f21CE9bd493B02D7460E03d82D44a77B4612d8B6a0Acc94655106Fbb96152d3E16a0ba414C368653BaE2fe868cB109c05727Ca47148114749451afb7Cc1';
+			contract.options.address = 'Q9Fa83f21CE9bd493B02D7460E03d82D44a77B4612d8B6a0Acc94655106Fbb96152d3E16a0ba414C368653BaE2fe868cB109c05727Ca47148114749451afb7Cc1';
 
 			expect(parseAndSetAddressSpy).toHaveBeenCalledWith(
 				'Q9Fa83f21CE9bd493B02D7460E03d82D44a77B4612d8B6a0Acc94655106Fbb96152d3E16a0ba414C368653BaE2fe868cB109c05727Ca47148114749451afb7Cc1',
@@ -211,8 +193,7 @@ describe('Contract', () => {
 
 			// @ts-expect-error run protected method
 			const parseAndSetAddressSpy = jest.spyOn(contract, '_parseAndSetAddress');
-			contract.options.address =
-				'Q9Fa83f21CE9bd493B02D7460E03d82D44a77B4612d8B6a0Acc94655106Fbb96152d3E16a0ba414C368653BaE2fe868cB109c05727Ca47148114749451afb7Cc1';
+			contract.options.address = 'Q9Fa83f21CE9bd493B02D7460E03d82D44a77B4612d8B6a0Acc94655106Fbb96152d3E16a0ba414C368653BaE2fe868cB109c05727Ca47148114749451afb7Cc1';
 
 			expect(parseAndSetAddressSpy).toHaveBeenCalledWith(
 				'Q9Fa83f21CE9bd493B02D7460E03d82D44a77B4612d8B6a0Acc94655106Fbb96152d3E16a0ba414C368653BaE2fe868cB109c05727Ca47148114749451afb7Cc1',
@@ -232,8 +213,7 @@ describe('Contract', () => {
 
 			// @ts-expect-error run protected method
 			const parseAndSetAddressSpy = jest.spyOn(contract, '_parseAndSetAddress');
-			contract.options.address =
-				'Q9Fa83f21CE9bd493B02D7460E03d82D44a77B4612d8B6a0Acc94655106Fbb96152d3E16a0ba414C368653BaE2fe868cB109c05727Ca47148114749451afb7Cc1';
+			contract.options.address = 'Q9Fa83f21CE9bd493B02D7460E03d82D44a77B4612d8B6a0Acc94655106Fbb96152d3E16a0ba414C368653BaE2fe868cB109c05727Ca47148114749451afb7Cc1';
 
 			expect(parseAndSetAddressSpy).toHaveBeenCalledWith(
 				'Q9Fa83f21CE9bd493B02D7460E03d82D44a77B4612d8B6a0Acc94655106Fbb96152d3E16a0ba414C368653BaE2fe868cB109c05727Ca47148114749451afb7Cc1',
@@ -251,8 +231,7 @@ describe('Contract', () => {
 
 	describe('Contract functions and defaults', () => {
 		let sendOptions: Record<string, unknown>;
-		const deployedAddr =
-			'QD29B41525Ef0e31e1CFFa6822dE48D527057F0Aa263834dB22a78F664704b0F8b70F6db008eD1e783EE7dd8521b57E752C486B2f6155D79DBC17903b58E52954';
+		const deployedAddr = 'QD29B41525Ef0e31e1CFFa6822dE48D527057F0Aa263834dB22a78F664704b0F8b70F6db008eD1e783EE7dd8521b57E752C486B2f6155D79DBC17903b58E52954';
 
 		beforeEach(() => {
 			sendOptions = {
@@ -421,8 +400,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: {
 					contractDataInputFill: 'data',
-					defaultAccount:
-						'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
+					defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
 				},
 			});
 			const arg = 'Hello';
@@ -468,8 +446,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: {
 					contractDataInputFill: 'both',
-					defaultAccount:
-						'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
+					defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
 				},
 			});
 			const arg = 'Hello';
@@ -519,8 +496,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: {
 					contractDataInputFill: 'input',
-					defaultAccount:
-						'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
+					defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
 				},
 			});
 			const arg = 'Hello';
@@ -634,13 +610,9 @@ describe('Contract', () => {
 		});
 
 		it('defaults set and get should work', () => {
-			const contract = new Contract(
-				[],
-				'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-			);
+			const contract = new Contract([], 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e');
 
-			const defaultAddr =
-				'Q2Dc44f218B0733811DA229D5BfA0F3305fdcb146549Cb424982635bEf8Cf7210afA1C6982fF0DF19794566aba6d48319c29CBaDbE3b08a026D432A3e040e5334';
+			const defaultAddr = 'Q2Dc44f218B0733811DA229D5BfA0F3305fdcb146549Cb424982635bEf8Cf7210afA1C6982fF0DF19794566aba6d48319c29CBaDbE3b08a026D432A3e040e5334';
 			expect(contract.defaultAccount).toBeUndefined();
 			contract.defaultAccount = defaultAddr;
 			expect(contract.defaultAccount).toStrictEqual(defaultAddr);
@@ -755,18 +727,12 @@ describe('Contract', () => {
 		});
 
 		it('should set and get correct address', () => {
-			const addr =
-				'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18';
+			const addr = 'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18';
 			const contract = new Contract(
 				[],
 				'',
 				{ gas: '123' },
-				{
-					config: {
-						defaultAccount:
-							'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-					},
-				},
+				{ config: { defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e' } },
 			);
 
 			contract.options.address = addr;
@@ -778,12 +744,7 @@ describe('Contract', () => {
 				sampleStorageContractABI,
 				'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18',
 				{ gas: '123' },
-				{
-					config: {
-						defaultAccount:
-							'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-					},
-				},
+				{ config: { defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e' } },
 			);
 
 			expect(contract.options.jsonInterface).toMatchObject(sampleStorageContractABI);
@@ -794,12 +755,7 @@ describe('Contract', () => {
 				sampleStorageContractABI,
 				'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18',
 				{ gas: '123' },
-				{
-					config: {
-						defaultAccount:
-							'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-					},
-				},
+				{ config: { defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e' } },
 			);
 
 			contract.options.jsonInterface = SQRCTF1TokenAbi;
@@ -813,20 +769,13 @@ describe('Contract', () => {
 				sqrcTn1Abi,
 				'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18',
 				{ gas: '123' },
-				{
-					config: {
-						defaultAccount:
-							'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-					},
-				},
+				{ config: { defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e' } },
 			);
 
 			const spyQRLCall = jest
 				.spyOn(qrl, 'call')
 				.mockImplementation(async (_objInstance, _tx) => {
-					expect(_tx.to).toBe(
-						'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18',
-					);
+					expect(_tx.to).toBe('Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18');
 					expect(_tx.input).toBe(
 						'0x095ea7b3abc6454190924728ceb54ccf57c4b313fb24ec2079a1d2c62c9ad0a86f76e4cd76988eddee1710f84e030b3f03504df35dabf2da3be65ad32f6152cec0f0fd8e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001',
 					);
@@ -834,12 +783,7 @@ describe('Contract', () => {
 				});
 
 			await expect(
-				contract.methods
-					.approve(
-						'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-						1,
-					)
-					.call(),
+				contract.methods.approve('QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e', 1).call(),
 			).resolves.toBeTruthy();
 
 			spyQRLCall.mockClear();
@@ -850,20 +794,13 @@ describe('Contract', () => {
 				sqrcTn1Abi,
 				'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18',
 				{ gas: '123', dataInputFill: 'data' },
-				{
-					config: {
-						defaultAccount:
-							'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-					},
-				},
+				{ config: { defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e' } },
 			);
 
 			const spyQRLCall = jest
 				.spyOn(qrl, 'call')
 				.mockImplementation(async (_objInstance, _tx) => {
-					expect(_tx.to).toBe(
-						'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18',
-					);
+					expect(_tx.to).toBe('Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18');
 					expect(_tx.data).toBe(
 						'0x095ea7b3abc6454190924728ceb54ccf57c4b313fb24ec2079a1d2c62c9ad0a86f76e4cd76988eddee1710f84e030b3f03504df35dabf2da3be65ad32f6152cec0f0fd8e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001',
 					);
@@ -871,12 +808,7 @@ describe('Contract', () => {
 				});
 
 			await expect(
-				contract.methods
-					.approve(
-						'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-						1,
-					)
-					.call(),
+				contract.methods.approve('QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e', 1).call(),
 			).resolves.toBeTruthy();
 
 			spyQRLCall.mockClear();
@@ -887,20 +819,13 @@ describe('Contract', () => {
 				sqrcTn1Abi,
 				'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18',
 				{ gas: '123', dataInputFill: 'input' },
-				{
-					config: {
-						defaultAccount:
-							'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-					},
-				},
+				{ config: { defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e' } },
 			);
 
 			const spyQRLCall = jest
 				.spyOn(qrl, 'call')
 				.mockImplementation(async (_objInstance, _tx) => {
-					expect(_tx.to).toBe(
-						'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18',
-					);
+					expect(_tx.to).toBe('Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18');
 					expect(_tx.input).toBe(
 						'0x095ea7b3abc6454190924728ceb54ccf57c4b313fb24ec2079a1d2c62c9ad0a86f76e4cd76988eddee1710f84e030b3f03504df35dabf2da3be65ad32f6152cec0f0fd8e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001',
 					);
@@ -908,12 +833,7 @@ describe('Contract', () => {
 				});
 
 			await expect(
-				contract.methods
-					.approve(
-						'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-						1,
-					)
-					.call(),
+				contract.methods.approve('QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e', 1).call(),
 			).resolves.toBeTruthy();
 
 			spyQRLCall.mockClear();
@@ -925,8 +845,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: {
 					contractDataInputFill: 'data',
-					defaultAccount:
-						'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
+					defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
 				},
 			});
 			const contract = new Contract(
@@ -939,9 +858,7 @@ describe('Contract', () => {
 			const spyQRLCall = jest
 				.spyOn(qrl, 'call')
 				.mockImplementation(async (_objInstance, _tx) => {
-					expect(_tx.to).toBe(
-						'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18',
-					);
+					expect(_tx.to).toBe('Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18');
 					expect(_tx.data).toBe(
 						'0x095ea7b3abc6454190924728ceb54ccf57c4b313fb24ec2079a1d2c62c9ad0a86f76e4cd76988eddee1710f84e030b3f03504df35dabf2da3be65ad32f6152cec0f0fd8e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001',
 					);
@@ -949,12 +866,7 @@ describe('Contract', () => {
 				});
 
 			await expect(
-				contract.methods
-					.approve(
-						'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-						1,
-					)
-					.call(),
+				contract.methods.approve('QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e', 1).call(),
 			).resolves.toBeTruthy();
 
 			spyQRLCall.mockClear();
@@ -966,8 +878,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: {
 					contractDataInputFill: 'both',
-					defaultAccount:
-						'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
+					defaultAccount: 'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
 				},
 			});
 			const contract = new Contract(
@@ -980,9 +891,7 @@ describe('Contract', () => {
 			const spyQRLCall = jest
 				.spyOn(qrl, 'call')
 				.mockImplementation(async (_objInstance, _tx) => {
-					expect(_tx.to).toBe(
-						'Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18',
-					);
+					expect(_tx.to).toBe('Qf0466865397aF16acec6F29a726b396BaEc16380bE88341DF5d994013FBC09ee5472F97Cb5aA366f6b163906f920f83E856dD3b9a9AB4F239198e27A7a0e3a18');
 					expect(_tx.data).toBe(
 						'0x095ea7b3abc6454190924728ceb54ccf57c4b313fb24ec2079a1d2c62c9ad0a86f76e4cd76988eddee1710f84e030b3f03504df35dabf2da3be65ad32f6152cec0f0fd8e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001',
 					);
@@ -993,12 +902,7 @@ describe('Contract', () => {
 				});
 
 			await expect(
-				contract.methods
-					.approve(
-						'QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e',
-						1,
-					)
-					.call(),
+				contract.methods.approve('QABc6454190924728CeB54ccF57c4b313Fb24ec2079a1d2c62C9ad0A86f76e4CD76988eDdEE1710f84E030b3F03504dF35Dabf2Da3Be65AD32f6152ceC0F0fD8e', 1).call(),
 			).resolves.toBeTruthy();
 
 			spyQRLCall.mockClear();
@@ -1534,8 +1438,7 @@ describe('Contract', () => {
 			const arg = 'Hello';
 
 			const contract = new Contract(GreeterAbi);
-			contract.options.address =
-				'Q26DD6013a6D6cCf740c037b7FcF0b125a49CA3F4fD8166343B53F8282908949a533Cc2744b40840046198C7d560b00794E83d568093812C09b4d1D4607D7acb8';
+			contract.options.address = 'Q26DD6013a6D6cCf740c037b7FcF0b125a49CA3F4fD8166343B53F8282908949a533Cc2744b40840046198C7d560b00794E83d568093812C09b4d1D4607D7acb8';
 
 			await expect(async () => {
 				await contract.methods.setGreeting(arg).send(sendOptionsSpecial);
@@ -1543,8 +1446,7 @@ describe('Contract', () => {
 		});
 
 		it('contract method createAccessList should work', async () => {
-			const fromAddr: Address =
-				'QD29B41525Ef0e31e1CFFa6822dE48D527057F0Aa263834dB22a78F664704b0F8b70F6db008eD1e783EE7dd8521b57E752C486B2f6155D79DBC17903b58E52954';
+			const fromAddr: Address = 'QD29B41525Ef0e31e1CFFa6822dE48D527057F0Aa263834dB22a78F664704b0F8b70F6db008eD1e783EE7dd8521b57E752C486B2f6155D79DBC17903b58E52954';
 			const result: AccessListResult = {
 				accessList: [
 					{
@@ -1581,8 +1483,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: { contractDataInputFill: 'data' },
 			});
-			const fromAddr: Address =
-				'QD29B41525Ef0e31e1CFFa6822dE48D527057F0Aa263834dB22a78F664704b0F8b70F6db008eD1e783EE7dd8521b57E752C486B2f6155D79DBC17903b58E52954';
+			const fromAddr: Address = 'QD29B41525Ef0e31e1CFFa6822dE48D527057F0Aa263834dB22a78F664704b0F8b70F6db008eD1e783EE7dd8521b57E752C486B2f6155D79DBC17903b58E52954';
 			const result: AccessListResult = {
 				accessList: [
 					{
@@ -1618,8 +1519,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: { contractDataInputFill: 'both' },
 			});
-			const fromAddr: Address =
-				'QD29B41525Ef0e31e1CFFa6822dE48D527057F0Aa263834dB22a78F664704b0F8b70F6db008eD1e783EE7dd8521b57E752C486B2f6155D79DBC17903b58E52954';
+			const fromAddr: Address = 'QD29B41525Ef0e31e1CFFa6822dE48D527057F0Aa263834dB22a78F664704b0F8b70F6db008eD1e783EE7dd8521b57E752C486B2f6155D79DBC17903b58E52954';
 			const result: AccessListResult = {
 				accessList: [
 					{
@@ -1652,8 +1552,7 @@ describe('Contract', () => {
 		});
 
 		it('contract method createAccessList should decode revert error according to EIP-838', async () => {
-			const fromAddr: Address =
-				'QD29B41525Ef0e31e1CFFa6822dE48D527057F0Aa263834dB22a78F664704b0F8b70F6db008eD1e783EE7dd8521b57E752C486B2f6155D79DBC17903b58E52954';
+			const fromAddr: Address = 'QD29B41525Ef0e31e1CFFa6822dE48D527057F0Aa263834dB22a78F664704b0F8b70F6db008eD1e783EE7dd8521b57E752C486B2f6155D79DBC17903b58E52954';
 
 			// ABI augmented with an `Unauthorized()` custom error (selector 0x82b42900)
 			const abiWithError = [

@@ -138,4 +138,5 @@ export const transactionTypeUndefined: FormatType<Transaction, typeof QRL_DATA_F
 	},
 ];
 
-export const transactionTypeValidationError: FormatType<Transaction, typeof QRL_DATA_FORMAT>[] = [];
+export const transactionTypeValidationError: FormatType<Transaction, typeof QRL_DATA_FORMAT>[] =
+	[];

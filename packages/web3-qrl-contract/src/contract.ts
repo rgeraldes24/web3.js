@@ -121,20 +121,20 @@ export type ContractOverloadedMethodInputs<AbiArr extends ReadonlyArray<unknown>
 	AbiArr extends readonly []
 		? undefined
 		: AbiArr extends readonly [infer A, ...infer R]
-			? A extends AbiFunctionFragment
-				? ContractMethodInputParameters<A['inputs']> | ContractOverloadedMethodInputs<R>
-				: undefined
+		? A extends AbiFunctionFragment
+			? ContractMethodInputParameters<A['inputs']> | ContractOverloadedMethodInputs<R>
 			: undefined
+		: undefined
 >;
 
 export type ContractOverloadedMethodOutputs<AbiArr extends ReadonlyArray<unknown>> = NonNullable<
 	AbiArr extends readonly []
 		? undefined
 		: AbiArr extends readonly [infer A, ...infer R]
-			? A extends AbiFunctionFragment
-				? ContractMethodOutputParameters<A['outputs']> | ContractOverloadedMethodOutputs<R>
-				: undefined
+		? A extends AbiFunctionFragment
+			? ContractMethodOutputParameters<A['outputs']> | ContractOverloadedMethodOutputs<R>
 			: undefined
+		: undefined
 >;
 
 // To avoid circular dependency between types and encoding, declared these types here.
@@ -313,8 +313,8 @@ export class Contract<Abi extends ContractAbi>
 		const options = isContractInitOptions(addressOrOptionsOrContext)
 			? addressOrOptionsOrContext
 			: isContractInitOptions(optionsOrContextOrReturnFormat)
-				? optionsOrContextOrReturnFormat
-				: undefined;
+			? optionsOrContextOrReturnFormat
+			: undefined;
 
 		let contractContext;
 		if (isWeb3ContractContext(addressOrOptionsOrContext)) {
@@ -365,8 +365,8 @@ export class Contract<Abi extends ContractAbi>
 		const returnDataFormat = isDataFormat(contextOrReturnFormat)
 			? contextOrReturnFormat
 			: isDataFormat(optionsOrContextOrReturnFormat)
-				? optionsOrContextOrReturnFormat
-				: (returnFormat ?? DEFAULT_RETURN_FORMAT);
+			? optionsOrContextOrReturnFormat
+			: returnFormat ?? DEFAULT_RETURN_FORMAT;
 
 		const address =
 			typeof addressOrOptionsOrContext === 'string' ? addressOrOptionsOrContext : undefined;
@@ -735,21 +735,21 @@ export class Contract<Abi extends ContractAbi>
 			typeof param1 !== 'string' && !isDataFormat(param1)
 				? param1
 				: !isDataFormat(param2)
-					? param2
-					: {};
+				? param2
+				: {};
 
 		const returnFormat = isDataFormat(param1)
 			? param1
 			: isDataFormat(param2)
-				? param2
-				: (param3 ?? DEFAULT_RETURN_FORMAT);
+			? param2
+			: param3 ?? DEFAULT_RETURN_FORMAT;
 
 		const abi =
 			eventName === 'allEvents' || eventName === ALL_EVENTS
 				? ALL_EVENTS_ABI
 				: (this._jsonInterface.find(
 						j => 'name' in j && j.name === eventName,
-					) as AbiEventFragment & { signature: string });
+				  ) as AbiEventFragment & { signature: string });
 
 		if (!abi) {
 			throw new Web3ContractError(`Event ${String(eventName)} not found.`);
