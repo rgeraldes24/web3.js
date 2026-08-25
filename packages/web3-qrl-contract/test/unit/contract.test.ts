@@ -1266,7 +1266,9 @@ describe('Contract', () => {
 			});
 
 			const result = deploy.encodeABI();
-			expect(result).toBe(GREETER_DEPLOYMENT_DATA);
+			expect(result).toBe(
+				GREETER_DEPLOYMENT_DATA,
+			);
 
 			spyTx.mockClear();
 		});
@@ -1287,7 +1289,9 @@ describe('Contract', () => {
 					expect(_block).toBe('latest');
 					expect(_tx.to).toBeUndefined();
 					expect(_tx.from).toStrictEqual(sendOptions.from);
-					expect(_tx.input).toBe(GREETER_DEPLOYMENT_DATA);
+					expect(_tx.input).toBe(
+						GREETER_DEPLOYMENT_DATA,
+					);
 					expect(returnFormat).toBe(QRL_DATA_FORMAT);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -1322,7 +1326,9 @@ describe('Contract', () => {
 					expect(_block).toBe('latest');
 					expect(_tx.to).toBeUndefined();
 					expect(_tx.from).toStrictEqual(sendOptions.from);
-					expect(_tx.data).toBe(GREETER_DEPLOYMENT_DATA);
+					expect(_tx.data).toBe(
+						GREETER_DEPLOYMENT_DATA,
+					);
 					expect(returnFormat).toBe(QRL_DATA_FORMAT);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -1363,8 +1369,12 @@ describe('Contract', () => {
 					expect(_block).toBe('latest');
 					expect(_tx.to).toBeUndefined();
 					expect(_tx.from).toStrictEqual(sendOptions.from);
-					expect(_tx.data).toBe(GREETER_DEPLOYMENT_DATA);
-					expect(_tx.input).toBe(GREETER_DEPLOYMENT_DATA);
+					expect(_tx.data).toBe(
+						GREETER_DEPLOYMENT_DATA,
+					);
+					expect(_tx.input).toBe(
+						GREETER_DEPLOYMENT_DATA,
+					);
 					expect(returnFormat).toBe(QRL_DATA_FORMAT);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -1404,7 +1414,9 @@ describe('Contract', () => {
 					expect(_block).toBe('latest');
 					expect(_tx.to).toBeUndefined();
 					expect(_tx.from).toStrictEqual(sendOptions.from);
-					expect(_tx.data).toBe(GREETER_DEPLOYMENT_DATA);
+					expect(_tx.data).toBe(
+						GREETER_DEPLOYMENT_DATA,
+					);
 					expect(returnFormat).toBe(QRL_DATA_FORMAT);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
