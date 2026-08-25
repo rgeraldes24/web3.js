@@ -288,6 +288,7 @@ describe('contract getPastEvent filter', () => {
 		});
 	});
 
+	/* eslint-disable @typescript-eslint/no-unsafe-call */
 	describe('indexed dynamic values', () => {
 		let contractDeployed: Contract<typeof IndexedDynamicEventsAbi>;
 		let sendOptions: Record<string, unknown>;
@@ -389,4 +390,5 @@ describe('contract getPastEvent filter', () => {
 			expect(events[0]?.returnValues.value).toBe(sha3Raw(utf8ToHex('beta')));
 		});
 	});
+	/* eslint-enable @typescript-eslint/no-unsafe-call */
 });

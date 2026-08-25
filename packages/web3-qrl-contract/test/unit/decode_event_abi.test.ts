@@ -52,6 +52,7 @@ const fullWidthLog: LogsInput = {
 
 const jsonInterface = [fullWidthEventFragment] as unknown as ContractAbiWithSignature;
 
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 describe('decodeEventABI', () => {
 	describe('full-width indexed topics', () => {
 		it('should decode each 64-byte indexed topic layout', () => {
@@ -102,5 +103,6 @@ describe('decodeEventABI', () => {
 			expect(decoded.returnValues.num).toBe(BigInt(2) ** BigInt(256) - BigInt(1));
 			expect(decoded.raw?.topics[0]).toBeInstanceOf(Uint8Array);
 		});
+		/* eslint-enable @typescript-eslint/no-unsafe-call */
 	});
 });
