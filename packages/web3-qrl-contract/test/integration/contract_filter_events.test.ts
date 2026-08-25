@@ -15,10 +15,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { toBigInt } from '@theqrl/web3-utils';
+import { sha3Raw, toBigInt, utf8ToHex } from '@theqrl/web3-utils';
+import { FMT_BYTES, FMT_NUMBER } from '@theqrl/web3-types';
 import { Contract } from '../../src';
 import { SQRCTF1TokenAbi, SQRCTF1TokenBytecode } from '../shared_fixtures/build/SQRCTF1Token';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
+import {
+	IndexedDynamicEventsAbi,
+	IndexedDynamicEventsBytecode,
+} from '../shared_fixtures/build/IndexedDynamicEvents';
 import {
 	getSystemTestProvider,
 	createTempAccount,
@@ -280,6 +285,108 @@ describe('contract getPastEvent filter', () => {
 			);
 			expect(event.returnValues.val).toBe(BigInt(4));
 			expect(event.returnValues.flag).toBeTruthy();
+		});
+	});
+
+	describe('indexed dynamic values', () => {
+		let contractDeployed: Contract<typeof IndexedDynamicEventsAbi>;
+		let sendOptions: Record<string, unknown>;
+		let fromBlock: bigint;
+
+		beforeAll(async () => {
+			const account = await createTempAccount();
+			sendOptions = { from: account.address };
+
+			const contract = new Contract(IndexedDynamicEventsAbi, undefined, {
+				provider: getSystemTestProvider(),
+			});
+			contractDeployed = await contract
+				.deploy({ data: IndexedDynamicEventsBytecode })
+				.send(sendOptions);
+
+			const firstReceipt = await contractDeployed.methods
+				.fire('beta', '0x0102', 1)
+				.send(sendOptions);
+			fromBlock = firstReceipt.blockNumber;
+			await contractDeployed.methods.fire('0xabcd', '0xff', 2).send(sendOptions);
+		});
+
+		it('filters an indexed string', async () => {
+			const events = (await contractDeployed.getPastEvents('IndexedString', {
+				fromBlock,
+				filter: { value: 'beta' },
+			})) as EventLog[];
+
+			expect(events).toHaveLength(1);
+			expect(events[0]?.returnValues.value).toBe(sha3Raw(utf8ToHex('beta')));
+			expect(events[0]?.returnValues.id).toBe(BigInt(1));
+		});
+
+		it('filters indexed strings with OR semantics', async () => {
+			const events = (await contractDeployed.getPastEvents('IndexedString', {
+				fromBlock,
+				filter: { value: ['beta', '0xabcd'] },
+			})) as EventLog[];
+
+			expect(events.map(event => event.returnValues.id)).toEqual([BigInt(1), BigInt(2)]);
+		});
+
+		it('hashes a hex-looking indexed string as UTF-8 text', async () => {
+			const events = (await contractDeployed.getPastEvents('IndexedString', {
+				fromBlock,
+				filter: { value: '0xabcd' },
+			})) as EventLog[];
+
+			expect(events).toHaveLength(1);
+			expect(events[0]?.returnValues.value).toBe(sha3Raw(utf8ToHex('0xabcd')));
+			expect(events[0]?.returnValues.value).not.toBe(sha3Raw('0xabcd'));
+			expect(events[0]?.returnValues.id).toBe(BigInt(2));
+		});
+
+		it('filters indexed bytes', async () => {
+			const events = (await contractDeployed.getPastEvents('IndexedBytes', {
+				fromBlock,
+				filter: { value: '0xff' },
+			})) as EventLog[];
+
+			expect(events).toHaveLength(1);
+			expect(events[0]?.returnValues.value).toBe(sha3Raw('0xff'));
+			expect(events[0]?.returnValues.id).toBe(BigInt(2));
+		});
+
+		it('filters indexed bytes with OR semantics', async () => {
+			const events = (await contractDeployed.getPastEvents('IndexedBytes', {
+				fromBlock,
+				filter: { value: ['0x0102', '0xff'] },
+			})) as EventLog[];
+
+			expect(events.map(event => event.returnValues.id)).toEqual([BigInt(1), BigInt(2)]);
+		});
+
+		it.each([
+			['string', 'beta', 'IndexedString', BigInt(1)],
+			['bytes', '0xff', 'IndexedBytes', BigInt(2)],
+		] as const)('filters indexed %s through allEvents', async (_type, value, name, id) => {
+			const events = (await contractDeployed.getPastEvents('allEvents', {
+				fromBlock,
+				filter: { value },
+			})) as EventLog[];
+
+			expect(events).toHaveLength(1);
+			expect(events[0]?.event).toBe(name);
+			expect(events[0]?.returnValues.id).toBe(id);
+		});
+
+		it('filters allEvents with Uint8Array-formatted topics', async () => {
+			const events = (await contractDeployed.getPastEvents(
+				'allEvents',
+				{ fromBlock, filter: { value: 'beta' } },
+				{ number: FMT_NUMBER.BIGINT, bytes: FMT_BYTES.UINT8ARRAY },
+			)) as EventLog[];
+
+			expect(events).toHaveLength(1);
+			expect(events[0]?.event).toBe('IndexedString');
+			expect(events[0]?.returnValues.value).toBe(sha3Raw(utf8ToHex('beta')));
 		});
 	});
 });

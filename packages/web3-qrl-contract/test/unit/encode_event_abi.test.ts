@@ -107,70 +107,6 @@ describe('encodeEventAbi', () => {
 		});
 	});
 
-	// This test fails because encoding of a dynamic sized array is not current supported
-	// Received error: AbiError: Parameter encoding error
-	it.skip('should set the filter topics to the keccak256 hash of the provided filter value', () => {
-		const _abiEventFragment: AbiEventFragment & { signature: string } = {
-			anonymous: false,
-			inputs: [
-				{
-					indexed: true,
-					internalType: 'uint256[]',
-					name: 'vals',
-					type: 'uint256[]',
-				},
-			],
-			name: 'IndexedArrayEvent',
-			type: 'event',
-			signature:
-				'0x71aefd401e4886a78931d42be506247958b9751348fa91aa2f9dbbd557e9208e0000000000000000000000000000000000000000000000000000000000000000',
-		};
-
-		encodeEventABI(contractOptions, _abiEventFragment, {
-			filter: {
-				vals: [1, 2, 3],
-			},
-		});
-	});
-
-	// This test fails because encoding of a dynamic sized array is not current supported
-	// Received error: AbiError: Parameter encoding error
-	it.skip('should set the filter topics', () => {
-		const _abiEventFragment: AbiEventFragment & { signature: string } = {
-			anonymous: false,
-			inputs: [
-				{
-					indexed: true,
-					internalType: 'uint256[]',
-					name: 'vals',
-					type: 'uint256[]',
-				},
-				{
-					indexed: true,
-					internalType: 'string[]',
-					name: 'strs',
-					type: 'string[]',
-				},
-				{
-					indexed: true,
-					internalType: 'bool[]',
-					name: 'flags',
-					type: 'bool[]',
-				},
-			],
-			name: 'IndexedMultiValArrayEvent',
-			type: 'event',
-			signature:
-				'0x9b5a12617e7ca791109ef5e09b8cc23cb4034e0e3dfb4aadac37b55fd28718f60000000000000000000000000000000000000000000000000000000000000000',
-		};
-
-		encodeEventABI(contractOptions, _abiEventFragment, {
-			filter: {
-				vals: [1, 2, 3],
-			},
-		});
-	});
-
 	it('should filter by the keccak256 of the provided indexed string filter', () => {
 		const encodedEventFilter = encodeEventABI(contractOptions, abiEventFragment, {
 			filter: {
@@ -211,6 +147,89 @@ describe('encodeEventAbi', () => {
 		});
 	});
 
+	it('should encode zero and false indexed filters', () => {
+		const encodedEventFilter = encodeEventABI(contractOptions, abiEventFragment, {
+			filter: { val: 0, flag: false },
+		});
+		const zeroWord = `0x${'0'.repeat(128)}`;
+
+		expect(encodedEventFilter.topics).toStrictEqual([
+			abiEventFragment.signature,
+			// eslint-disable-next-line no-null/no-null
+			null,
+			zeroWord,
+			zeroWord,
+		]);
+	});
+
+	describe('dynamic indexed topics', () => {
+		const dynamicEventFragment: AbiEventFragment & { signature: string } = {
+			anonymous: false,
+			inputs: [
+				{ indexed: true, internalType: 'string', name: 'text', type: 'string' },
+				{ indexed: true, internalType: 'bytes', name: 'data', type: 'bytes' },
+			],
+			name: 'DynamicIndexed',
+			type: 'event',
+			signature: `0xbac4615f67d03bd638dfc37d5751fe1acbc0d951241a04b0d5e6aa6835d58880${'0'.repeat(
+				64,
+			)}`,
+		};
+		const padding = '0'.repeat(64);
+		const stringHash = `0x77b446f7f7431b79d3ee0ee3faafefd90f1f8cc91b5c88cf21bac16ac0c8590b${padding}`;
+		const bytesHash = `0xdbe576b4818846aa77e82f4ed5fa78f92766b141f282d36703886d196df39322${padding}`;
+
+		it('should hash a hex-looking string as UTF-8 text', () => {
+			const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
+				filter: { text: '0xabcd' },
+			}).topics;
+
+			expect(topics?.[1]).toBe(stringHash);
+		});
+
+		it('should hash bytes as their raw value', () => {
+			const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
+				filter: { data: '0xabcd' },
+			}).topics;
+
+			expect(topics?.[2]).toBe(bytesHash);
+		});
+
+		it('should hash bytes supplied as a Uint8Array', () => {
+			const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
+				filter: { data: new Uint8Array([0xab, 0xcd]) },
+			}).topics;
+
+			expect(topics?.[2]).toBe(bytesHash);
+		});
+
+		it('should hash each string and bytes OR-filter alternative', () => {
+			const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
+				filter: {
+					text: ['0xabcd', '0xabcd'],
+					data: ['0xabcd', '0xabcd'],
+				},
+			}).topics;
+
+			expect(topics?.[1]).toStrictEqual([stringHash, stringHash]);
+			expect(topics?.[2]).toStrictEqual([bytesHash, bytesHash]);
+		});
+
+		it.each(['function', 'uint256[]', 'bytes32[2]', 'tuple'])(
+			'should reject unsupported indexed %s filters',
+			type => {
+				const fragment: AbiEventFragment & { signature: string } = {
+					...dynamicEventFragment,
+					inputs: [{ indexed: true, internalType: type, name: 'value', type }],
+				};
+
+				expect(() =>
+					encodeEventABI(contractOptions, fragment, { filter: { value: [1] } }),
+				).toThrow(`Unsupported indexed type: ${type}`);
+			},
+		);
+	});
+
 	describe('full-width indexed topics', () => {
 		const fullWidthEventFragment: AbiEventFragment & { signature: string } = {
 			anonymous: false,
@@ -238,6 +257,12 @@ describe('encodeEventAbi', () => {
 
 		it('should left-align an indexed bytes32 in the topic word', () => {
 			expect(topicsFor({ raw: `0x${'ff'.repeat(32)}` })[2]).toBe(
+				`0x${'ff'.repeat(32)}${'0'.repeat(64)}`,
+			);
+		});
+
+		it('should encode a Uint8Array indexed bytes32 filter', () => {
+			expect(topicsFor({ raw: new Uint8Array(32).fill(0xff) })[2]).toBe(
 				`0x${'ff'.repeat(32)}${'0'.repeat(64)}`,
 			);
 		});

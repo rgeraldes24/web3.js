@@ -15,13 +15,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { format, isNullish, keccak256 } from '@theqrl/web3-utils';
+import { bytesToHex, format, isNullish } from '@theqrl/web3-utils';
 import { isAddressString } from '@theqrl/web3-validator';
 
 import {
 	AbiConstructorFragment,
 	AbiEventFragment,
 	AbiFunctionFragment,
+	Bytes,
 	LogsInput,
 	Filter,
 	HexString,
@@ -37,9 +38,7 @@ import {
 	decodeParameters,
 	encodeEventSignature,
 	encodeFunctionSignature,
-	encodeParameter,
 	encodeParameters,
-	hashToLogTopic,
 	isAbiConstructorFragment,
 	jsonInterfaceMethodToString,
 } from '@theqrl/web3-qrl-abi';
@@ -49,12 +48,9 @@ import { blockSchema, logSchema } from '@theqrl/web3-qrl';
 import { Web3ContractError } from '@theqrl/web3-errors';
 
 import { ContractOptions, ContractAbiWithSignature, EventLog } from './types.js';
+import { assertSupportedIndexedType, encodeIndexedFilterTopic } from './indexed_topic.js';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
-
-const encodeIndexedTopic = (type: string, value: unknown) =>
-	type === 'string' ? hashToLogTopic(keccak256(value as string)) : encodeParameter(type, value);
-
 export const encodeEventABI = (
 	{ address }: ContractOptions,
 	event: AbiEventFragment & { signature: string },
@@ -102,12 +98,12 @@ export const encodeEventABI = (
 					continue;
 				}
 
-				// TODO: https://github.com/ethereum/web3.js/issues/344
-				// TODO: deal properly with components
+				assertSupportedIndexedType(input.type);
+
 				if (Array.isArray(value)) {
-					opts.topics.push(value.map(v => encodeIndexedTopic(input.type, v)));
+					opts.topics.push(value.map(v => encodeIndexedFilterTopic(input.type, v)));
 				} else {
-					opts.topics.push(encodeIndexedTopic(input.type, value));
+					opts.topics.push(encodeIndexedFilterTopic(input.type, value));
 				}
 			}
 		}
@@ -136,10 +132,19 @@ export const decodeEventABI = (
 	let modifiedEvent = { ...event };
 
 	const result = format(logSchema, data, returnFormat);
+	const runtimeData = data as unknown as Omit<LogsInput, 'data' | 'topics'> & {
+		readonly data: Bytes;
+		readonly topics: Bytes[];
+	};
+	const topics = (runtimeData.topics ?? []).map(topic =>
+		typeof topic === 'string' ? topic : bytesToHex(topic),
+	);
+	const logData =
+		typeof runtimeData.data === 'string' ? runtimeData.data : bytesToHex(runtimeData.data);
 
 	// if allEvents get the right event
 	if (modifiedEvent.name === 'ALLEVENTS') {
-		const matchedEvent = jsonInterface.find(j => j.signature === data.topics[0]);
+		const matchedEvent = jsonInterface.find(j => j.signature === topics[0]);
 		if (matchedEvent) {
 			modifiedEvent = matchedEvent as AbiEventFragment & { signature: string };
 		} else {
@@ -162,7 +167,7 @@ export const decodeEventABI = (
 			}
 		});
 
-		if (indexedInputs > 0 && data?.topics && data?.topics.length !== indexedInputs + 1) {
+		if (indexedInputs > 0 && topics.length !== indexedInputs + 1) {
 			// checks if event is anonymous
 			modifiedEvent = {
 				...modifiedEvent,
@@ -172,15 +177,15 @@ export const decodeEventABI = (
 		}
 	}
 
-	const argTopics = modifiedEvent.anonymous ? data.topics : (data.topics ?? []).slice(1);
+	const argTopics = modifiedEvent.anonymous ? topics : topics.slice(1);
 	return {
 		...result,
-		returnValues: decodeLog([...(modifiedEvent.inputs ?? [])], data.data, argTopics),
+		returnValues: decodeLog([...(modifiedEvent.inputs ?? [])], logData, argTopics),
 		event: modifiedEvent.name,
 		signature:
-			modifiedEvent.anonymous || !data.topics || data.topics.length === 0 || !data.topics[0]
+			modifiedEvent.anonymous || topics.length === 0 || !topics[0]
 				? undefined
-				: data.topics[0],
+				: topics[0],
 
 		raw: {
 			data: data.data,

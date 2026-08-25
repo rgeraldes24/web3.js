@@ -74,10 +74,9 @@ import {
 	PayableCallOptions,
 	DataFormat,
 	DEFAULT_RETURN_FORMAT,
-	Numbers,
 	Web3ValidationErrorObject,
 } from '@theqrl/web3-types';
-import { format, isDataFormat, keccak256, toChecksumAddress } from '@theqrl/web3-utils';
+import { bytesToHex, format, isDataFormat, toChecksumAddress } from '@theqrl/web3-utils';
 import {
 	isNullish,
 	validator,
@@ -87,6 +86,7 @@ import {
 } from '@theqrl/web3-validator';
 import { ALL_EVENTS, ALL_EVENTS_ABI } from './constants.js';
 import { decodeEventABI, decodeMethodReturn, encodeEventABI, encodeMethodABI } from './encoding.js';
+import { assertSupportedIndexedType, encodeIndexedFilterTopic } from './indexed_topic.js';
 import { LogsSubscription } from './log_subscription.js';
 import {
 	ContractAbiWithSignature,
@@ -774,33 +774,47 @@ export class Contract<Abi extends ContractAbi>
 			return decodedLogs.filter(log => {
 				if (typeof log === 'string') return true;
 
+				const logAbi =
+					abi.name === ALL_EVENTS
+						? this._jsonInterface.find(
+								item =>
+									isAbiEventFragment(item) && item.signature === log.signature,
+							)
+						: abi;
+
 				return filterKeys.every((key: string) => {
-					const inputAbi = abi.inputs?.find(input => input.name === key);
-					if (Array.isArray(filter[key])) {
-						if (inputAbi?.indexed && inputAbi.type === 'string') {
-							return (filter[key] as string[]).some(
-								value =>
-									keccak256(value).toUpperCase() ===
-									String(log.returnValues[key]).toUpperCase(),
-							);
+					const inputAbi = logAbi?.inputs?.find(input => input.name === key);
+					if (!inputAbi) return false;
+
+					const matches = (value: unknown) => {
+						let expected = value;
+						let actual = log.returnValues[key];
+						if (inputAbi.type.startsWith('bytes') && value instanceof Uint8Array) {
+							expected = bytesToHex(value);
+						}
+						if (inputAbi.indexed) {
+							try {
+								assertSupportedIndexedType(inputAbi.type);
+								if (inputAbi.type === 'string' || inputAbi.type === 'bytes') {
+									const encodedTopic = encodeIndexedFilterTopic(
+										inputAbi.type,
+										value,
+									);
+									expected = encodedTopic.slice(0, 66);
+									actual = String(actual).slice(0, 66);
+								}
+							} catch (error) {
+								if (abi.name === ALL_EVENTS) return false;
+								throw error;
+							}
 						}
 
-						return (filter[key] as Numbers[]).some(
-							(v: Numbers) =>
-								String(log.returnValues[key]).toUpperCase() ===
-								String(v).toUpperCase(),
-						);
-					}
+						return String(actual).toUpperCase() === String(expected).toUpperCase();
+					};
 
-					if (inputAbi?.indexed && inputAbi.type === 'string') {
-						const hashedIndexedString = keccak256(filter[key] as string);
-						if (hashedIndexedString === String(log.returnValues[key])) return true;
-					}
-
-					return (
-						String(log.returnValues[key]).toUpperCase() ===
-						String(filter[key]).toUpperCase()
-					);
+					return Array.isArray(filter[key])
+						? (filter[key] as unknown[]).some(matches)
+						: matches(filter[key]);
 				});
 			});
 		}

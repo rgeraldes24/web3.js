@@ -97,7 +97,7 @@ const findSchemaByDataPath = (
  */
 export const convertScalarValue = (value: unknown, qrlType: string, format: DataFormat) => {
 	if (qrlType === 'topic') {
-		const topic = new Uint8Array(bytesToUint8Array(value as Bytes));
+		const topic = bytesToUint8Array(value as Bytes);
 		if (topic.length !== 64) {
 			throw new FormatterError(
 				`Invalid log topic length: expected 64 bytes, got ${topic.length}`,

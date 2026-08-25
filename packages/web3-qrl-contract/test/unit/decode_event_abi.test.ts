@@ -14,7 +14,8 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { AbiEventFragment, LogsInput } from '@theqrl/web3-types';
+import { AbiEventFragment, FMT_BYTES, FMT_NUMBER, LogsInput } from '@theqrl/web3-types';
+import { hexToBytes } from '@theqrl/web3-utils';
 import { ContractAbiWithSignature, decodeEventABI } from '../../src';
 
 const ZERO_HALF = '0'.repeat(64);
@@ -78,6 +79,28 @@ describe('decodeEventABI', () => {
 
 			expect(decoded.event).toBe('FullWidthIndexedEvent');
 			expect(decoded.returnValues.addr).toBe(`Q${'ff'.repeat(64)}`);
+		});
+
+		it('should decode and match allEvents from Uint8Array log data', () => {
+			const byteLog = {
+				...fullWidthLog,
+				data: hexToBytes(fullWidthLog.data),
+				topics: fullWidthLog.topics.map(hexToBytes),
+			} as unknown as LogsInput;
+
+			const decoded = decodeEventABI(
+				{ ...fullWidthEventFragment, name: 'ALLEVENTS' },
+				byteLog,
+				jsonInterface,
+				{ number: FMT_NUMBER.BIGINT, bytes: FMT_BYTES.UINT8ARRAY },
+			);
+
+			expect(decoded.event).toBe('FullWidthIndexedEvent');
+			expect(decoded.signature).toBe(eventSignature);
+			expect(decoded.returnValues.addr).toBe(`Q${'ff'.repeat(64)}`);
+			expect(decoded.returnValues.raw).toBe(`0x${FF_HALF}`);
+			expect(decoded.returnValues.num).toBe(BigInt(2) ** BigInt(256) - BigInt(1));
+			expect(decoded.raw?.topics[0]).toBeInstanceOf(Uint8Array);
 		});
 	});
 });

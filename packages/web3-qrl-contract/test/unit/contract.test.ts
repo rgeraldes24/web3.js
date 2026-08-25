@@ -25,6 +25,8 @@ import {
 } from '@theqrl/web3-types';
 import { ContractExecutionError, Web3ContractError } from '@theqrl/web3-errors';
 import { Web3Context } from '@theqrl/web3-core';
+import { encodeEventSignature } from '@theqrl/web3-qrl-abi';
+import { hexToBytes, sha3Raw } from '@theqrl/web3-utils';
 import { Contract } from '../../src';
 import { sampleStorageContractABI } from '../fixtures/storage';
 import { GreeterAbi, GreeterBytecode } from '../shared_fixtures/build/Greeter';
@@ -36,8 +38,6 @@ import { processAsync } from '../shared_fixtures/utils';
 
 jest.mock('@theqrl/web3-qrl');
 
-// The VM-encoded constructor arg ('My Greeting') is kept as an independent literal so the
-// deploy-encoding assertions do not derive their expectation from the encoder under test.
 const GREETER_DEPLOYMENT_DATA = `${GreeterBytecode}000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b4d79204772656574696e670000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000`;
 
 describe('Contract', () => {
@@ -1094,6 +1094,79 @@ describe('Contract', () => {
 			expect(pastEventFilterWithIncorrectParam).toHaveLength(0);
 
 			spyTx.mockClear();
+			spyGetLogs.mockClear();
+		});
+
+		it('ignores allEvents logs whose ABI is incompatible with the filter value', async () => {
+			const indexedString = {
+				anonymous: false,
+				inputs: [{ indexed: true, internalType: 'string', name: 'value', type: 'string' }],
+				name: 'IndexedString',
+				type: 'event',
+			} as const;
+			const indexedBytes = {
+				...indexedString,
+				inputs: [{ indexed: true, internalType: 'bytes', name: 'value', type: 'bytes' }],
+				name: 'IndexedBytes',
+			} as const;
+			const padding = '0'.repeat(64);
+			const stringHash = sha3Raw('0x616c706861');
+			const bytesHash = sha3Raw('0xabcd');
+			const spyGetLogs = jest.spyOn(qrl, 'getLogs').mockResolvedValue([
+				{
+					...getLogsData.response[0],
+					data: '0x',
+					topics: [encodeEventSignature(indexedString), `${stringHash}${padding}`],
+				},
+				{
+					...getLogsData.response[0],
+					data: '0x',
+					topics: [encodeEventSignature(indexedBytes), `${bytesHash}${padding}`],
+				},
+			] as never);
+			const contract = new Contract([indexedString, indexedBytes], deployedAddr);
+
+			const events = await contract.getPastEvents('allEvents', {
+				filter: { value: 'alpha' },
+			});
+
+			expect(events).toHaveLength(1);
+			expect(events[0]).toMatchObject({
+				event: 'IndexedString',
+				returnValues: { value: stringHash },
+			});
+			spyGetLogs.mockClear();
+		});
+
+		it.each([
+			['indexed', true],
+			['non-indexed', false],
+		] as const)('matches a %s bytes32 Uint8Array filter after decoding', async (_label, indexed) => {
+			const bytes32Event = {
+				anonymous: false,
+				inputs: [
+					{ indexed, internalType: 'bytes32', name: 'value', type: 'bytes32' },
+				],
+				name: 'IndexedBytes32',
+				type: 'event',
+			} as const;
+			const value = `0x${'ab'.repeat(32)}`;
+			const encodedValue = `${value}${'0'.repeat(64)}`;
+			const spyGetLogs = jest.spyOn(qrl, 'getLogs').mockResolvedValue([
+				{
+					...getLogsData.response[0],
+					data: indexed ? '0x' : encodedValue,
+					topics: [encodeEventSignature(bytes32Event), ...(indexed ? [encodedValue] : [])],
+				},
+			] as never);
+			const contract = new Contract([bytes32Event], deployedAddr);
+
+			const events = await contract.getPastEvents('IndexedBytes32', {
+				filter: { value: hexToBytes(value) },
+			});
+
+			expect(events).toHaveLength(1);
+			expect(events[0]).toMatchObject({ returnValues: { value } });
 			spyGetLogs.mockClear();
 		});
 

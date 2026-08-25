@@ -15,14 +15,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { HexString, AbiParameter, DecodedParams } from '@theqrl/web3-types';
+import { bytesToHex } from '@theqrl/web3-utils';
+import { HexString, AbiParameter, Bytes, DecodedParams } from '@theqrl/web3-types';
 import { decodeParameter, decodeParametersWith } from './parameters_api.js';
 
-const STATIC_TYPES = ['bool', 'string', 'int', 'uint', 'address', 'fixed', 'ufixed'];
-const FIXED_BYTES_TYPE = /^bytes(?:[1-9]|[1-5][0-9]|6[0-4])$/;
+const ARRAY_TYPE = /\[[0-9]*\]$/;
 
-const _decodeParameter = (inputType: string, clonedTopic: string) =>
-	inputType === 'string' ? clonedTopic.slice(0, 66) : decodeParameter(inputType, clonedTopic);
+const isIndexedHash = (inputType: string) =>
+	inputType === 'string' ||
+	inputType === 'bytes' ||
+	inputType === 'function' ||
+	inputType.startsWith('tuple') ||
+	ARRAY_TYPE.test(inputType);
+
+const decodeTopic = (inputType: string, topic: Bytes) => {
+	const normalizedTopic = typeof topic === 'string' ? topic : bytesToHex(topic);
+	return isIndexedHash(inputType)
+		? normalizedTopic.slice(0, 66)
+		: decodeParameter(inputType, normalizedTopic);
+};
 
 /**
  * Decodes ABI-encoded log data and indexed topic data.
@@ -70,7 +81,7 @@ const _decodeParameter = (inputType: string, clonedTopic: string) =>
 export const decodeLog = <ReturnType extends DecodedParams>(
 	inputs: Array<AbiParameter>,
 	data: HexString,
-	topics: string | string[],
+	topics: Bytes | Bytes[],
 ) => {
 	const clonedTopics = Array.isArray(topics) ? topics : [topics];
 
@@ -93,9 +104,7 @@ export const decodeLog = <ReturnType extends DecodedParams>(
 	const offset = clonedTopics.length - Object.keys(indexedInputs).length;
 
 	const decodedIndexedInputs = Object.values(indexedInputs).map((input, index) =>
-		STATIC_TYPES.some(s => input.type.startsWith(s)) || FIXED_BYTES_TYPE.test(input.type)
-			? _decodeParameter(input.type, clonedTopics[index + offset])
-			: clonedTopics[index + offset],
+		decodeTopic(input.type, clonedTopics[index + offset]),
 	);
 
 	const returnValues: DecodedParams = { __length__: 0 };

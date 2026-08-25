@@ -1,0 +1,12 @@
+// SPDX-License-Identifier: GNU
+pragma hyperion >=0.0;
+
+contract IndexedDynamicEvents {
+	event IndexedString(string indexed value, uint256 indexed id);
+	event IndexedBytes(bytes indexed value, uint256 indexed id);
+
+	function fire(string calldata stringValue, bytes calldata bytesValue, uint256 id) public {
+		emit IndexedString(stringValue, id);
+		emit IndexedBytes(bytesValue, id);
+	}
+}
