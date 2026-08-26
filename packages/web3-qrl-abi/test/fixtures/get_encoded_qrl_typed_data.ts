@@ -597,6 +597,20 @@ export const testData: [string, QRLTypedData, boolean | undefined, string][] = [
 		true,
 		'0x6e45f6f8417505d964ae9ebc9ca2c50e2588f3547a7189d4fdde938f26b64e31',
 	],
+	[
+		'should hash a hex-looking string value as UTF-8 text',
+		{
+			types: {
+				QRLTypedDataDomain: [{ name: 'name', type: 'string' }],
+				Message: [{ name: 'value', type: 'string' }],
+			},
+			primaryType: 'Message',
+			domain: { name: 'Test' },
+			message: { value: '0x1234' },
+		},
+		true,
+		'0x1d209d6d7f729d7de4c7001ffddcc0c9e01fb789d42133690bc6829a7a242501',
+	],
 ];
 
 /**
