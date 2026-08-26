@@ -350,7 +350,7 @@ export const testData: [string, QRLTypedData, boolean | undefined, string][] = [
 		'0x910c79f4dc6ed873523316d07c5f502b39412fd07eb1aa627a8f2c07d6faff2d',
 	],
 	[
-		'should get encoded message with dynamic array',
+		'should get encoded message with fixed array',
 		{
 			types: {
 				QRLTypedDataDomain: [
@@ -378,7 +378,7 @@ export const testData: [string, QRLTypedData, boolean | undefined, string][] = [
 					},
 					{
 						name: 'array2',
-						type: 'address[]',
+						type: 'address[3]',
 					},
 					{
 						name: 'array3',
@@ -405,10 +405,10 @@ export const testData: [string, QRLTypedData, boolean | undefined, string][] = [
 			},
 		},
 		false,
-		'0x190117fa7042b8aa94b9ef86e1eb0846d9dbe945d7a2901618f7137c2849ce8370605c59b9659cf7843220e18df18a71d1599af1dc6461808d18d15c29381fc69a73',
+		'0x190117fa7042b8aa94b9ef86e1eb0846d9dbe945d7a2901618f7137c2849ce8370602267fb8b769f7129d648a9fb181be878bdd68d5754525cda887c81984317ae2a',
 	],
 	[
-		'should get encoded message with dynamic array',
+		'should get encoded message with fixed array',
 		{
 			types: {
 				QRLTypedDataDomain: [
@@ -436,7 +436,7 @@ export const testData: [string, QRLTypedData, boolean | undefined, string][] = [
 					},
 					{
 						name: 'array2',
-						type: 'address[]',
+						type: 'address[3]',
 					},
 					{
 						name: 'array3',
@@ -463,7 +463,7 @@ export const testData: [string, QRLTypedData, boolean | undefined, string][] = [
 			},
 		},
 		true,
-		'0x910c79f4dc6ed873523316d07c5f502b39412fd07eb1aa627a8f2c07d6faff2d',
+		'0x1948a10f87c45c76677fe4a9724a8a2e6432c9804d8ec67381807c3d8d11c8b4',
 	],
 	[
 		'should get encoded message with bytes32',
@@ -661,7 +661,7 @@ export const erroneousTestData: [string, QRLTypedData, boolean | undefined, Erro
 		new Error('Cannot encode data: value is not of array type'),
 	],
 	[
-		'should throw error: Cannot encode data: invalid type definitions',
+		'should throw error: Cannot encode data: expected length of 3, but got 1',
 		{
 			types: {
 				QRLTypedDataDomain: [
@@ -714,7 +714,7 @@ export const erroneousTestData: [string, QRLTypedData, boolean | undefined, Erro
 			},
 		},
 		false,
-		new Error('Cannot encode data: invalid type definitions'),
+		new Error('Cannot encode data: expected length of 3, but got 1'),
 	],
 	[
 		"should throw error: Cannot encode data: missing data for 'array3'",

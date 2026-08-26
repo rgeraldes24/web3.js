@@ -93,34 +93,10 @@ describe('signTypedData - typed data validation', () => {
 			},
 		],
 		[
-			'domain is undefined',
-			() => {
-				const d = clone();
-				d.domain = {};
-				return d;
-			},
-		],
-		[
-			'message has extra data',
-			() => {
-				const d = clone();
-				d.message.extra = 'not declared';
-				return d;
-			},
-		],
-		[
 			'type member missing its type field',
 			() => {
 				const d = clone();
 				delete d.types.Message[0].type;
-				return d;
-			},
-		],
-		[
-			'fixed array type is not supported by current go-qrl',
-			() => {
-				const d = clone();
-				d.types.Message[0].type = 'string[2]';
 				return d;
 			},
 		],

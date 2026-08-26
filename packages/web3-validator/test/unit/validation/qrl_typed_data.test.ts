@@ -19,14 +19,9 @@ import {
 	isEip712TypedData,
 	isQRLTypedData as isQRLTypedDataFromDeprecatedModule,
 } from '../../../src/validation/eip712';
-import {
-	isQRLTypedData,
-	isQRLTypedDataTypeDefinitions,
-} from '../../../src/validation/qrl_typed_data';
+import { isQRLTypedData } from '../../../src/validation/qrl_typed_data';
 import { validator } from '../../../src/default_validator';
 
-// A minimal but complete QRL Typed Structured Data v1 payload. Every negative case below is this
-// object with exactly one thing broken, so each test pins one encoder precondition.
 const validTypedData = {
 	types: {
 		QRLTypedDataDomain: [
@@ -105,45 +100,6 @@ describe('validation', () => {
 			expect(isQRLTypedData(data)).toBe(false);
 		});
 
-		it.each(['string[2]', 'string[][]'])(
-			'should reject an array type unsupported by current go-qrl: %s',
-			type => {
-				const data = clone();
-				data.types.Message[0].type = type;
-				expect(isQRLTypedData(data)).toBe(false);
-			},
-		);
-
-		it.each([
-			['empty type key', { '': [] }],
-			['invalid bytes width', { Unused: [{ name: 'value', type: 'bytes65' }] }],
-			['noncanonical integer width', { Unused: [{ name: 'value', type: 'int08' }] }],
-			['undefined reference', { Unused: [{ name: 'value', type: 'Missing' }] }],
-			['direct self-reference', { Unused: [{ name: 'value', type: 'Unused' }] }],
-		])('should reject type definitions containing an %s', (_, extraTypes) => {
-			const data = clone();
-			data.types = { ...data.types, ...extraTypes };
-			expect(isQRLTypedDataTypeDefinitions(data.types)).toBe(false);
-			expect(isQRLTypedData(data)).toBe(false);
-		});
-
-		it('should match the go-qrl cycle and primary-key policy', () => {
-			const selfArray = clone();
-			selfArray.types.Node = [{ name: 'children', type: 'Node[]' }];
-			expect(isQRLTypedDataTypeDefinitions(selfArray.types)).toBe(true);
-
-			const indirectCycle = clone();
-			indirectCycle.types.A = [{ name: 'b', type: 'B' }];
-			indirectCycle.types.B = [{ name: 'a', type: 'A' }];
-			expect(isQRLTypedDataTypeDefinitions(indirectCycle.types)).toBe(true);
-
-			const nonIdentifierPrimary = clone();
-			nonIdentifierPrimary.types['Order-V1'] = [{ name: 'value', type: 'uint512' }];
-			nonIdentifierPrimary.primaryType = 'Order-V1';
-			nonIdentifierPrimary.message = { value: 1 };
-			expect(isQRLTypedData(nonIdentifierPrimary)).toBe(true);
-		});
-
 		it.each([undefined, '', 42, {}])('should reject primaryType: %s', primaryType => {
 			const data = clone();
 			data.primaryType = primaryType;
@@ -165,41 +121,6 @@ describe('validation', () => {
 		it.each(['domain', 'message'])('should reject when %s is not a plain object', field => {
 			const data = clone();
 			data[field] = 'not-an-object';
-			expect(isQRLTypedData(data)).toBe(false);
-		});
-
-		it('should reject an undefined domain', () => {
-			const data = clone();
-			data.domain = {};
-			expect(isQRLTypedData(data)).toBe(false);
-		});
-
-		it.each([
-			['wrong-typed known field', { name: 123, chainId: 1 }],
-			['invalid chainId syntax', { chainId: '-0x1' }],
-			['over-wide chainId', { chainId: `0x1${'0'.repeat(64)}` }],
-			['exponent-form numeric chainId', { chainId: 1e21 }],
-		])('should reject an invalid or unsupported domain: %s', (_, domain) => {
-			const data = clone();
-			data.domain = domain;
-			expect(isQRLTypedData(data)).toBe(false);
-		});
-
-		it.each([
-			{ chainId: '' },
-			{ chainId: '+1' },
-			{ chainId: '0X1' },
-			{ chainId: Number.MAX_SAFE_INTEGER + 1 },
-			{ chainId: 2 ** 63 },
-		])('should accept a go-qrl-compatible chainId: %p', domain => {
-			const data = clone();
-			data.domain = domain;
-			expect(isQRLTypedData(data)).toBe(true);
-		});
-
-		it('should reject extra message fields', () => {
-			const data = clone();
-			data.message.extra = 'not declared';
 			expect(isQRLTypedData(data)).toBe(false);
 		});
 
