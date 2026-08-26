@@ -99,7 +99,7 @@ const getStructHash = (
 /**
  * Get the QRL typed-data message to sign. If `hash` is enabled, the message will be hashed with Keccak256.
  */
-export const getQRLTypedDataMessage = (typedData: QRLTypedData, hash?: boolean): string => {
+export const getMessage = (typedData: QRLTypedData, hash?: boolean): string => {
 	const TYPED_DATA_PREFIX = '1901';
 	const message = `0x${TYPED_DATA_PREFIX}${getStructHash(
 		typedData,

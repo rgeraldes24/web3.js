@@ -25,4 +25,4 @@ export * from './api/logs_api.js';
 export * from './api/parameters_api.js';
 export * from './utils.js';
 export * from './decode_contract_error_data.js';
-export { getQRLTypedDataMessage as getEncodedQRLTypedData } from './qrl_typed_data.js';
+export { getMessage as getEncodedQRLTypedData } from './qrl_typed_data.js';
