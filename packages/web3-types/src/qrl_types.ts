@@ -440,12 +440,6 @@ export interface QRLTypedData {
 	readonly message: Record<string, unknown>;
 }
 
-/** @deprecated Use {@link QRLTypedDataTypeDetails}. */
-export type Eip712TypeDetails = QRLTypedDataTypeDetails;
-
-/** @deprecated Use {@link QRLTypedData}. */
-export type Eip712TypedData = QRLTypedData;
-
 /**
  * To contain the gas Fee Data to be used with transactions.
  *

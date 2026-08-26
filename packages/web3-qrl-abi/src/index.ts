@@ -26,6 +26,3 @@ export * from './api/parameters_api.js';
 export * from './utils.js';
 export * from './decode_contract_error_data.js';
 export { getQRLTypedDataMessage as getEncodedQRLTypedData } from './qrl_typed_data.js';
-
-/** @deprecated Use {@link getEncodedQRLTypedData}. */
-export { getQRLTypedDataMessage as getEncodedEip712Data } from './qrl_typed_data.js';

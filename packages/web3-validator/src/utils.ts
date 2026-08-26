@@ -39,10 +39,9 @@ const extraTypes = [
 	'filter',
 	'bloom',
 	'qrlTypedData',
-	'eip712TypedData',
 ];
 
-export const parseBaseType = <T = typeof VALID_QRL_BASE_TYPES[number]>(
+export const parseBaseType = <T = (typeof VALID_QRL_BASE_TYPES)[number]>(
 	type: string,
 ): {
 	baseType?: T;

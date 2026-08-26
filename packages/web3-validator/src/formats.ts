@@ -35,8 +35,6 @@ const formats: { [key: string]: (data: unknown) => boolean } = {
 	bool: (data: unknown) => isBoolean(data as ValidInputTypes),
 	bytes: (data: unknown) => isBytes(data as ValidInputTypes | Uint8Array | number[]),
 	qrlTypedData: (data: unknown) => isQRLTypedData(data),
-	// Deprecated validation-format alias. It validates the QRL payload shape only.
-	eip712TypedData: (data: unknown) => isQRLTypedData(data),
 	filter: (data: unknown) => isFilterObject(data as Filter),
 	hex: (data: unknown) => isHexStrict(data as ValidInputTypes),
 	uint: (data: unknown) => isUInt(data as ValidInputTypes),

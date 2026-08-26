@@ -47,6 +47,3 @@ export const isQRLTypedData = (value: unknown): boolean => {
 
 	return true;
 };
-
-/** @deprecated Use {@link isQRLTypedData}. */
-export const isEip712TypedData = isQRLTypedData;

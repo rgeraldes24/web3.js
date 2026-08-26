@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isEip712TypedData, isQRLTypedData } from '../../../src/validation/qrl_typed_data';
+import { isQRLTypedData } from '../../../src/validation/qrl_typed_data';
 import { validator } from '../../../src/default_validator';
 
 const validTypedData = {
@@ -125,10 +125,6 @@ describe('validation', () => {
 			data.someProviderExtension = { anything: true };
 			expect(isQRLTypedData(data)).toBe(true);
 		});
-
-		it('keeps the old validator export as a deprecated symbol alias', () => {
-			expect(isEip712TypedData(validTypedData)).toBe(true);
-		});
 	});
 
 	describe('qrlTypedData format wiring', () => {
@@ -140,10 +136,6 @@ describe('validation', () => {
 			const data = clone();
 			delete data.types.QRLTypedDataDomain;
 			expect(() => validator.validate(['qrlTypedData'], [data])).toThrow();
-		});
-
-		it('keeps the old format name as a deprecated alias', () => {
-			expect(() => validator.validate(['eip712TypedData'], [validTypedData])).not.toThrow();
 		});
 	});
 });

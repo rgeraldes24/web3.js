@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { QRLTypedData } from '@theqrl/web3-types';
 
-import { getEncodedEip712Data, getEncodedQRLTypedData } from '../../src/index';
+import { getEncodedQRLTypedData } from '../../src/index';
 
 const goQRLWideValuesGolden: QRLTypedData = {
 	types: {
@@ -45,12 +45,6 @@ describe('go-qrl QRL typed-data compatibility', () => {
 	it('matches the go-qrl uint512 and bytes64 golden digest', () => {
 		expect(getEncodedQRLTypedData(goQRLWideValuesGolden, true)).toBe(
 			'0x054b04b5b0976d8b58cb06fb10c1100af45cf46488d16842897e6b2a81ed6ed3',
-		);
-	});
-
-	it('keeps the old encoder export as a deprecated symbol alias', () => {
-		expect(getEncodedEip712Data(goQRLWideValuesGolden, true)).toBe(
-			getEncodedQRLTypedData(goQRLWideValuesGolden, true),
 		);
 	});
 });
