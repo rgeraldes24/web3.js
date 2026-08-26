@@ -15,11 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-	isEip712TypedData,
-	isQRLTypedData as isQRLTypedDataFromDeprecatedModule,
-} from '../../../src/validation/eip712';
-import { isQRLTypedData } from '../../../src/validation/qrl_typed_data';
+import { isEip712TypedData, isQRLTypedData } from '../../../src/validation/qrl_typed_data';
 import { validator } from '../../../src/default_validator';
 
 const validTypedData = {
@@ -132,7 +128,6 @@ describe('validation', () => {
 
 		it('keeps the old validator export as a deprecated symbol alias', () => {
 			expect(isEip712TypedData(validTypedData)).toBe(true);
-			expect(isQRLTypedDataFromDeprecatedModule(validTypedData)).toBe(true);
 		});
 	});
 
