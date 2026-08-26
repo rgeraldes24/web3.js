@@ -127,7 +127,7 @@ export const isQRLTypedData = (value: unknown): boolean => {
 	const { types, primaryType, domain, message } = value as Partial<QRLTypedData>;
 
 	// `types` is indexed for every type encountered, and `types.QRLTypedDataDomain` is read
-	// unconditionally by `getMessage` to build the domain separator.
+	// unconditionally by `getEncodedQRLTypedData` to build the domain separator.
 	if (!isQRLTypedDataTypeDefinitions(types)) return false;
 	if (!Array.isArray((types as Record<string, unknown>).QRLTypedDataDomain)) return false;
 

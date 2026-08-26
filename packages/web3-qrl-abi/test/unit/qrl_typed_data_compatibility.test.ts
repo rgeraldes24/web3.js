@@ -19,7 +19,6 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { QRLTypedData } from '@theqrl/web3-types';
 
 import { getEncodedEip712Data, getEncodedQRLTypedData } from '../../src/index';
-import { getMessage as getLegacyMessage } from '../../src/eip_712';
 
 const goQRLWideValuesGolden: QRLTypedData = {
 	types: {
@@ -85,9 +84,6 @@ describe('go-qrl QRL typed-data compatibility', () => {
 
 	it('keeps the old encoder export as a deprecated symbol alias', () => {
 		expect(getEncodedEip712Data(goQRLWideValuesGolden, true)).toBe(
-			getEncodedQRLTypedData(goQRLWideValuesGolden, true),
-		);
-		expect(getLegacyMessage(goQRLWideValuesGolden, true)).toBe(
 			getEncodedQRLTypedData(goQRLWideValuesGolden, true),
 		);
 	});
