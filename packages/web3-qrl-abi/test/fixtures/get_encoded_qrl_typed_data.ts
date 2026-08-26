@@ -18,7 +18,7 @@ import { QRLTypedData } from '@theqrl/web3-types';
 
 /**
  * string is the test title
- * QRLTypedData is the entire QRL Typed Structured Data v1 object
+ * QRLTypedData is the entire QRL Typed Structured Data object
  * boolean is whether the QRL typed data is Keccak-256 hashed
  * string is the encoded data expected from getEncodedQRLTypedData
  */
@@ -601,7 +601,7 @@ export const testData: [string, QRLTypedData, boolean | undefined, string][] = [
 
 /**
  * string is the test title
- * QRLTypedData is the entire QRL Typed Structured Data v1 object
+ * QRLTypedData is the entire QRL Typed Structured Data object
  * boolean is whether the QRL typed data is Keccak-256 hashed
  * string is the encoded data expected from getEncodedQRLTypedData
  */

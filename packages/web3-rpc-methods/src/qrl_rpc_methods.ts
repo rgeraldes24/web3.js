@@ -501,7 +501,7 @@ export async function createAccessList(
 }
 
 /**
- * Sends QRL Typed Structured Data v1 to the connected **wallet** provider to be signed. Typed-data signing
+ * Sends QRL Typed Structured Data to the connected **wallet** provider to be signed. Typed-data signing
  * is a wallet capability, not a node one — gqrl does not implement it (as geth does not; it lives
  * in clef). The QRL web3 wallet extension answers `qrl_signTypedData_v4` and signs locally.
  *

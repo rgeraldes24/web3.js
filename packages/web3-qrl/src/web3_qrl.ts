@@ -1418,7 +1418,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	}
 
 	/**
-	 * This method sends QRL Typed Structured Data v1 to the connected wallet provider to be signed.
+	 * This method sends QRL Typed Structured Data to the connected wallet provider to be signed.
 	 *
 	 * Typed-data signing is a **wallet** capability, not a node one: the request is answered by
 	 * a wallet provider (for example the QRL web3 wallet extension, which implements

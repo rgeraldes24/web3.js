@@ -429,7 +429,7 @@ export interface QRLTypedDataTypeDetails {
 	type: string;
 }
 
-/** QRL Typed Structured Data v1 payload. */
+/** QRL Typed Structured Data payload. */
 export interface QRLTypedData {
 	readonly types: {
 		QRLTypedDataDomain: QRLTypedDataTypeDetails[];
