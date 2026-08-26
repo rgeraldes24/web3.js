@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Web3ContractError } from '@theqrl/web3-errors';
-import { encodeParameter, hashToLogTopic } from '@theqrl/web3-qrl-abi';
+import { encodeParameter, formatOddHexstrings, hashToLogTopic } from '@theqrl/web3-qrl-abi';
 import { Bytes, Topic } from '@theqrl/web3-types';
 import { bytesToHex, keccak256 } from '@theqrl/web3-utils';
 
@@ -35,11 +35,15 @@ export const encodeIndexedFilterTopic = (type: string, value: unknown): Topic =>
 		type.startsWith('bytes') && value instanceof Uint8Array ? bytesToHex(value) : value;
 	if (type !== 'string' && type !== 'bytes') return encodeParameter(type, validationValue);
 
-	encodeParameter(type, validationValue);
+	const normalizedValue =
+		type === 'bytes' && typeof validationValue === 'string'
+			? formatOddHexstrings(validationValue)
+			: validationValue;
+	encodeParameter(type, normalizedValue);
 	const hash =
 		type === 'string'
-			? keccak256(new TextEncoder().encode(value as string))
-			: keccak256(value as Bytes);
+			? keccak256(new TextEncoder().encode(normalizedValue as string))
+			: keccak256(normalizedValue as Bytes);
 
 	return hashToLogTopic(hash);
 };

@@ -195,6 +195,16 @@ describe('encodeEventAbi', () => {
 			expect(topics?.[2]).toBe(bytesHash);
 		});
 
+		it('should normalize odd-length hex bytes before hashing', () => {
+			const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
+				filter: { data: '0xabc' },
+			}).topics;
+
+			expect(topics?.[2]).toBe(
+				`0xe91cf08aac85935e32397f410e48217a127b6855d41b1e3877eb4179c0904b77${padding}`,
+			);
+		});
+
 		it('should hash bytes supplied as a Uint8Array', () => {
 			const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
 				filter: { data: new Uint8Array([0xab, 0xcd]) },

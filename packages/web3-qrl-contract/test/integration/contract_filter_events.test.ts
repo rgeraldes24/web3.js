@@ -344,15 +344,15 @@ describe('contract getPastEvent filter', () => {
 			expect(events[0]?.returnValues.id).toBe(BigInt(2));
 		});
 
-		it('filters indexed bytes', async () => {
+		it('normalizes odd-length indexed bytes filters', async () => {
 			const events = (await contractDeployed.getPastEvents('IndexedBytes', {
 				fromBlock,
-				filter: { value: '0xff' },
+				filter: { value: '0x102' },
 			})) as EventLog[];
 
 			expect(events).toHaveLength(1);
-			expect(events[0]?.returnValues.value).toBe(sha3Raw('0xff'));
-			expect(events[0]?.returnValues.id).toBe(BigInt(2));
+			expect(events[0]?.returnValues.value).toBe(sha3Raw('0x0102'));
+			expect(events[0]?.returnValues.id).toBe(BigInt(1));
 		});
 
 		it('filters indexed bytes with OR semantics', async () => {
