@@ -14,13 +14,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Address, Eip712TypedData } from '@theqrl/web3-types';
+import { Address, QRLTypedData } from '@theqrl/web3-types';
 
 const address = 'Q83cd1122848dd1b2E3AF9ca60a1340e595B2C6d5b3B340AfD625e38EEf9067bc9C28db215702Aa8B3C0243Bb13785a9365A35ee1Fe8e57983b1D47d9fff835a3';
 
 const typedData = {
 	types: {
-		EIP712Domain: [
+		QRLTypedDataDomain: [
 			{
 				name: 'name',
 				type: 'string',
@@ -93,5 +93,5 @@ export const mockRpcResponse =
  *     - address
  *     - message
  */
-type TestData = [string, [Address, Eip712TypedData]];
+type TestData = [string, [Address, QRLTypedData]];
 export const testData: TestData[] = [['typed data', [address, typedData]]];

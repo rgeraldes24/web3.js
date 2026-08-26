@@ -45,7 +45,7 @@ import {
 	TransactionWithFromAndToLocalWalletIndex,
 	TransactionForAccessList,
 	AccessListResult,
-	Eip712TypedData,
+	QRLTypedData,
 } from '@theqrl/web3-types';
 import { Web3Context, Web3PromiEvent } from '@theqrl/web3-core';
 import { format, hexToBytes, bytesToUint8Array, numberToHex } from '@theqrl/web3-utils';
@@ -984,7 +984,7 @@ export async function createAccessList<ReturnFormat extends DataFormat>(
 export async function signTypedData<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<QRLExecutionAPI>,
 	address: Address,
-	typedData: Eip712TypedData,
+	typedData: QRLTypedData,
 	returnFormat: ReturnFormat,
 ) {
 	const response = await qrlRpcMethods.signTypedData(

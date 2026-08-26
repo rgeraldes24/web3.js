@@ -21,13 +21,13 @@ import {
 	Filter,
 	HexString32Bytes,
 	HexStringBytes,
+	QRLTypedData,
 	TransactionCallAPI,
 	TransactionWithSenderAPI,
 	Uint,
 	Uint256,
 	Web3QRLExecutionAPI,
 } from '@theqrl/web3-types';
-import { Eip712TypedData } from '@theqrl/web3-types/src/qrl_types';
 import { validator } from '@theqrl/web3-validator';
 
 export async function getProtocolVersion(requestManager: Web3RequestManager) {
@@ -501,7 +501,7 @@ export async function createAccessList(
 }
 
 /**
- * Sends EIP-712 typed data to the connected **wallet** provider to be signed. Typed-data signing
+ * Sends QRL Typed Structured Data v1 to the connected **wallet** provider to be signed. Typed-data signing
  * is a wallet capability, not a node one — gqrl does not implement it (as geth does not; it lives
  * in clef). The QRL web3 wallet extension answers `qrl_signTypedData_v4` and signs locally.
  *
@@ -510,13 +510,13 @@ export async function createAccessList(
 export async function signTypedData(
 	requestManager: Web3RequestManager,
 	address: Address,
-	typedData: Eip712TypedData,
+	typedData: QRLTypedData,
 ): Promise<string> {
-	// The `eip712TypedData` format mirrors `getEncodedEip712Data` (@theqrl/web3-qrl-abi) — the
+	// The `qrlTypedData` format mirrors `getEncodedQRLTypedData` (@theqrl/web3-qrl-abi) — the
 	// encoder this library and the wallet share — rather than any node-side implementation,
 	// because a wallet provider answers this request and encodes with that same function.
 	// Without it, a malformed request fails inside the wallet's encoder with an opaque TypeError.
-	validator.validate(['address', 'eip712TypedData'], [address, typedData]);
+	validator.validate(['address', 'qrlTypedData'], [address, typedData]);
 
 	return requestManager.send({
 		method: 'qrl_signTypedData_v4',

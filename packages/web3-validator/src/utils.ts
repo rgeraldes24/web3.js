@@ -38,6 +38,7 @@ const extraTypes = [
 	'blockNumberOrTag',
 	'filter',
 	'bloom',
+	'qrlTypedData',
 	'eip712TypedData',
 ];
 

@@ -424,19 +424,27 @@ export interface AccountObject {
 	readonly storageProof: StorageProof[];
 }
 
-export interface Eip712TypeDetails {
+export interface QRLTypedDataTypeDetails {
 	name: string;
 	type: string;
 }
-export interface Eip712TypedData {
+
+/** QRL Typed Structured Data v1 payload. */
+export interface QRLTypedData {
 	readonly types: {
-		EIP712Domain: Eip712TypeDetails[];
-		[key: string]: Eip712TypeDetails[];
+		QRLTypedDataDomain: QRLTypedDataTypeDetails[];
+		[key: string]: QRLTypedDataTypeDetails[];
 	};
 	readonly primaryType: string;
 	readonly domain: Record<string, string | number>;
 	readonly message: Record<string, unknown>;
 }
+
+/** @deprecated Use {@link QRLTypedDataTypeDetails}. */
+export type Eip712TypeDetails = QRLTypedDataTypeDetails;
+
+/** @deprecated Use {@link QRLTypedData}. */
+export type Eip712TypedData = QRLTypedData;
 
 /**
  * To contain the gas Fee Data to be used with transactions.

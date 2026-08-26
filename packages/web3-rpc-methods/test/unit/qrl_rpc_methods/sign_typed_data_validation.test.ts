@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Web3RequestManager } from '@theqrl/web3-core';
-import { Eip712TypedData } from '@theqrl/web3-types';
+import { QRLTypedData } from '@theqrl/web3-types';
 
 import { qrlRpcMethods } from '../../../src/index';
 
@@ -29,7 +29,7 @@ const address =
 
 const validTypedData = {
 	types: {
-		EIP712Domain: [
+		QRLTypedDataDomain: [
 			{ name: 'name', type: 'string' },
 			{ name: 'chainId', type: 'uint256' },
 		],
@@ -38,7 +38,7 @@ const validTypedData = {
 	primaryType: 'Message',
 	domain: { name: 'QRL', chainId: 1 },
 	message: { contents: 'hello' },
-} as unknown as Eip712TypedData;
+} as unknown as QRLTypedData;
 
 const clone = () => JSON.parse(JSON.stringify(validTypedData)) as Record<string, any>;
 
@@ -57,14 +57,14 @@ describe('signTypedData - typed data validation', () => {
 		expect(sendSpy).toHaveBeenCalledTimes(1);
 	});
 
-	// Each case below would otherwise reach the wallet and fail inside getEncodedEip712Data with
+	// Each case below would otherwise reach the wallet and fail inside getEncodedQRLTypedData with
 	// an opaque TypeError. The request must not be sent at all.
 	it.each([
 		[
-			'types.EIP712Domain missing',
+			'types.QRLTypedDataDomain missing',
 			() => {
 				const d = clone();
-				delete d.types.EIP712Domain;
+				delete d.types.QRLTypedDataDomain;
 				return d;
 			},
 		],
@@ -93,6 +93,22 @@ describe('signTypedData - typed data validation', () => {
 			},
 		],
 		[
+			'domain is undefined',
+			() => {
+				const d = clone();
+				d.domain = {};
+				return d;
+			},
+		],
+		[
+			'message has extra data',
+			() => {
+				const d = clone();
+				d.message.extra = 'not declared';
+				return d;
+			},
+		],
+		[
 			'type member missing its type field',
 			() => {
 				const d = clone();
@@ -100,9 +116,17 @@ describe('signTypedData - typed data validation', () => {
 				return d;
 			},
 		],
+		[
+			'fixed array type is not supported by current go-qrl',
+			() => {
+				const d = clone();
+				d.types.Message[0].type = 'string[2]';
+				return d;
+			},
+		],
 		['typed data is not an object', () => 'nonsense' as unknown as Record<string, any>],
 	])('should reject and not send the request when %s', async (_, build) => {
-		const malformed = build() as unknown as Eip712TypedData;
+		const malformed = build() as unknown as QRLTypedData;
 
 		await expect(
 			qrlRpcMethods.signTypedData(requestManager, address, malformed),
