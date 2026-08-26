@@ -35,6 +35,16 @@ const goQRLWideValuesGolden: QRLTypedData = {
 	},
 };
 
+const goQRLHexLookingStringGolden: QRLTypedData = {
+	types: {
+		QRLTypedDataDomain: [{ name: 'name', type: 'string' }],
+		Message: [{ name: 'value', type: 'string' }],
+	},
+	primaryType: 'Message',
+	domain: { name: 'Test' },
+	message: { value: '0x1234' },
+};
+
 describe('go-qrl QRL typed-data compatibility', () => {
 	it('matches the go-qrl uint512 and bytes64 golden preimage', () => {
 		expect(getEncodedQRLTypedData(goQRLWideValuesGolden)).toBe(
@@ -45,6 +55,15 @@ describe('go-qrl QRL typed-data compatibility', () => {
 	it('matches the go-qrl uint512 and bytes64 golden digest', () => {
 		expect(getEncodedQRLTypedData(goQRLWideValuesGolden, true)).toBe(
 			'0x054b04b5b0976d8b58cb06fb10c1100af45cf46488d16842897e6b2a81ed6ed3',
+		);
+	});
+
+	it('matches go-qrl for a hex-looking string value', () => {
+		expect(getEncodedQRLTypedData(goQRLHexLookingStringGolden)).toBe(
+			'0x19016f5491d6f641912f7d8a8ca5d3d8a9801842e3112943c2ad3387b95d8567e2ac68940590c580d3745b59e42a3785f6a3c1c8aefd4211d1df4726f65f998be0b1',
+		);
+		expect(getEncodedQRLTypedData(goQRLHexLookingStringGolden, true)).toBe(
+			'0x1d209d6d7f729d7de4c7001ffddcc0c9e01fb789d42133690bc6829a7a242501',
 		);
 	});
 });

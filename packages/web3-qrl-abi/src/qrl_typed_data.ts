@@ -155,7 +155,7 @@ const encodeValue = (
 
 	// Strings and arbitrary byte arrays are hashed to bytes32
 	if (type === 'string') {
-		return ['bytes32', keccak256(data as string)];
+		return ['bytes32', keccak256(new TextEncoder().encode(data as string))];
 	}
 
 	if (type === 'bytes') {
