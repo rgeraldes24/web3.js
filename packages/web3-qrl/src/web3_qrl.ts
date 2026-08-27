@@ -35,7 +35,7 @@ import {
 	TransactionForAccessList,
 	DataFormat,
 	DEFAULT_RETURN_FORMAT,
-	Eip712TypedData,
+	QRLTypedData,
 	FeeData,
 	FMT_BYTES,
 	FMT_NUMBER,
@@ -1418,7 +1418,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	}
 
 	/**
-	 * This method sends EIP-712 typed data to the connected wallet provider to be signed.
+	 * This method sends QRL Typed Structured Data to the connected wallet provider to be signed.
 	 *
 	 * Typed-data signing is a **wallet** capability, not a node one: the request is answered by
 	 * a wallet provider (for example the QRL web3 wallet extension, which implements
@@ -1426,13 +1426,13 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 * where `eth_signTypedData_v4` is implemented by wallets rather than by the node.
 	 *
 	 * @param address The address that corresponds with the private key used to sign the typed data.
-	 * @param typedData The EIP-712 typed data object.
+	 * @param typedData The QRL typed-data object.
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) - Specifies how the signed typed data should be formatted.
 	 * @returns The signed typed data.
 	 */
 	public async signTypedData<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		address: Address,
-		typedData: Eip712TypedData,
+		typedData: QRLTypedData,
 		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.signTypedData(this, address, typedData, returnFormat);

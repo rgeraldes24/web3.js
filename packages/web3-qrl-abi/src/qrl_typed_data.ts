@@ -15,11 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * @note This code was taken from: https://github.com/Mrtenz/eip-712/tree/master
- */
-
-import { Eip712TypedData } from '@theqrl/web3-types';
+import { QRLTypedData } from '@theqrl/web3-types';
 import { isNullish, keccak256 } from '@theqrl/web3-utils';
 
 import ethersAbiCoder from './ethers_abi_coder.js';
@@ -32,7 +28,7 @@ const ARRAY_REGEX = /^(.*)\[([0-9]*?)]$/;
  * in the resulting array.
  */
 const getDependencies = (
-	typedData: Eip712TypedData,
+	typedData: QRLTypedData,
 	type: string,
 	dependencies: string[] = [],
 ): string[] => {
@@ -68,7 +64,7 @@ const getDependencies = (
  * @param {Options} [options]
  * @return {string}
  */
-const encodeType = (typedData: Eip712TypedData, type: string): string => {
+const encodeType = (typedData: QRLTypedData, type: string): string => {
 	const [primary, ...dependencies] = getDependencies(typedData, type);
 	const types = [primary, ...dependencies.sort()];
 
@@ -86,7 +82,7 @@ const encodeType = (typedData: Eip712TypedData, type: string): string => {
 /**
  * Get a type string as hash.
  */
-const getTypeHash = (typedData: Eip712TypedData, type: string) =>
+const getTypeHash = (typedData: QRLTypedData, type: string) =>
 	keccak256(encodeType(typedData, type));
 
 /**
@@ -94,21 +90,20 @@ const getTypeHash = (typedData: Eip712TypedData, type: string) =>
  * types are automatically encoded.
  */
 const getStructHash = (
-	typedData: Eip712TypedData,
+	typedData: QRLTypedData,
 	type: string,
 	data: Record<string, unknown>,
 	// eslint-disable-next-line  no-use-before-define
 ): string => keccak256(encodeData(typedData, type, data));
 
 /**
- * Get the EIP-191 encoded message to sign, from the typedData object. If `hash` is enabled, the message will be hashed
- * with Keccak256.
+ * Get the QRL typed-data message to sign. If `hash` is enabled, the message will be hashed with Keccak256.
  */
-export const getMessage = (typedData: Eip712TypedData, hash?: boolean): string => {
-	const EIP_191_PREFIX = '1901';
-	const message = `0x${EIP_191_PREFIX}${getStructHash(
+export const getMessage = (typedData: QRLTypedData, hash?: boolean): string => {
+	const TYPED_DATA_PREFIX = '1901';
+	const message = `0x${TYPED_DATA_PREFIX}${getStructHash(
 		typedData,
-		'EIP712Domain',
+		'QRLTypedDataDomain',
 		typedData.domain as Record<string, unknown>,
 	).substring(2)}${getStructHash(typedData, typedData.primaryType, typedData.message).substring(
 		2,
@@ -126,7 +121,7 @@ export const getMessage = (typedData: Eip712TypedData, hash?: boolean): string =
  * an array of ABI compatible types, and an array of corresponding values.
  */
 const encodeValue = (
-	typedData: Eip712TypedData,
+	typedData: QRLTypedData,
 	type: string,
 	data: unknown,
 ): [string, string | Uint8Array | number] => {
@@ -160,7 +155,7 @@ const encodeValue = (
 
 	// Strings and arbitrary byte arrays are hashed to bytes32
 	if (type === 'string') {
-		return ['bytes32', keccak256(data as string)];
+		return ['bytes32', keccak256(new TextEncoder().encode(data as string))];
 	}
 
 	if (type === 'bytes') {
@@ -175,7 +170,7 @@ const encodeValue = (
  * dependant types are automatically encoded.
  */
 const encodeData = (
-	typedData: Eip712TypedData,
+	typedData: QRLTypedData,
 	type: string,
 	data: Record<string, unknown>,
 ): string => {

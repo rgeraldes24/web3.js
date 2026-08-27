@@ -14,16 +14,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { getEncodedEip712Data } from '../../src/index';
-import { erroneousTestData, testData } from '../fixtures/get_encoded_eip712_data';
+import { getEncodedQRLTypedData } from '../../src/index';
+import { erroneousTestData, testData } from '../fixtures/get_encoded_qrl_typed_data';
 
-describe('getEncodedEip712Data', () => {
+describe('getEncodedQRLTypedData', () => {
 	it.each(testData)('%s', (_, typedData, hashEncodedData, expectedResponse) => {
-		const encodedMessage = getEncodedEip712Data(typedData, hashEncodedData);
+		const encodedMessage = getEncodedQRLTypedData(typedData, hashEncodedData);
 		expect(encodedMessage).toBe(expectedResponse);
 	});
 
 	it.each(erroneousTestData)('%s', (_, typedData, hashEncodedData, expectedError) => {
-		expect(() => getEncodedEip712Data(typedData, hashEncodedData)).toThrow(expectedError);
+		expect(() => getEncodedQRLTypedData(typedData, hashEncodedData)).toThrow(expectedError);
 	});
 });

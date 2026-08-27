@@ -15,14 +15,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isEip712TypedData } from '../../../src/validation/eip712';
+import { isQRLTypedData } from '../../../src/validation/qrl_typed_data';
 import { validator } from '../../../src/default_validator';
 
-// A minimal but complete EIP-712 payload. Every negative case below is this object with exactly
-// one thing broken, so each test pins one precondition of `getEncodedEip712Data`.
 const validTypedData = {
 	types: {
-		EIP712Domain: [
+		QRLTypedDataDomain: [
 			{ name: 'name', type: 'string' },
 			{ name: 'version', type: 'string' },
 			{ name: 'chainId', type: 'uint256' },
@@ -37,116 +35,107 @@ const validTypedData = {
 const clone = () => JSON.parse(JSON.stringify(validTypedData)) as Record<string, any>;
 
 describe('validation', () => {
-	describe('isEip712TypedData', () => {
+	describe('isQRLTypedData', () => {
 		it('should accept a well-formed typed data object', () => {
-			expect(isEip712TypedData(validTypedData)).toBe(true);
+			expect(isQRLTypedData(validTypedData)).toBe(true);
 		});
 
 		// eslint-disable-next-line no-null/no-null
 		it.each([undefined, null, 'string', 42, true, [], () => undefined])(
 			'should reject a non-object value: %s',
 			value => {
-				expect(isEip712TypedData(value)).toBe(false);
+				expect(isQRLTypedData(value)).toBe(false);
 			},
 		);
 
 		it('should reject when types is missing', () => {
 			const data = clone();
 			delete data.types;
-			expect(isEip712TypedData(data)).toBe(false);
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
 		it('should reject when types is not a plain object', () => {
 			const data = clone();
 			data.types = [];
-			expect(isEip712TypedData(data)).toBe(false);
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
-		// getMessage() reads types.EIP712Domain unconditionally to build the domain separator.
-		it('should reject when types.EIP712Domain is missing', () => {
+		it('should reject when types.QRLTypedDataDomain is missing', () => {
 			const data = clone();
-			delete data.types.EIP712Domain;
-			expect(isEip712TypedData(data)).toBe(false);
+			delete data.types.QRLTypedDataDomain;
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
-		it('should reject when types.EIP712Domain is not an array', () => {
+		it('should reject when types.QRLTypedDataDomain is not an array', () => {
 			const data = clone();
-			data.types.EIP712Domain = {};
-			expect(isEip712TypedData(data)).toBe(false);
+			data.types.QRLTypedDataDomain = {};
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
 		it('should reject a type member that is not an object', () => {
 			const data = clone();
 			data.types.Message = ['contents'];
-			expect(isEip712TypedData(data)).toBe(false);
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
 		it.each(['name', 'type'])('should reject a type member missing %s', field => {
 			const data = clone();
 			delete data.types.Message[0][field];
-			expect(isEip712TypedData(data)).toBe(false);
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
 		it.each(['name', 'type'])('should reject a type member whose %s is empty', field => {
 			const data = clone();
 			data.types.Message[0][field] = '';
-			expect(isEip712TypedData(data)).toBe(false);
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
 		it.each(['name', 'type'])('should reject a type member whose %s is not a string', field => {
 			const data = clone();
 			data.types.Message[0][field] = 42;
-			expect(isEip712TypedData(data)).toBe(false);
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
 		it.each([undefined, '', 42, {}])('should reject primaryType: %s', primaryType => {
 			const data = clone();
 			data.primaryType = primaryType;
-			expect(isEip712TypedData(data)).toBe(false);
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
-		// encodeData() does types[primaryType].reduce(...) — an undeclared primaryType is the
-		// classic opaque "Cannot read properties of undefined (reading 'reduce')".
 		it('should reject a primaryType that is not declared in types', () => {
 			const data = clone();
 			data.primaryType = 'NotDeclared';
-			expect(isEip712TypedData(data)).toBe(false);
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
 		it.each(['domain', 'message'])('should reject when %s is missing', field => {
 			const data = clone();
 			delete data[field];
-			expect(isEip712TypedData(data)).toBe(false);
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
 		it.each(['domain', 'message'])('should reject when %s is not a plain object', field => {
 			const data = clone();
 			data[field] = 'not-an-object';
-			expect(isEip712TypedData(data)).toBe(false);
+			expect(isQRLTypedData(data)).toBe(false);
 		});
 
-		// Provider extension fields are permitted: the wallet's ingest ignores unknown keys, so
-		// rejecting them here would diverge from the only real implementation.
 		it('should accept unknown top-level keys', () => {
 			const data = clone();
 			data.someProviderExtension = { anything: true };
-			expect(isEip712TypedData(data)).toBe(true);
+			expect(isQRLTypedData(data)).toBe(true);
 		});
 	});
 
-	// The format registration is what actually makes the guard fire from `validator.validate`.
-	// Without this, `isEip712TypedData` would be correct but never called — an inert control.
-	describe('eip712TypedData format wiring', () => {
+	describe('qrlTypedData format wiring', () => {
 		it('should pass validation for well-formed typed data', () => {
-			expect(() =>
-				validator.validate(['eip712TypedData'], [validTypedData]),
-			).not.toThrow();
+			expect(() => validator.validate(['qrlTypedData'], [validTypedData])).not.toThrow();
 		});
 
 		it('should throw Web3ValidatorError for malformed typed data', () => {
 			const data = clone();
-			delete data.types.EIP712Domain;
-			expect(() => validator.validate(['eip712TypedData'], [data])).toThrow();
+			delete data.types.QRLTypedDataDomain;
+			expect(() => validator.validate(['qrlTypedData'], [data])).toThrow();
 		});
 	});
 });

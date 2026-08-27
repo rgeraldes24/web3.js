@@ -424,14 +424,16 @@ export interface AccountObject {
 	readonly storageProof: StorageProof[];
 }
 
-export interface Eip712TypeDetails {
+export interface QRLTypedDataTypeDetails {
 	name: string;
 	type: string;
 }
-export interface Eip712TypedData {
+
+/** QRL Typed Structured Data payload. */
+export interface QRLTypedData {
 	readonly types: {
-		EIP712Domain: Eip712TypeDetails[];
-		[key: string]: Eip712TypeDetails[];
+		QRLTypedDataDomain: QRLTypedDataTypeDetails[];
+		[key: string]: QRLTypedDataTypeDetails[];
 	};
 	readonly primaryType: string;
 	readonly domain: Record<string, string | number>;
