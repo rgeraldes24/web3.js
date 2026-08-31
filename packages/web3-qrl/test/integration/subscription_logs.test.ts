@@ -82,7 +82,7 @@ describeIf(isSocket)('subscription', () => {
 				arguments: [10, 'string init value'],
 			};
 
-			sendOptions = { from, gas: '1000000' };
+			sendOptions = { from, gas: '1200000' };
 			contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 
 			const sub: LogsSubscription = await web3QRL.subscribe('logs', {

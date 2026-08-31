@@ -20,10 +20,6 @@ import { Contract } from '../../src';
 import { SQRCTF1TokenAbi, SQRCTF1TokenBytecode } from '../shared_fixtures/build/SQRCTF1Token';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
 import {
-	IndexedDynamicEventsAbi,
-	IndexedDynamicEventsBytecode,
-} from '../shared_fixtures/build/IndexedDynamicEvents';
-import {
 	getSystemTestProvider,
 	createTempAccount,
 	createNewAccount,
@@ -190,6 +186,7 @@ describe('contract getPastEvent filter', () => {
 			await contractDeployed.methods
 				.firesMultiValueIndexedEventWithStringIndexed('str4', 4, true)
 				.send(sendOptions);
+			await contractDeployed.methods.firesIndexedBytesEvent('0x0102').send(sendOptions);
 		});
 
 		it('should filter one event by address with event name and filter param', async () => {
@@ -285,29 +282,15 @@ describe('contract getPastEvent filter', () => {
 			expect(event.returnValues.val).toBe(BigInt(4));
 			expect(event.returnValues.flag).toBeTruthy();
 		});
-	});
 
-	/* eslint-disable @typescript-eslint/no-unsafe-call */
-	it('normalizes odd-length indexed bytes filters', async () => {
-		const account = await createTempAccount();
-		const sendOptions = { from: account.address };
-		const contract = new Contract(IndexedDynamicEventsAbi, undefined, {
-			provider: getSystemTestProvider(),
+		it('normalizes odd-length indexed bytes filters', async () => {
+			const events = (await contractDeployed.getPastEvents('IndexedBytesEvent', {
+				fromBlock: 'earliest',
+				filter: { value: '0x102' },
+			})) as EventLog[];
+
+			expect(events).toHaveLength(1);
+			expect(events[0]?.returnValues.value).toBe(sha3Raw('0x0102'));
 		});
-		const contractDeployed = await contract
-			.deploy({ data: IndexedDynamicEventsBytecode })
-			.send(sendOptions);
-		const { blockNumber: fromBlock } = await contractDeployed.methods
-			.fire('0x0102')
-			.send(sendOptions);
-
-		const events = (await contractDeployed.getPastEvents('IndexedBytes', {
-			fromBlock,
-			filter: { value: '0x102' },
-		})) as EventLog[];
-
-		expect(events).toHaveLength(1);
-		expect(events[0]?.returnValues.value).toBe(sha3Raw('0x0102'));
 	});
-	/* eslint-enable @typescript-eslint/no-unsafe-call */
 });
