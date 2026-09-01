@@ -32,13 +32,6 @@ import {
 } from '@theqrl/web3-types';
 import { transactionWithSender } from './rpc_methods_wrappers';
 
-const filterTopic = `0x${'0'.repeat(
-	64,
-)}000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b`;
-const alternateFilterTopic = `0x${'0'.repeat(
-	64,
-)}0000000000000000000000000aff3454fce5edbc8cca8697c15331677e6ebccc`;
-
 /**
  * Array consists of:
  * - array of inputs
@@ -1595,11 +1588,14 @@ export const getPastLogsValidData: [[Filter, DataFormat | undefined], [Filter, D
 			{
 				address: 'Q83cd1122848dd1b2E3AF9ca60a1340e595B2C6d5b3B340AfD625e38EEf9067bc9C28db215702Aa8B3C0243Bb13785a9365A35ee1Fe8e57983b1D47d9fff835a3',
 				topics: [
-					filterTopic,
+					'0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
 					// Using "null" value intentionally for validation
 					// eslint-disable-next-line no-null/no-null
 					null,
-					[filterTopic, alternateFilterTopic],
+					[
+						'0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
+						'0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000aff3454fce5edbc8cca8697c15331677e6ebccc',
+					],
 				],
 			},
 			undefined,
@@ -1608,11 +1604,14 @@ export const getPastLogsValidData: [[Filter, DataFormat | undefined], [Filter, D
 			{
 				address: 'Q83cd1122848dd1b2E3AF9ca60a1340e595B2C6d5b3B340AfD625e38EEf9067bc9C28db215702Aa8B3C0243Bb13785a9365A35ee1Fe8e57983b1D47d9fff835a3',
 				topics: [
-					filterTopic,
+					'0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
 					// Using "null" value intentionally for validation
 					// eslint-disable-next-line no-null/no-null
 					null,
-					[filterTopic, alternateFilterTopic],
+					[
+						'0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
+						'0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000aff3454fce5edbc8cca8697c15331677e6ebccc',
+					],
 				],
 			},
 			DEFAULT_RETURN_FORMAT,
