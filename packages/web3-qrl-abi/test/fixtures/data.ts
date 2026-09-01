@@ -291,7 +291,7 @@ export const inValidFunctionsCalls: { input: any; output: string }[] = [
 export const validEventsSignatures: { input: any; output: string }[] = [
 	{
 		input: 'myEvent(uint256,bytes32)',
-		output: '0xf2eeb729e636a8cb783be044acf6b7b1e2c5863735b60d6daae84c366ee87d97',
+		output: '0xf2eeb729e636a8cb783be044acf6b7b1e2c5863735b60d6daae84c366ee87d970000000000000000000000000000000000000000000000000000000000000000',
 	},
 	{
 		input: {
@@ -308,7 +308,7 @@ export const validEventsSignatures: { input: any; output: string }[] = [
 				},
 			],
 		},
-		output: '0xf2eeb729e636a8cb783be044acf6b7b1e2c5863735b60d6daae84c366ee87d97',
+		output: '0xf2eeb729e636a8cb783be044acf6b7b1e2c5863735b60d6daae84c366ee87d970000000000000000000000000000000000000000000000000000000000000000',
 	},
 ];
 
@@ -445,7 +445,7 @@ export const validDecodeLogsData: {
 				},
 			],
 			topics: [
-				'0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
+				'0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef0000000000000000000000000000000000000000000000000000000000000000',
 				'0x9fa83f21ce9bd493b02d7460e03d82d44a77b4612d8b6a0acc94655106fbb96152d3e16a0ba414c368653bae2fe868cb109c05727ca47148114749451afb7cc1',
 				'0x32bc304efea6eeda861cf8949ebb480da50b91da5f7f8d5918779865c88e16c790935cb72a27613327126ad142b767616784022611b0a345ff346f4e81fa1499',
 			],

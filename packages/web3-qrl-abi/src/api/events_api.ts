@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { sha3Raw } from '@theqrl/web3-utils';
+import { rightPad, sha3Raw } from '@theqrl/web3-utils';
 import { AbiError } from '@theqrl/web3-errors';
 import { AbiEventFragment } from '@theqrl/web3-types';
 import { jsonInterfaceMethodToString, isAbiEventFragment } from '../utils.js';
@@ -82,5 +82,5 @@ export const encodeEventSignature = (functionName: string | AbiEventFragment): s
 		name = jsonInterfaceMethodToString(functionName);
 	}
 
-	return sha3Raw(name);
+	return rightPad(sha3Raw(name), 128);
 };

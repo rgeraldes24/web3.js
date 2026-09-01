@@ -18,10 +18,16 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { HexString, AbiParameter, DecodedParams } from '@theqrl/web3-types';
 import { decodeParameter, decodeParametersWith } from './parameters_api.js';
 
-const STATIC_TYPES = ['bool', 'string', 'int', 'uint', 'address', 'fixed', 'ufixed'];
+const ARRAY_TYPE = /\[[0-9]*\]$/;
 
-const _decodeParameter = (inputType: string, clonedTopic: string) =>
-	inputType === 'string' ? clonedTopic : decodeParameter(inputType, clonedTopic);
+const isIndexedHash = (inputType: string) =>
+	inputType === 'string' ||
+	inputType === 'bytes' ||
+	inputType === 'function' ||
+	ARRAY_TYPE.test(inputType);
+
+const decodeTopic = (inputType: string, topic: string) =>
+	isIndexedHash(inputType) ? topic.slice(0, 66) : decodeParameter(inputType, topic);
 
 /**
  * Decodes ABI-encoded log data and indexed topic data.
@@ -92,9 +98,7 @@ export const decodeLog = <ReturnType extends DecodedParams>(
 	const offset = clonedTopics.length - Object.keys(indexedInputs).length;
 
 	const decodedIndexedInputs = Object.values(indexedInputs).map((input, index) =>
-		STATIC_TYPES.some(s => input.type.startsWith(s))
-			? _decodeParameter(input.type, clonedTopics[index + offset])
-			: clonedTopics[index + offset],
+		decodeTopic(input.type, clonedTopics[index + offset]),
 	);
 
 	const returnValues: DecodedParams = { __length__: 0 };

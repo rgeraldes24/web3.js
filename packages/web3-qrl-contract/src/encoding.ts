@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { format, isNullish, keccak256 } from '@theqrl/web3-utils';
+import { format, isNullish, keccak256, rightPad } from '@theqrl/web3-utils';
 import { isAddressString } from '@theqrl/web3-validator';
 
 import {
@@ -102,7 +102,7 @@ export const encodeEventABI = (
 				if (Array.isArray(value)) {
 					opts.topics.push(value.map(v => encodeParameter(input.type, v)));
 				} else if (input.type === 'string') {
-					opts.topics.push(keccak256(value as string));
+					opts.topics.push(rightPad(keccak256(value as string), 128));
 				} else {
 					opts.topics.push(encodeParameter(input.type, value));
 				}

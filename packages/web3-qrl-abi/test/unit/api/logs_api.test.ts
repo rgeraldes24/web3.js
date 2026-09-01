@@ -20,6 +20,27 @@ import { validDecodeLogsData } from '../../fixtures/data';
 
 describe('logs_api', () => {
 	describe('decodeLog', () => {
+		it.each(['string', 'bytes', 'function', 'uint256[]'])(
+			'returns the 32-byte hash for an indexed %s value',
+			type => {
+				const hash = `0x${'ab'.repeat(32)}`;
+				const topic = `${hash}${'00'.repeat(32)}`;
+
+				const decoded = decodeLog([{ name: 'value', type, indexed: true }], '0x', [topic]);
+
+				expect(decoded.value).toBe(hash);
+			},
+		);
+
+		it('decodes a fixed bytes value from a 64-byte indexed topic', () => {
+			const value = `0x${'ab'.repeat(32)}`;
+			const decoded = decodeLog([{ name: 'value', type: 'bytes32', indexed: true }], '0x', [
+				`${value}${'00'.repeat(32)}`,
+			]);
+
+			expect(decoded.value).toBe(value);
+		});
+
 		describe('valid data', () => {
 			it.each(validDecodeLogsData)(
 				'should pass for valid values: %j',
