@@ -20,7 +20,7 @@ import { validDecodeLogsData } from '../../fixtures/data';
 
 describe('logs_api', () => {
 	describe('decodeLog', () => {
-		it.each(['string', 'bytes', 'function', 'uint256[]'])(
+		it.each(['string', 'bytes', 'function', 'tuple', 'uint256[]'])(
 			'returns the 32-byte hash for an indexed %s value',
 			type => {
 				const hash = `0x${'ab'.repeat(32)}`;

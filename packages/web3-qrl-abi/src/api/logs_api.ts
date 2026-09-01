@@ -24,6 +24,7 @@ const isIndexedHash = (inputType: string) =>
 	inputType === 'string' ||
 	inputType === 'bytes' ||
 	inputType === 'function' ||
+	inputType === 'tuple' ||
 	ARRAY_TYPE.test(inputType);
 
 const decodeTopic = (inputType: string, topic: string) =>
