@@ -122,7 +122,8 @@ describe('encodeEventAbi', () => {
 			],
 			name: 'IndexedArrayEvent',
 			type: 'event',
-			signature: '0x71aefd401e4886a78931d42be506247958b9751348fa91aa2f9dbbd557e9208e',
+			signature:
+				'0x71aefd401e4886a78931d42be506247958b9751348fa91aa2f9dbbd557e9208e0000000000000000000000000000000000000000000000000000000000000000',
 		};
 
 		encodeEventABI(contractOptions, _abiEventFragment, {
@@ -159,7 +160,8 @@ describe('encodeEventAbi', () => {
 			],
 			name: 'IndexedMultiValArrayEvent',
 			type: 'event',
-			signature: '0x9b5a12617e7ca791109ef5e09b8cc23cb4034e0e3dfb4aadac37b55fd28718f6',
+			signature:
+				'0x9b5a12617e7ca791109ef5e09b8cc23cb4034e0e3dfb4aadac37b55fd28718f60000000000000000000000000000000000000000000000000000000000000000',
 		};
 
 		encodeEventABI(contractOptions, _abiEventFragment, {
