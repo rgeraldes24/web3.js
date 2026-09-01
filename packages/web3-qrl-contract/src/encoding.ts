@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { format, isNullish, keccak256, rightPad } from '@theqrl/web3-utils';
+import { format, isNullish, rightPad } from '@theqrl/web3-utils';
 import { isAddressString } from '@theqrl/web3-validator';
 
 import {
@@ -37,7 +37,6 @@ import {
 	decodeParameters,
 	encodeEventSignature,
 	encodeFunctionSignature,
-	encodeParameter,
 	encodeParameters,
 	isAbiConstructorFragment,
 	jsonInterfaceMethodToString,
@@ -48,6 +47,7 @@ import { blockSchema, logSchema } from '@theqrl/web3-qrl';
 import { Web3ContractError } from '@theqrl/web3-errors';
 
 import { ContractOptions, ContractAbiWithSignature, EventLog } from './types.js';
+import { encodeIndexedFilterTopic } from './indexed_topic.js';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 export const encodeEventABI = (
@@ -94,7 +94,7 @@ export const encodeEventABI = (
 				}
 
 				const value = filter[input.name];
-				if (!value) {
+				if (isNullish(value)) {
 					// eslint-disable-next-line no-null/no-null
 					opts.topics.push(null);
 					continue;
@@ -103,11 +103,9 @@ export const encodeEventABI = (
 				// TODO: https://github.com/ethereum/web3.js/issues/344
 				// TODO: deal properly with components
 				if (Array.isArray(value)) {
-					opts.topics.push(value.map(v => encodeParameter(input.type, v)));
-				} else if (input.type === 'string') {
-					opts.topics.push(rightPad(keccak256(value as string), 128));
+					opts.topics.push(value.map(v => encodeIndexedFilterTopic(input.type, v)));
 				} else {
-					opts.topics.push(encodeParameter(input.type, value));
+					opts.topics.push(encodeIndexedFilterTopic(input.type, value));
 				}
 			}
 		}

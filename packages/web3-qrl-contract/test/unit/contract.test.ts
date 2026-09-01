@@ -25,6 +25,8 @@ import {
 } from '@theqrl/web3-types';
 import { ContractExecutionError, Web3ContractError } from '@theqrl/web3-errors';
 import { Web3Context } from '@theqrl/web3-core';
+import { encodeEventSignature } from '@theqrl/web3-qrl-abi';
+import { rightPad, sha3Raw } from '@theqrl/web3-utils';
 import { Contract } from '../../src';
 import { sampleStorageContractABI } from '../fixtures/storage';
 import { GreeterAbi, GreeterBytecode } from '../shared_fixtures/build/Greeter';
@@ -1092,6 +1094,38 @@ describe('Contract', () => {
 			expect(pastEventFilterWithIncorrectParam).toHaveLength(0);
 
 			spyTx.mockClear();
+			spyGetLogs.mockClear();
+		});
+
+		it('matches indexed bytes OR filters for all events', async () => {
+			const indexedBytesEvent = {
+				anonymous: false,
+				inputs: [{ indexed: true, internalType: 'bytes', name: 'value', type: 'bytes' }],
+				name: 'IndexedBytes',
+				type: 'event',
+			} as const;
+			const bytesHash = sha3Raw('0xabcd');
+			const spyGetLogs = jest.spyOn(qrl, 'getLogs').mockResolvedValue([
+				{
+					...getLogsData.response[0],
+					data: '0x',
+					topics: [
+						rightPad(encodeEventSignature(indexedBytesEvent), 128),
+						rightPad(bytesHash, 128),
+					],
+				},
+			] as never);
+			const contract = new Contract([indexedBytesEvent], deployedAddr);
+
+			const events = await contract.getPastEvents('allEvents', {
+				filter: { value: ['0x0000', '0xabcd'] },
+			});
+
+			expect(events).toHaveLength(1);
+			expect(events[0]).toMatchObject({
+				event: 'IndexedBytes',
+				returnValues: { value: bytesHash },
+			});
 			spyGetLogs.mockClear();
 		});
 
