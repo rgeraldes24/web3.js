@@ -14,8 +14,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { AbiEventFragment } from '@theqrl/web3-types';
-import { ContractOptions, encodeEventABI } from '../../src';
+import { AbiEventFragment, LogsInput } from '@theqrl/web3-types';
+import {
+	ContractAbiWithSignature,
+	ContractOptions,
+	decodeEventABI,
+	encodeEventABI,
+} from '../../src';
 
 const contractOptions: ContractOptions = {
 	address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
@@ -44,8 +49,7 @@ const abiEventFragment: AbiEventFragment & { signature: string } = {
 	],
 	name: 'MultiValueIndexedEventWithStringIndexed',
 	type: 'event',
-	signature:
-		'0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd50000000000000000000000000000000000000000000000000000000000000000',
+	signature: '0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd5',
 };
 
 describe('encodeEventAbi', () => {
@@ -93,8 +97,7 @@ describe('encodeEventAbi', () => {
 				anonymous: false,
 				name: 'ALLEVENTS',
 				type: 'event',
-				signature:
-					'0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd50000000000000000000000000000000000000000000000000000000000000000',
+				signature: '0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd5',
 			},
 			{
 				fromBlock: 1000,
@@ -122,8 +125,7 @@ describe('encodeEventAbi', () => {
 			],
 			name: 'IndexedArrayEvent',
 			type: 'event',
-			signature:
-				'0x71aefd401e4886a78931d42be506247958b9751348fa91aa2f9dbbd557e9208e0000000000000000000000000000000000000000000000000000000000000000',
+			signature: '0x71aefd401e4886a78931d42be506247958b9751348fa91aa2f9dbbd557e9208e',
 		};
 
 		encodeEventABI(contractOptions, _abiEventFragment, {
@@ -160,8 +162,7 @@ describe('encodeEventAbi', () => {
 			],
 			name: 'IndexedMultiValArrayEvent',
 			type: 'event',
-			signature:
-				'0x9b5a12617e7ca791109ef5e09b8cc23cb4034e0e3dfb4aadac37b55fd28718f60000000000000000000000000000000000000000000000000000000000000000',
+			signature: '0x9b5a12617e7ca791109ef5e09b8cc23cb4034e0e3dfb4aadac37b55fd28718f6',
 		};
 
 		encodeEventABI(contractOptions, _abiEventFragment, {
@@ -209,5 +210,31 @@ describe('encodeEventAbi', () => {
 			],
 			address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 		});
+	});
+});
+
+describe('decodeEventABI', () => {
+	it('should not match a function selector as an all-events signature', () => {
+		const selector = '0x12345678';
+		const decoded = decodeEventABI(
+			{ anonymous: false, name: 'ALLEVENTS', type: 'event', signature: selector },
+			{
+				address: contractOptions.address,
+				data: '0x',
+				topics: [`${selector}${'0'.repeat(120)}`],
+			} as LogsInput,
+			[
+				{
+					inputs: [],
+					name: 'collidingFunction',
+					outputs: [],
+					signature: selector,
+					stateMutability: 'view',
+					type: 'function',
+				},
+			] as ContractAbiWithSignature,
+		);
+
+		expect(decoded.event).toBeUndefined();
 	});
 });

@@ -79,7 +79,10 @@ export const encodeEventABI = (
 		// add event signature
 		if (event && !event.anonymous && event.name !== 'ALLEVENTS') {
 			opts.topics.push(
-				event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event)),
+				rightPad(
+					event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event)),
+					128,
+				),
 			);
 		}
 
@@ -136,7 +139,9 @@ export const decodeEventABI = (
 
 	// if allEvents get the right event
 	if (modifiedEvent.name === 'ALLEVENTS') {
-		const matchedEvent = jsonInterface.find(j => j.signature === data.topics[0]);
+		const matchedEvent = jsonInterface.find(
+			j => j.type === 'event' && rightPad(j.signature, 128) === data.topics[0],
+		);
 		if (matchedEvent) {
 			modifiedEvent = matchedEvent as AbiEventFragment & { signature: string };
 		} else {
