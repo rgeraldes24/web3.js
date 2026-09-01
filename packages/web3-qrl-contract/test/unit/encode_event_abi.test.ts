@@ -257,14 +257,6 @@ describe('encodeEventAbi', () => {
 			);
 		});
 
-		it('should hash indexed bytes supplied as a Uint8Array', () => {
-			const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
-				filter: { data: new Uint8Array([0xab, 0xcd]) },
-			}).topics;
-
-			expect(topics?.[2]).toBe(bytesHash);
-		});
-
 		it('should encode every dynamic OR-filter alternative', () => {
 			const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
 				filter: {

@@ -16,23 +16,19 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { encodeParameter, formatOddHexstrings } from '@theqrl/web3-qrl-abi';
-import { Bytes, Topic } from '@theqrl/web3-types';
-import { bytesToHex, keccak256, rightPad } from '@theqrl/web3-utils';
+import { Topic } from '@theqrl/web3-types';
+import { keccak256, rightPad } from '@theqrl/web3-utils';
 
 export const encodeIndexedFilterTopic = (type: string, value: unknown): Topic => {
-	const validationValue =
-		type === 'bytes' && value instanceof Uint8Array ? bytesToHex(value) : value;
-	if (type !== 'string' && type !== 'bytes') return encodeParameter(type, validationValue);
+	if (type !== 'string' && type !== 'bytes') return encodeParameter(type, value);
 
 	const normalizedValue =
-		type === 'bytes' && typeof validationValue === 'string'
-			? formatOddHexstrings(validationValue)
-			: validationValue;
+		type === 'bytes' && typeof value === 'string' ? formatOddHexstrings(value) : value;
 	encodeParameter(type, normalizedValue);
 	const hash =
 		type === 'string'
 			? keccak256(new TextEncoder().encode(normalizedValue as string))
-			: keccak256(normalizedValue as Bytes);
+			: keccak256(normalizedValue as string);
 
 	return rightPad(hash, 128) as Topic;
 };
