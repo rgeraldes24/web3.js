@@ -19,7 +19,12 @@ import { FilterResultsAPI, Filter } from '@theqrl/web3-types';
 const eventTopic = `0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5${'0'.repeat(
 	64,
 )}`;
-const alternateTopic = `0x${'a7'.repeat(64)}`;
+const filterTopic = `0x${'0'.repeat(
+	64,
+)}000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b`;
+const alternateFilterTopic = `0x${'0'.repeat(
+	64,
+)}0000000000000000000000000aff3454fce5edbc8cca8697c15331677e6ebccc`;
 
 export const mockRpcResponse: FilterResultsAPI = [
 	{
@@ -37,11 +42,11 @@ export const mockRpcResponse: FilterResultsAPI = [
 const filter: Filter = {
 	address: 'Q83cd1122848dd1b2E3AF9ca60a1340e595B2C6d5b3B340AfD625e38EEf9067bc9C28db215702Aa8B3C0243Bb13785a9365A35ee1Fe8e57983b1D47d9fff835a3',
 	topics: [
-		eventTopic,
+		filterTopic,
 		// Using "null" value intentionally for validation
 		// eslint-disable-next-line no-null/no-null
 		null,
-		[eventTopic, alternateTopic],
+		[filterTopic, alternateFilterTopic],
 	],
 };
 
