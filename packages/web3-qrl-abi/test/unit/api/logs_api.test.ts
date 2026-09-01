@@ -33,9 +33,9 @@ describe('logs_api', () => {
 		);
 
 		it('decodes a fixed bytes value from a 64-byte indexed topic', () => {
-			const value = `0x${'ab'.repeat(32)}`;
-			const decoded = decodeLog([{ name: 'value', type: 'bytes32', indexed: true }], '0x', [
-				`${value}${'00'.repeat(32)}`,
+			const value = `0x${'ab'.repeat(48)}`;
+			const decoded = decodeLog([{ name: 'value', type: 'bytes48', indexed: true }], '0x', [
+				`${value}${'00'.repeat(16)}`,
 			]);
 
 			expect(decoded.value).toBe(value);

@@ -27,9 +27,6 @@ const isIndexedHash = (inputType: string) =>
 	inputType === 'tuple' ||
 	ARRAY_TYPE.test(inputType);
 
-const decodeTopic = (inputType: string, topic: string) =>
-	isIndexedHash(inputType) ? topic.slice(0, 66) : decodeParameter(inputType, topic);
-
 /**
  * Decodes ABI-encoded log data and indexed topic data.
  * @param inputs - A {@link AbiParameter} input array. See the [Hyperion documentation](https://docs.soliditylang.org/en/develop/types.html) for a list of types.
@@ -56,10 +53,10 @@ const decodeTopic = (inputType: string, topic: string) =>
  *        indexed: true,
  *      },
  *    ],
- *    "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000748656c6c6f252100000000000000000000000000000000000000000000000000",
+ *    "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000748656c6c6f2521000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
  *    [
- *      "0x000000000000000000000000000000000000000000000000000000000000f310",
- *      "0x0000000000000000000000000000000000000000000000000000000000000010",
+ *      "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f310",
+ *      "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010",
  *    ]
  *  );
  * > {
@@ -99,7 +96,9 @@ export const decodeLog = <ReturnType extends DecodedParams>(
 	const offset = clonedTopics.length - Object.keys(indexedInputs).length;
 
 	const decodedIndexedInputs = Object.values(indexedInputs).map((input, index) =>
-		decodeTopic(input.type, clonedTopics[index + offset]),
+		isIndexedHash(input.type)
+			? clonedTopics[index + offset].slice(0, 66)
+			: decodeParameter(input.type, clonedTopics[index + offset]),
 	);
 
 	const returnValues: DecodedParams = { __length__: 0 };
