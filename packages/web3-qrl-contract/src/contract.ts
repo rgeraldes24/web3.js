@@ -789,7 +789,7 @@ export class Contract<Abi extends ContractAbi>
 
 					const matches = (value: unknown) => {
 						let expected = value;
-						let actual = log.returnValues[key];
+						const actual = log.returnValues[key];
 						if (
 							inputAbi?.indexed &&
 							(inputAbi.type === 'string' || inputAbi.type === 'bytes')
@@ -802,7 +802,6 @@ export class Contract<Abi extends ContractAbi>
 										: value;
 							encodeParameter(inputAbi.type, value);
 							expected = keccak256(normalizedValue as string);
-							actual = String(actual).slice(0, 66);
 						}
 
 						return String(actual).toUpperCase() === String(expected).toUpperCase();
