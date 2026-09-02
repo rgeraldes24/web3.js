@@ -1108,8 +1108,7 @@ describe('Contract', () => {
 			const bytesHash = sha3Raw('0xabcd');
 			const eventTopic = rightPad(encodeEventSignature(indexedBytesEvent), 128);
 			const logs = [sha3Raw('0xffff'), bytesHash].map(valueHash => ({
-				...getLogsData.response[0],
-				address: deployedAddr,
+				...AllGetPastEventsData.getLogsData[0],
 				data: '0x',
 				topics: [eventTopic, rightPad(valueHash, 128)],
 			}));
@@ -1144,7 +1143,9 @@ describe('Contract', () => {
 					expect(_params.address).toBe(`Q${deployedAddr.slice(1).toLocaleLowerCase()}`);
 					expect(_params.fromBlock).toBeUndefined();
 					expect(_params.toBlock).toBeUndefined();
-					expect(_params.topics).toStrictEqual(getLogsData.request.topics);
+					expect(_params.topics).toStrictEqual(
+						AllGetPastEventsData.getLogsData[1].topics,
+					);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 					return Promise.resolve([AllGetPastEventsData.getLogsData[1]]) as any; // AllGetPastEventsData.getLogsData data test is for: assume two transactions sent to contract with contractInstance.methods.setGreeting("Hello") and contractInstance.methods.setGreeting("Another Greeting")
