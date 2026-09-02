@@ -236,10 +236,10 @@ describe('encodeEventAbi', () => {
 		const bytesTopic = `0xdbe576b4818846aa77e82f4ed5fa78f92766b141f282d36703886d196df39322${padding}`;
 
 		const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
-			filter: { text: '0xabcd', data: ['0xabcd', '0xabc'] },
+			filter: { text: ['0xabcd'], data: ['0xabcd', '0xabc'] },
 		}).topics;
 
-		expect(topics?.[1]).toBe(stringTopic);
+		expect(topics?.[1]).toStrictEqual([stringTopic]);
 		expect(topics?.[2]).toStrictEqual([
 			bytesTopic,
 			`0xe91cf08aac85935e32397f410e48217a127b6855d41b1e3877eb4179c0904b77${padding}`,

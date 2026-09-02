@@ -160,9 +160,7 @@ export const decodeEventABI = (
 
 	// if allEvents get the right event
 	if (modifiedEvent.name === 'ALLEVENTS') {
-		const matchedEvent = jsonInterface.find(
-			j => rightPad(j.signature, 128) === data.topics[0],
-		);
+		const matchedEvent = jsonInterface.find(j => rightPad(j.signature, 128) === data.topics[0]);
 		if (matchedEvent) {
 			modifiedEvent = matchedEvent as AbiEventFragment & { signature: string };
 		} else {
