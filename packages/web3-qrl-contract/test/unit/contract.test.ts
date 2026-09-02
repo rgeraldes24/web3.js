@@ -967,6 +967,7 @@ describe('Contract', () => {
 					expect(_params.address).toBe(`Q${deployedAddr.slice(1).toLocaleLowerCase()}`);
 					expect(_params.fromBlock).toStrictEqual(getLogsData.request.fromBlock);
 					expect(_params.toBlock).toStrictEqual(getLogsData.request.toBlock);
+					expect(_params.topics).toStrictEqual(getLogsData.request.topics);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 					return Promise.resolve([getLogsData.response[0]]) as any;
@@ -984,9 +985,7 @@ describe('Contract', () => {
 			const pastEvent = await deployedContract.getPastEvents(getPastEventsData.event as any, {
 				fromBlock,
 				toBlock,
-				topics: [
-					'0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e0000000000000000000000000000000000000000000000000000000000000000',
-				],
+				topics: getLogsData.request.topics,
 			});
 
 			expect(pastEvent).toStrictEqual(getPastEventsData.response);
@@ -1108,6 +1107,7 @@ describe('Contract', () => {
 			const spyGetLogs = jest.spyOn(qrl, 'getLogs').mockResolvedValue([
 				{
 					...getLogsData.response[0],
+					address: deployedAddr,
 					data: '0x',
 					topics: [
 						rightPad(encodeEventSignature(indexedBytesEvent), 128),
@@ -1145,6 +1145,7 @@ describe('Contract', () => {
 					expect(_params.address).toBe(`Q${deployedAddr.slice(1).toLocaleLowerCase()}`);
 					expect(_params.fromBlock).toBeUndefined();
 					expect(_params.toBlock).toBeUndefined();
+					expect(_params.topics).toStrictEqual(getLogsData.request.topics);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 					return Promise.resolve([AllGetPastEventsData.getLogsData[1]]) as any; // AllGetPastEventsData.getLogsData data test is for: assume two transactions sent to contract with contractInstance.methods.setGreeting("Hello") and contractInstance.methods.setGreeting("Another Greeting")
@@ -1158,9 +1159,7 @@ describe('Contract', () => {
 				.send(sendOptions);
 
 			const pastEvent = await deployedContract.getPastEvents({
-				topics: [
-					'0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e0000000000000000000000000000000000000000000000000000000000000000',
-				],
+				topics: getLogsData.request.topics,
 			});
 			expect(pastEvent).toHaveLength(1);
 			expect(pastEvent[0]).toStrictEqual(AllGetPastEventsData.response[1]);
