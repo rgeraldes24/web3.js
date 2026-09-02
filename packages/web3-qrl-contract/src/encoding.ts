@@ -63,6 +63,11 @@ const encodeIndexedBytesTopic = (value: unknown): Topic => {
 	return rightPad(keccak256(normalizedValue as string), 128) as Topic;
 };
 
+const encodeIndexedFunctionTopic = (value: unknown): Topic => {
+	encodeParameter('function', value);
+	return rightPad(keccak256(value as HexString), 128) as Topic;
+};
+
 export const encodeEventABI = (
 	{ address }: ContractOptions,
 	event: AbiEventFragment & { signature: string },
@@ -120,6 +125,8 @@ export const encodeEventABI = (
 						opts.topics.push(value.map(encodeIndexedStringTopic));
 					} else if (input.type === 'bytes') {
 						opts.topics.push(value.map(encodeIndexedBytesTopic));
+					} else if (input.type === 'function') {
+						opts.topics.push(value.map(encodeIndexedFunctionTopic));
 					} else {
 						opts.topics.push(value.map(topic => encodeParameter(input.type, topic)));
 					}
@@ -127,6 +134,8 @@ export const encodeEventABI = (
 					opts.topics.push(encodeIndexedStringTopic(value));
 				} else if (input.type === 'bytes') {
 					opts.topics.push(encodeIndexedBytesTopic(value));
+				} else if (input.type === 'function') {
+					opts.topics.push(encodeIndexedFunctionTopic(value));
 				} else {
 					opts.topics.push(encodeParameter(input.type, value));
 				}

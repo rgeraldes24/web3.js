@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Address } from './qrl_types.js';
-import { Bytes, Numbers } from './primitives_types.js';
+import { Bytes, HexString, Numbers } from './primitives_types.js';
 import { FixedSizeArray } from './utility_types.js';
 
 type _HyperionIndexRange =
@@ -218,6 +218,12 @@ export type PrimitiveBytesType<Type extends string> = Type extends `bytes${strin
 	? Bytes
 	: never;
 
+export type PrimitiveFunctionType<Type extends string> = Type extends `function[${infer Size}]`
+	? _TypedArray<HexString, Size>
+	: Type extends 'function'
+	? HexString
+	: never;
+
 export type PrimitiveTupleType<
 	Type extends string,
 	TypeComponents extends ReadonlyArray<AbiParameter> | undefined | unknown = [],
@@ -256,6 +262,7 @@ export type MatchPrimitiveType<
 	| PrimitiveBooleanType<Type>
 	| PrimitiveIntegerType<Type>
 	| PrimitiveBytesType<Type>
+	| PrimitiveFunctionType<Type>
 	| PrimitiveTupleType<Type, TypeComponents>
 	| never;
 

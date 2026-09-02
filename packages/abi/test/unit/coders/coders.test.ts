@@ -23,6 +23,7 @@ import { ArrayCoder } from '../../../src/coders/array.js';
 import { BooleanCoder } from '../../../src/coders/boolean.js';
 import { BytesCoder, DynamicBytesCoder } from '../../../src/coders/bytes.js';
 import { FixedBytesCoder } from '../../../src/coders/fixed-bytes.js';
+import { FunctionCoder } from '../../../src/coders/function.js';
 import { NullCoder } from '../../../src/coders/null.js';
 import { NumberCoder } from '../../../src/coders/number.js';
 import { StringCoder } from '../../../src/coders/string.js';
@@ -272,6 +273,35 @@ describe('FixedBytesCoder', () => {
 		expect(read(coder, write(coder, value))).toBe(value);
 	});
 });
+
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+describe('FunctionCoder', () => {
+	const value = `0x01${'00'.repeat(63)}deadbeef`;
+	const encoded = `0x01${'00'.repeat(63)}${'00'.repeat(60)}deadbeef`;
+
+	it('is static and defaults to a zero 68-byte value', () => {
+		const coder = new FunctionCoder('callback');
+		expect(coder.name).toBe('function');
+		expect(coder.dynamic).toBe(false);
+		expect(coder.defaultValue()).toBe(`0x${'00'.repeat(68)}`);
+	});
+
+	it('encodes and decodes the address and selector across two words', () => {
+		const coder = new FunctionCoder('callback');
+		expect(write(coder, value)).toBe(encoded);
+
+		const reader = new Reader(encoded, WORD);
+		expect(coder.decode(reader)).toBe(value);
+		expect(reader.consumed).toBe(WORD * 2);
+	});
+
+	it.each([67, 69])('rejects a %i-byte value', size => {
+		expect(() => write(new FunctionCoder('callback'), `0x${'00'.repeat(size)}`)).toThrow(
+			/incorrect data length/,
+		);
+	});
+});
+/* eslint-enable @typescript-eslint/no-unsafe-call */
 
 describe('DynamicBytesCoder / BytesCoder', () => {
 	it('is dynamic and defaults to 0x', () => {

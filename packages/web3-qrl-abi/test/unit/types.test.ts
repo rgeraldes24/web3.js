@@ -94,6 +94,22 @@ describe('types', () => {
 			);
 		});
 
+		/* eslint-disable @typescript-eslint/no-unsafe-call */
+		describe('function', () => {
+			typecheck('should extend the hex string type', () =>
+				expectTypeOf<MatchPrimitiveType<'function', []>>().toExtend<string>(),
+			);
+
+			typecheck('should extend the hex string dynamic array type', () =>
+				expectTypeOf<MatchPrimitiveType<'function[]', []>>().toExtend<string[]>(),
+			);
+
+			typecheck('should extend the hex string fixed array type', () =>
+				expectTypeOf<MatchPrimitiveType<'function[2]', []>>().toExtend<[string, string]>(),
+			);
+		});
+		/* eslint-enable @typescript-eslint/no-unsafe-call */
+
 		describe('uint', () => {
 			typecheck('should extend correct type', () =>
 				expectTypeOf<MatchPrimitiveType<'uint', []>>().toExtend<Numbers>(),

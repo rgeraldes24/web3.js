@@ -118,13 +118,6 @@ export const mapTypes = (
 			modifiedType = { ...type };
 		}
 
-		// A 64-byte QRL address plus a 4-byte selector is 68 bytes, which no
-		// longer fits in one VM word. Keep this unsupported until the chain and
-		// ABI spec define a QRL-specific function-pointer representation.
-		if (typeof type === 'object' && type.type === 'function') {
-			throw new AbiError('ABI function type is not supported for 64-byte QRL addresses.');
-		}
-
 		if (isSimplifiedStructFormat(modifiedType)) {
 			const structName = Object.keys(modifiedType)[0] as unknown as keyof typeof modifiedType;
 

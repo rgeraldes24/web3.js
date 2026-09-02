@@ -15,10 +15,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { sha3Raw, toBigInt } from '@theqrl/web3-utils';
+import { addressToHex, sha3Raw, toBigInt } from '@theqrl/web3-utils';
 import { Contract } from '../../src';
 import { SQRCTF1TokenAbi, SQRCTF1TokenBytecode } from '../shared_fixtures/build/SQRCTF1Token';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
+import {
+	FunctionValuesAbi,
+	FunctionValuesBytecode,
+} from '../fixtures/FunctionValues';
 import {
 	getSystemTestProvider,
 	createTempAccount,
@@ -302,6 +306,49 @@ describe('contract getPastEvent filter', () => {
 			expect(events).toHaveLength(1);
 			expect(events[0]?.event).toBe('IndexedBytesEvent');
 			expect(events[0]?.returnValues.value).toBe(sha3Raw('0x0102'));
+		});
+	});
+
+	describe('function values', () => {
+		let contractDeployed: Contract<typeof FunctionValuesAbi>;
+		let sendOptions: Record<string, unknown>;
+
+		beforeAll(async () => {
+			const contract = new Contract(FunctionValuesAbi, undefined, {
+				provider: getSystemTestProvider(),
+			});
+			const account = await createTempAccount();
+			sendOptions = { from: account.address };
+			contractDeployed = await contract
+				.deploy({ data: FunctionValuesBytecode })
+				.send(sendOptions);
+		});
+
+		it('should encode, decode, and filter a 68-byte function value', async () => {
+			const selector = contractDeployed.methods.plusOne(0).encodeABI().slice(0, 10);
+			const functionValue = `${addressToHex(
+				contractDeployed.options.address,
+			)}${selector.slice(2)}`;
+
+			const result = await contractDeployed.methods
+				.exerciseFunction(functionValue, 41)
+				.call();
+			expect(result[0]).toBe(functionValue);
+			expect(result[1]).toBe(BigInt(42));
+
+			const receipt = await contractDeployed.methods
+				.exerciseFunction(functionValue, 41)
+				.send(sendOptions);
+			const events = (await contractDeployed.getPastEvents('FunctionObserved', {
+				fromBlock: receipt.blockNumber,
+				toBlock: receipt.blockNumber,
+				filter: { indexedCallback: functionValue },
+			})) as EventLog[];
+
+			expect(events).toHaveLength(1);
+			expect(events[0]?.returnValues.indexedCallback).toBe(sha3Raw(functionValue));
+			expect(events[0]?.returnValues.callback).toBe(functionValue);
+			expect(events[0]?.returnValues.result).toBe(BigInt(42));
 		});
 	});
 });

@@ -36,6 +36,18 @@ describe('web3-validator', () => {
 				expect(validator.validate(['uint'], [1])).toBeUndefined();
 			});
 
+			it('should validate a 68-byte function value', () => {
+				const functionValue = `0x01${'00'.repeat(63)}deadbeef`;
+
+				expect(validator.validate(['function'], [functionValue])).toBeUndefined();
+				expect(() => validator.validate(['function'], [`0x${'00'.repeat(67)}`])).toThrow(
+					'must pass "function" validation',
+				);
+				expect(() => validator.validate(['function'], [new Uint8Array(68)])).toThrow(
+					'must pass "function" validation',
+				);
+			});
+
 			it('should raise error with empty value', () => {
 				expect(() => validator.validate(['string'], [])).toThrow(
 					'must NOT have fewer than 1 items',

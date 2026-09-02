@@ -23,7 +23,7 @@ import { isBoolean } from './validation/boolean.js';
 import { isBytes } from './validation/bytes.js';
 import { isQRLTypedData } from './validation/qrl_typed_data.js';
 import { isFilterObject } from './validation/filter.js';
-import { isHexStrict, isString } from './validation/string.js';
+import { isHexStrict, isHexString, isString } from './validation/string.js';
 import { isNumber, isInt, isUInt } from './validation/numbers.js';
 
 const formats: { [key: string]: (data: unknown) => boolean } = {
@@ -36,6 +36,7 @@ const formats: { [key: string]: (data: unknown) => boolean } = {
 	bytes: (data: unknown) => isBytes(data as ValidInputTypes | Uint8Array | number[]),
 	qrlTypedData: (data: unknown) => isQRLTypedData(data),
 	filter: (data: unknown) => isFilterObject(data as Filter),
+	function: (data: unknown) => isHexString(data as string, 68),
 	hex: (data: unknown) => isHexStrict(data as ValidInputTypes),
 	uint: (data: unknown) => isUInt(data as ValidInputTypes),
 	int: (data: unknown) => isInt(data as ValidInputTypes),

@@ -245,4 +245,31 @@ describe('encodeEventAbi', () => {
 			`0xe91cf08aac85935e32397f410e48217a127b6855d41b1e3877eb4179c0904b77${padding}`,
 		]);
 	});
+
+	it('should hash the packed 68-byte function value for an indexed filter', () => {
+		const functionEventFragment: AbiEventFragment & { signature: string } = {
+			anonymous: false,
+			inputs: [
+				{
+					indexed: true,
+					internalType: 'function',
+					name: 'callback',
+					type: 'function',
+				},
+			],
+			name: 'FunctionObserved',
+			type: 'event',
+			signature: '0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd5',
+		};
+		const functionValue = `0x01${'00'.repeat(63)}deadbeef`;
+
+		expect(
+			encodeEventABI(contractOptions, functionEventFragment, {
+				filter: { callback: functionValue },
+			}).topics,
+		).toStrictEqual([
+			`0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd5${'0'.repeat(64)}`,
+			`0x8286660e28123e1d7f404613117da406d53c9ca46c3e71353480681c01a1f0f4${'0'.repeat(64)}`,
+		]);
+	});
 });

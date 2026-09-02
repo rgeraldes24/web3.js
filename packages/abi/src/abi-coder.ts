@@ -29,6 +29,7 @@ import { ArrayCoder } from './coders/array.js';
 import { BooleanCoder } from './coders/boolean.js';
 import { BytesCoder } from './coders/bytes.js';
 import { FixedBytesCoder } from './coders/fixed-bytes.js';
+import { FunctionCoder } from './coders/function.js';
 import { NullCoder } from './coders/null.js';
 import { NumberCoder } from './coders/number.js';
 import { StringCoder } from './coders/string.js';
@@ -60,6 +61,8 @@ export class AbiCoder {
 				return new StringCoder(param.name);
 			case 'bytes':
 				return new BytesCoder(param.name);
+			case 'function':
+				return new FunctionCoder(param.name);
 			case 'array':
 				return new ArrayCoder(
 					this._getCoder(param.arrayChildren),

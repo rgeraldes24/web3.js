@@ -728,6 +728,7 @@ export const validQRLTypeData: string[] = [
 	'address',
 	'address[]',
 	'address[2]',
+	'function',
 ];
 
 export const invalidQRLTypeData: string[] = [

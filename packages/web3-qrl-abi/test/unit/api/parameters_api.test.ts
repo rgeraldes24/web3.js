@@ -27,6 +27,9 @@ import {
 } from '../../fixtures/data';
 
 describe('parameters_api', () => {
+	const functionValue = `0x01${'00'.repeat(63)}deadbeef`;
+	const encodedFunction = `0x01${'00'.repeat(63)}${'00'.repeat(60)}deadbeef`;
+
 	describe('encodeParameters', () => {
 		describe('valid data', () => {
 			it.each(validEncodeParametersData)(
@@ -101,6 +104,17 @@ describe('parameters_api', () => {
 	});
 
 	describe('encode and decode', () => {
+		/* eslint-disable @typescript-eslint/no-unsafe-call */
+		it('encodes and decodes a named 68-byte function value', () => {
+			const abi = [{ name: 'callback', type: 'function' }];
+			expect(encodeParameters(abi, [functionValue])).toBe(encodedFunction);
+
+			const decoded = decodeParameters(abi, encodedFunction);
+			expect(decoded[0]).toBe(functionValue);
+			expect(decoded.callback).toBe(functionValue);
+		});
+		/* eslint-enable @typescript-eslint/no-unsafe-call */
+
 		describe('input should be the same as returned value from encode and decode', () => {
 			it.each(validEncodeDecodeParametersData)(
 				'%#: should pass for valid values: %j',

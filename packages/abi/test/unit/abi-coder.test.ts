@@ -37,6 +37,9 @@ const bytesWord = (hex: string) => `${hex}${'0'.repeat(WORD * 2 - hex.length)}`;
 const ADDR_A = `Q${'ab'.repeat(64)}`;
 const ADDR_B = `Q${'0'.repeat(127)}1`;
 const ADDR_ZERO = `Q${'0'.repeat(128)}`;
+const FUNCTION_A = `0x01${'00'.repeat(63)}deadbeef`;
+const FUNCTION_B = `0x${'ab'.repeat(64)}01020304`;
+const functionWords = (value: string) => `${value.slice(2, -8)}${zeros(60)}${value.slice(-8)}`;
 
 describe('AbiCoder', () => {
 	describe('word size', () => {
@@ -246,6 +249,64 @@ describe('AbiCoder', () => {
 			).toThrow(/missing names/);
 		});
 	});
+
+	/* eslint-disable @typescript-eslint/no-unsafe-call */
+	describe('function values', () => {
+		it('accounts for both function words when locating a dynamic argument', () => {
+			const encoded = defaultAbiCoder.encode(['function', 'string'], [FUNCTION_A, 'ok']);
+
+			expect(encoded).toBe(
+				`0x${functionWords(FUNCTION_A)}${word(192)}${word(2)}${bytesWord('6f6b')}`,
+			);
+			expect(Array.from(defaultAbiCoder.decode(['function', 'string'], encoded))).toEqual([
+				FUNCTION_A,
+				'ok',
+			]);
+		});
+
+		it('accounts for every function in a fixed array head', () => {
+			const encoded = defaultAbiCoder.encode(
+				['function[2]', 'string'],
+				[[FUNCTION_A, FUNCTION_B], 'ok'],
+			);
+
+			expect(encoded).toBe(
+				`0x${functionWords(FUNCTION_A)}${functionWords(FUNCTION_B)}${word(
+					320,
+				)}${word(2)}${bytesWord('6f6b')}`,
+			);
+			const decoded = defaultAbiCoder.decode(['function[2]', 'string'], encoded);
+			expect(Array.from(decoded[0])).toEqual([FUNCTION_A, FUNCTION_B]);
+			expect(decoded[1]).toBe('ok');
+		});
+
+		it('encodes a dynamic function array inline after its count', () => {
+			const encoded = defaultAbiCoder.encode(['function[]'], [[FUNCTION_A, FUNCTION_B]]);
+
+			expect(encoded).toBe(
+				`0x${word(64)}${word(2)}${functionWords(FUNCTION_A)}${functionWords(FUNCTION_B)}`,
+			);
+			expect(Array.from(defaultAbiCoder.decode(['function[]'], encoded)[0])).toEqual([
+				FUNCTION_A,
+				FUNCTION_B,
+			]);
+		});
+
+		it('accounts for both function words inside a dynamic tuple', () => {
+			const type = 'tuple(function callback, string label)';
+			const encoded = defaultAbiCoder.encode([type], [{ callback: FUNCTION_A, label: 'ok' }]);
+
+			expect(encoded).toBe(
+				`0x${word(64)}${functionWords(FUNCTION_A)}${word(192)}${word(2)}${bytesWord(
+					'6f6b',
+				)}`,
+			);
+			const [decoded] = defaultAbiCoder.decode([type], encoded);
+			expect(decoded.callback).toBe(FUNCTION_A);
+			expect(decoded.label).toBe('ok');
+		});
+	});
+	/* eslint-enable @typescript-eslint/no-unsafe-call */
 
 	describe('encode: argument checking', () => {
 		it('rejects a types/values length mismatch', () => {
