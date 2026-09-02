@@ -1104,17 +1104,14 @@ describe('Contract', () => {
 				type: 'event',
 			} as const;
 			const bytesHash = sha3Raw('0xabcd');
-			const spyGetLogs = jest.spyOn(qrl, 'getLogs').mockResolvedValue([
-				{
-					...getLogsData.response[0],
-					address: deployedAddr,
-					data: '0x',
-					topics: [
-						rightPad(encodeEventSignature(indexedBytesEvent), 128),
-						rightPad(bytesHash, 128),
-					],
-				},
-			] as never);
+			const eventTopic = rightPad(encodeEventSignature(indexedBytesEvent), 128);
+			const logs = [sha3Raw('0xffff'), bytesHash].map(valueHash => ({
+				...getLogsData.response[0],
+				address: deployedAddr,
+				data: '0x',
+				topics: [eventTopic, rightPad(valueHash, 128)],
+			}));
+			const spyGetLogs = jest.spyOn(qrl, 'getLogs').mockResolvedValue(logs as never);
 			const contract = new Contract([indexedBytesEvent], deployedAddr);
 
 			const events = await contract.getPastEvents('allEvents', {
