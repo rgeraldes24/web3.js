@@ -201,7 +201,7 @@ export const decodeEventABI = (
 		signature:
 			modifiedEvent.anonymous || !data.topics || data.topics.length === 0 || !data.topics[0]
 				? undefined
-				: data.topics[0],
+				: data.topics[0].slice(0, 66),
 
 		raw: {
 			data: data.data,

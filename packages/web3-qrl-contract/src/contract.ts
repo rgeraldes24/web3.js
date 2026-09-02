@@ -40,7 +40,6 @@ import {
 import {
 	encodeEventSignature,
 	encodeFunctionSignature,
-	encodeParameter,
 	decodeContractErrorData,
 	formatOddHexstrings,
 	isAbiErrorFragment,
@@ -78,7 +77,7 @@ import {
 	DEFAULT_RETURN_FORMAT,
 	Web3ValidationErrorObject,
 } from '@theqrl/web3-types';
-import { format, isDataFormat, keccak256, rightPad, toChecksumAddress } from '@theqrl/web3-utils';
+import { format, isDataFormat, keccak256, toChecksumAddress } from '@theqrl/web3-utils';
 import {
 	isNullish,
 	validator,
@@ -689,10 +688,10 @@ export class Contract<Abi extends ContractAbi>
 	 *   },
 	 *   raw: {
 	 *       data: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
-	 *       topics: ['0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ead7', '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385']
+	 *       topics: ['0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ea0000000000000000000000000000000000000000000000000000000000000000', '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a9130000000000000000000000000000000000000000000000000000000000000000']
 	 *   },
 	 *   event: 'MyEvent',
-	 *   signature: '0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ead7',
+	 *   signature: '0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ea',
 	 *   logIndex: 0,
 	 *   transactionIndex: 0,
 	 *   transactionHash: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
@@ -780,7 +779,7 @@ export class Contract<Abi extends ContractAbi>
 						? this._jsonInterface.find(
 								item =>
 									isAbiEventFragment(item) &&
-									rightPad(item.signature, 128) === log.signature,
+									item.signature === log.signature,
 							)
 						: abi;
 
@@ -800,7 +799,6 @@ export class Contract<Abi extends ContractAbi>
 									: typeof value === 'string'
 										? formatOddHexstrings(value)
 										: value;
-							encodeParameter(inputAbi.type, value);
 							expected = keccak256(normalizedValue as string);
 						}
 
