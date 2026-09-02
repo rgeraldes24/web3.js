@@ -292,5 +292,16 @@ describe('contract getPastEvent filter', () => {
 			expect(events).toHaveLength(1);
 			expect(events[0]?.returnValues.value).toBe(sha3Raw('0x0102'));
 		});
+
+		it('should filter all events using indexed bytes', async () => {
+			const events = (await contractDeployed.getPastEvents('allEvents', {
+				fromBlock: 'earliest',
+				filter: { value: '0x0102' },
+			})) as EventLog[];
+
+			expect(events).toHaveLength(1);
+			expect(events[0]?.event).toBe('IndexedBytesEvent');
+			expect(events[0]?.returnValues.value).toBe(sha3Raw('0x0102'));
+		});
 	});
 });
