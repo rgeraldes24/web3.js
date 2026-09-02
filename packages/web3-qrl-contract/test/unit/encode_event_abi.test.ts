@@ -232,16 +232,16 @@ describe('encodeEventAbi', () => {
 			signature: '0xbac4615f67d03bd638dfc37d5751fe1acbc0d951241a04b0d5e6aa6835d58880',
 		};
 		const padding = '0'.repeat(64);
-		const stringHash = `0x77b446f7f7431b79d3ee0ee3faafefd90f1f8cc91b5c88cf21bac16ac0c8590b${padding}`;
-		const bytesHash = `0xdbe576b4818846aa77e82f4ed5fa78f92766b141f282d36703886d196df39322${padding}`;
+		const stringTopic = `0x77b446f7f7431b79d3ee0ee3faafefd90f1f8cc91b5c88cf21bac16ac0c8590b${padding}`;
+		const bytesTopic = `0xdbe576b4818846aa77e82f4ed5fa78f92766b141f282d36703886d196df39322${padding}`;
 
 		const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
 			filter: { text: '0xabcd', data: ['0xabcd', '0xabc'] },
 		}).topics;
 
-		expect(topics?.[1]).toBe(stringHash);
+		expect(topics?.[1]).toBe(stringTopic);
 		expect(topics?.[2]).toStrictEqual([
-			bytesHash,
+			bytesTopic,
 			`0xe91cf08aac85935e32397f410e48217a127b6855d41b1e3877eb4179c0904b77${padding}`,
 		]);
 	});
