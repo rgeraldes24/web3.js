@@ -51,6 +51,18 @@ import { Web3ContractError } from '@theqrl/web3-errors';
 import { ContractOptions, ContractAbiWithSignature, EventLog } from './types.js';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+
+const encodeIndexedStringTopic = (value: unknown): Topic => {
+	encodeParameter('string', value);
+	return rightPad(keccak256(new TextEncoder().encode(value as string)), 128) as Topic;
+};
+
+const encodeIndexedBytesTopic = (value: unknown): Topic => {
+	const normalizedValue = typeof value === 'string' ? formatOddHexstrings(value) : value;
+	encodeParameter('bytes', normalizedValue);
+	return rightPad(keccak256(normalizedValue as string), 128) as Topic;
+};
+
 export const encodeEventABI = (
 	{ address }: ContractOptions,
 	event: AbiEventFragment & { signature: string },
@@ -104,34 +116,17 @@ export const encodeEventABI = (
 				// TODO: https://github.com/ethereum/web3.js/issues/344
 				// TODO: deal properly with components
 				if (Array.isArray(value)) {
-					opts.topics.push(
-						value.map(topic => {
-							if (input.type === 'string') {
-								encodeParameter(input.type, topic);
-								return rightPad(
-									keccak256(new TextEncoder().encode(topic as string)),
-									128,
-								) as Topic;
-							}
-							if (input.type === 'bytes') {
-								const normalizedTopic =
-									typeof topic === 'string' ? formatOddHexstrings(topic) : topic;
-								encodeParameter(input.type, normalizedTopic);
-								return rightPad(keccak256(normalizedTopic as string), 128) as Topic;
-							}
-							return encodeParameter(input.type, topic);
-						}),
-					);
+					if (input.type === 'string') {
+						opts.topics.push(value.map(encodeIndexedStringTopic));
+					} else if (input.type === 'bytes') {
+						opts.topics.push(value.map(encodeIndexedBytesTopic));
+					} else {
+						opts.topics.push(value.map(topic => encodeParameter(input.type, topic)));
+					}
 				} else if (input.type === 'string') {
-					encodeParameter(input.type, value);
-					opts.topics.push(
-						rightPad(keccak256(new TextEncoder().encode(value as string)), 128),
-					);
+					opts.topics.push(encodeIndexedStringTopic(value));
 				} else if (input.type === 'bytes') {
-					const normalizedValue =
-						typeof value === 'string' ? formatOddHexstrings(value) : value;
-					encodeParameter(input.type, normalizedValue);
-					opts.topics.push(rightPad(keccak256(normalizedValue as string), 128));
+					opts.topics.push(encodeIndexedBytesTopic(value));
 				} else {
 					opts.topics.push(encodeParameter(input.type, value));
 				}
