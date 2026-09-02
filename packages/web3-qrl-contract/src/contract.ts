@@ -40,7 +40,9 @@ import {
 import {
 	encodeEventSignature,
 	encodeFunctionSignature,
+	encodeParameter,
 	decodeContractErrorData,
+	formatOddHexstrings,
 	isAbiErrorFragment,
 	isAbiEventFragment,
 	isAbiFunctionFragment,
@@ -76,7 +78,7 @@ import {
 	DEFAULT_RETURN_FORMAT,
 	Web3ValidationErrorObject,
 } from '@theqrl/web3-types';
-import { format, isDataFormat, rightPad, toChecksumAddress } from '@theqrl/web3-utils';
+import { format, isDataFormat, keccak256, rightPad, toChecksumAddress } from '@theqrl/web3-utils';
 import {
 	isNullish,
 	validator,
@@ -86,7 +88,6 @@ import {
 } from '@theqrl/web3-validator';
 import { ALL_EVENTS, ALL_EVENTS_ABI } from './constants.js';
 import { decodeEventABI, decodeMethodReturn, encodeEventABI, encodeMethodABI } from './encoding.js';
-import { encodeIndexedFilterTopic } from './indexed_topic.js';
 import { LogsSubscription } from './log_subscription.js';
 import {
 	ContractAbiWithSignature,
@@ -793,7 +794,14 @@ export class Contract<Abi extends ContractAbi>
 							inputAbi?.indexed &&
 							(inputAbi.type === 'string' || inputAbi.type === 'bytes')
 						) {
-							expected = encodeIndexedFilterTopic(inputAbi.type, value).slice(0, 66);
+							const normalizedValue =
+								inputAbi.type === 'string'
+									? new TextEncoder().encode(value as string)
+									: typeof value === 'string'
+										? formatOddHexstrings(value)
+										: value;
+							encodeParameter(inputAbi.type, value);
+							expected = keccak256(normalizedValue as string);
 							actual = String(actual).slice(0, 66);
 						}
 

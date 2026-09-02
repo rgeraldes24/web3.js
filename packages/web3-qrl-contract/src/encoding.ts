@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { format, isNullish, rightPad } from '@theqrl/web3-utils';
+import { format, isNullish, keccak256, rightPad } from '@theqrl/web3-utils';
 import { isAddressString } from '@theqrl/web3-validator';
 
 import {
@@ -37,7 +37,9 @@ import {
 	decodeParameters,
 	encodeEventSignature,
 	encodeFunctionSignature,
+	encodeParameter,
 	encodeParameters,
+	formatOddHexstrings,
 	isAbiConstructorFragment,
 	jsonInterfaceMethodToString,
 } from '@theqrl/web3-qrl-abi';
@@ -47,7 +49,6 @@ import { blockSchema, logSchema } from '@theqrl/web3-qrl';
 import { Web3ContractError } from '@theqrl/web3-errors';
 
 import { ContractOptions, ContractAbiWithSignature, EventLog } from './types.js';
-import { encodeIndexedFilterTopic } from './indexed_topic.js';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 export const encodeEventABI = (
@@ -102,10 +103,27 @@ export const encodeEventABI = (
 
 				// TODO: https://github.com/ethereum/web3.js/issues/344
 				// TODO: deal properly with components
+				const encodeTopic = (topic: unknown): Topic => {
+					if (input.type === 'string') {
+						encodeParameter(input.type, topic);
+						return rightPad(
+							keccak256(new TextEncoder().encode(topic as string)),
+							128,
+						) as Topic;
+					}
+					if (input.type === 'bytes') {
+						const normalizedTopic =
+							typeof topic === 'string' ? formatOddHexstrings(topic) : topic;
+						encodeParameter(input.type, normalizedTopic);
+						return rightPad(keccak256(normalizedTopic as string), 128) as Topic;
+					}
+					return encodeParameter(input.type, topic);
+				};
+
 				if (Array.isArray(value)) {
-					opts.topics.push(value.map(v => encodeIndexedFilterTopic(input.type, v)));
+					opts.topics.push(value.map(encodeTopic));
 				} else {
-					opts.topics.push(encodeIndexedFilterTopic(input.type, value));
+					opts.topics.push(encodeTopic(value));
 				}
 			}
 		}
