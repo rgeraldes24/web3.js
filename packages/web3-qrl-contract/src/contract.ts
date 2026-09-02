@@ -774,6 +774,7 @@ export class Contract<Abi extends ContractAbi>
 			return decodedLogs.filter(log => {
 				if (typeof log === 'string') return true;
 
+				// allEvents has no inputs; resolve its concrete ABI before matching indexed filters.
 				const logAbi =
 					abi.name === ALL_EVENTS
 						? this._jsonInterface.find(
