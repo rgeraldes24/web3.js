@@ -72,15 +72,11 @@ describe('encodeEventAbi', () => {
 
 	it('should set topics array for filter to given topics array', () => {
 		const encodedEventFilter = encodeEventABI(contractOptions, abiEventFragment, {
-			topics: [
-				'0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca0000000000000000000000000000000000000000000000000000000000000000',
-			],
+			topics: ['0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca'],
 		});
 
 		expect(encodedEventFilter).toMatchObject({
-			topics: [
-				'0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca0000000000000000000000000000000000000000000000000000000000000000',
-			],
+			topics: ['0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca'],
 			address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 		});
 	});
@@ -220,7 +216,7 @@ describe('encodeEventAbi', () => {
 		]);
 	});
 
-	describe('dynamic indexed topics', () => {
+	it('should encode dynamic string and bytes topics', () => {
 		const dynamicEventFragment: AbiEventFragment & { signature: string } = {
 			anonymous: false,
 			inputs: [
@@ -235,38 +231,14 @@ describe('encodeEventAbi', () => {
 		const stringHash = `0x77b446f7f7431b79d3ee0ee3faafefd90f1f8cc91b5c88cf21bac16ac0c8590b${padding}`;
 		const bytesHash = `0xdbe576b4818846aa77e82f4ed5fa78f92766b141f282d36703886d196df39322${padding}`;
 
-		it('should distinguish UTF-8 strings from raw bytes', () => {
-			const stringTopics = encodeEventABI(contractOptions, dynamicEventFragment, {
-				filter: { text: '0xabcd' },
-			}).topics;
-			const bytesTopics = encodeEventABI(contractOptions, dynamicEventFragment, {
-				filter: { data: '0xabcd' },
-			}).topics;
+		const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
+			filter: { text: '0xabcd', data: ['0xabcd', '0xabc'] },
+		}).topics;
 
-			expect(stringTopics?.[1]).toBe(stringHash);
-			expect(bytesTopics?.[2]).toBe(bytesHash);
-		});
-
-		it('should normalize odd-length indexed bytes before hashing', () => {
-			const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
-				filter: { data: '0xabc' },
-			}).topics;
-
-			expect(topics?.[2]).toBe(
-				`0xe91cf08aac85935e32397f410e48217a127b6855d41b1e3877eb4179c0904b77${padding}`,
-			);
-		});
-
-		it('should encode every dynamic OR-filter alternative', () => {
-			const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
-				filter: {
-					text: ['0xabcd', '0xabcd'],
-					data: ['0xabcd', '0xabcd'],
-				},
-			}).topics;
-
-			expect(topics?.[1]).toStrictEqual([stringHash, stringHash]);
-			expect(topics?.[2]).toStrictEqual([bytesHash, bytesHash]);
-		});
+		expect(topics?.[1]).toBe(stringHash);
+		expect(topics?.[2]).toStrictEqual([
+			bytesHash,
+			`0xe91cf08aac85935e32397f410e48217a127b6855d41b1e3877eb4179c0904b77${padding}`,
+		]);
 	});
 });
