@@ -75,7 +75,7 @@ describe('qrl', () => {
 			arguments: [10, 'string init value'],
 		};
 
-		sendOptions = { from: accounts[0], gas: '1000000' };
+		sendOptions = { from: accounts[0], gas: '1200000' };
 
 		contract = await contract.deploy(deployOptions).send(sendOptions);
 	});

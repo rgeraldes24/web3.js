@@ -41,6 +41,7 @@ import {
 	encodeEventSignature,
 	encodeFunctionSignature,
 	decodeContractErrorData,
+	formatOddHexstrings,
 	isAbiErrorFragment,
 	isAbiEventFragment,
 	isAbiFunctionFragment,
@@ -74,7 +75,6 @@ import {
 	PayableCallOptions,
 	DataFormat,
 	DEFAULT_RETURN_FORMAT,
-	Numbers,
 	Web3ValidationErrorObject,
 } from '@theqrl/web3-types';
 import { format, isDataFormat, keccak256, toChecksumAddress } from '@theqrl/web3-utils';
@@ -688,10 +688,10 @@ export class Contract<Abi extends ContractAbi>
 	 *   },
 	 *   raw: {
 	 *       data: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
-	 *       topics: ['0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ead7', '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385']
+	 *       topics: ['0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ea0000000000000000000000000000000000000000000000000000000000000000', '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a9130000000000000000000000000000000000000000000000000000000000000000']
 	 *   },
 	 *   event: 'MyEvent',
-	 *   signature: '0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ead7',
+	 *   signature: '0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ea',
 	 *   logIndex: 0,
 	 *   transactionIndex: 0,
 	 *   transactionHash: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
@@ -774,25 +774,37 @@ export class Contract<Abi extends ContractAbi>
 			return decodedLogs.filter(log => {
 				if (typeof log === 'string') return true;
 
+				// allEvents has no inputs; resolve its event ABI to identify indexed types that require hashing.
+				const logAbi =
+					abi.name === ALL_EVENTS
+						? this._jsonInterface.find(
+								item =>
+									isAbiEventFragment(item) &&
+									item.signature === log.signature,
+							)
+						: abi;
+
 				return filterKeys.every((key: string) => {
-					if (Array.isArray(filter[key])) {
-						return (filter[key] as Numbers[]).some(
-							(v: Numbers) =>
-								String(log.returnValues[key]).toUpperCase() ===
-								String(v).toUpperCase(),
+					const inputAbi = logAbi?.inputs?.find(input => input.name === key);
+
+					const matches = (value: unknown) => {
+						let expected = value;
+						if (inputAbi?.indexed && inputAbi.type === 'string') {
+							expected = keccak256(new TextEncoder().encode(value as string));
+						} else if (inputAbi?.indexed && inputAbi.type === 'bytes') {
+							expected = keccak256(formatOddHexstrings(value as string));
+						}
+
+						return (
+							String(log.returnValues[key]).toUpperCase() ===
+							String(expected).toUpperCase()
 						);
-					}
+					};
 
-					const inputAbi = abi.inputs?.filter(input => input.name === key)[0];
-					if (inputAbi?.indexed && inputAbi.type === 'string') {
-						const hashedIndexedString = keccak256(filter[key] as string);
-						if (hashedIndexedString === String(log.returnValues[key])) return true;
+					if (Array.isArray(filter[key])) {
+						return (filter[key] as unknown[]).some(matches);
 					}
-
-					return (
-						String(log.returnValues[key]).toUpperCase() ===
-						String(filter[key]).toUpperCase()
-					);
+					return matches(filter[key]);
 				});
 			});
 		}

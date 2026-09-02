@@ -38,7 +38,7 @@ describe('contract', () => {
 			arguments: [10, 'string init value'],
 		};
 
-		sendOptions = { from: acc.address, gas: '1000000' };
+		sendOptions = { from: acc.address, gas: '1200000' };
 
 		contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 	});
@@ -61,7 +61,7 @@ describe('contract', () => {
 					provider: getSystemTestProvider(),
 					data: BasicBytecode,
 					from: acc.address,
-					gas: '1000000',
+					gas: '1200000',
 				});
 				const deployedTempContract = await tempContract
 					.deploy({ arguments: [10, 'string init value'] })
@@ -135,7 +135,7 @@ describe('contract', () => {
 					provider: getSystemTestProvider(),
 					input: BasicBytecode,
 					from: acc.address,
-					gas: '1000000',
+					gas: '1200000',
 				});
 				const deployedTempContract = await tempContract
 					.deploy({ arguments: [10, 'string init value'] })

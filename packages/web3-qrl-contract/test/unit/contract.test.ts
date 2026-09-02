@@ -25,6 +25,8 @@ import {
 } from '@theqrl/web3-types';
 import { ContractExecutionError, Web3ContractError } from '@theqrl/web3-errors';
 import { Web3Context } from '@theqrl/web3-core';
+import { encodeEventSignature } from '@theqrl/web3-qrl-abi';
+import { rightPad, sha3Raw } from '@theqrl/web3-utils';
 import { Contract } from '../../src';
 import { sampleStorageContractABI } from '../fixtures/storage';
 import { GreeterAbi, GreeterBytecode } from '../shared_fixtures/build/Greeter';
@@ -965,6 +967,7 @@ describe('Contract', () => {
 					expect(_params.address).toBe(`Q${deployedAddr.slice(1).toLocaleLowerCase()}`);
 					expect(_params.fromBlock).toStrictEqual(getLogsData.request.fromBlock);
 					expect(_params.toBlock).toStrictEqual(getLogsData.request.toBlock);
+					expect(_params.topics).toStrictEqual(getLogsData.request.topics);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 					return Promise.resolve([getLogsData.response[0]]) as any;
@@ -982,7 +985,9 @@ describe('Contract', () => {
 			const pastEvent = await deployedContract.getPastEvents(getPastEventsData.event as any, {
 				fromBlock,
 				toBlock,
-				topics: ['0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e'],
+				topics: [
+					'0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e0000000000000000000000000000000000000000000000000000000000000000',
+				],
 			});
 
 			expect(pastEvent).toStrictEqual(getPastEventsData.response);
@@ -1093,6 +1098,35 @@ describe('Contract', () => {
 			spyGetLogs.mockClear();
 		});
 
+		it('matches indexed bytes OR filters for all events', async () => {
+			const indexedBytesEvent = {
+				anonymous: false,
+				inputs: [{ indexed: true, internalType: 'bytes', name: 'value', type: 'bytes' }],
+				name: 'IndexedBytes',
+				type: 'event',
+			} as const;
+			const bytesHash = sha3Raw('0xabcd');
+			const eventTopic = rightPad(encodeEventSignature(indexedBytesEvent), 128);
+			const logs = [sha3Raw('0xffff'), bytesHash].map(valueHash => ({
+				...AllGetPastEventsData.getLogsData[0],
+				data: '0x',
+				topics: [eventTopic, rightPad(valueHash, 128)],
+			}));
+			const spyGetLogs = jest.spyOn(qrl, 'getLogs').mockResolvedValue(logs as never);
+			const contract = new Contract([indexedBytesEvent], deployedAddr);
+
+			const events = await contract.getPastEvents('allEvents', {
+				filter: { value: ['0x0000', '0xabcd'] },
+			});
+
+			expect(events).toHaveLength(1);
+			expect(events[0]).toMatchObject({
+				event: 'IndexedBytes',
+				returnValues: { value: bytesHash },
+			});
+			spyGetLogs.mockClear();
+		});
+
 		it('getPastEvents for all events with filter by topics should work', async () => {
 			const contract = new Contract<typeof GreeterAbi>(GreeterAbi);
 
@@ -1109,6 +1143,9 @@ describe('Contract', () => {
 					expect(_params.address).toBe(`Q${deployedAddr.slice(1).toLocaleLowerCase()}`);
 					expect(_params.fromBlock).toBeUndefined();
 					expect(_params.toBlock).toBeUndefined();
+					expect(_params.topics).toStrictEqual(
+						AllGetPastEventsData.getLogsData[1].topics,
+					);
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 					return Promise.resolve([AllGetPastEventsData.getLogsData[1]]) as any; // AllGetPastEventsData.getLogsData data test is for: assume two transactions sent to contract with contractInstance.methods.setGreeting("Hello") and contractInstance.methods.setGreeting("Another Greeting")
@@ -1122,7 +1159,9 @@ describe('Contract', () => {
 				.send(sendOptions);
 
 			const pastEvent = await deployedContract.getPastEvents({
-				topics: ['0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e'],
+				topics: [
+					'0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e0000000000000000000000000000000000000000000000000000000000000000',
+				],
 			});
 			expect(pastEvent).toHaveLength(1);
 			expect(pastEvent[0]).toStrictEqual(AllGetPastEventsData.response[1]);

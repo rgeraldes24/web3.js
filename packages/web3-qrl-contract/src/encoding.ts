@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { format, isNullish, keccak256 } from '@theqrl/web3-utils';
+import { format, isNullish, keccak256, rightPad } from '@theqrl/web3-utils';
 import { isAddressString } from '@theqrl/web3-validator';
 
 import {
@@ -39,6 +39,7 @@ import {
 	encodeFunctionSignature,
 	encodeParameter,
 	encodeParameters,
+	formatOddHexstrings,
 	isAbiConstructorFragment,
 	jsonInterfaceMethodToString,
 } from '@theqrl/web3-qrl-abi';
@@ -50,6 +51,18 @@ import { Web3ContractError } from '@theqrl/web3-errors';
 import { ContractOptions, ContractAbiWithSignature, EventLog } from './types.js';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+
+const encodeIndexedStringTopic = (value: unknown): Topic => {
+	encodeParameter('string', value);
+	return rightPad(keccak256(new TextEncoder().encode(value as string)), 128) as Topic;
+};
+
+const encodeIndexedBytesTopic = (value: unknown): Topic => {
+	const normalizedValue = typeof value === 'string' ? formatOddHexstrings(value) : value;
+	encodeParameter('bytes', normalizedValue);
+	return rightPad(keccak256(normalizedValue as string), 128) as Topic;
+};
+
 export const encodeEventABI = (
 	{ address }: ContractOptions,
 	event: AbiEventFragment & { signature: string },
@@ -79,7 +92,10 @@ export const encodeEventABI = (
 		// add event signature
 		if (event && !event.anonymous && event.name !== 'ALLEVENTS') {
 			opts.topics.push(
-				event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event)),
+				rightPad(
+					event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event)),
+					128,
+				),
 			);
 		}
 
@@ -91,7 +107,7 @@ export const encodeEventABI = (
 				}
 
 				const value = filter[input.name];
-				if (!value) {
+				if (isNullish(value)) {
 					// eslint-disable-next-line no-null/no-null
 					opts.topics.push(null);
 					continue;
@@ -100,9 +116,17 @@ export const encodeEventABI = (
 				// TODO: https://github.com/ethereum/web3.js/issues/344
 				// TODO: deal properly with components
 				if (Array.isArray(value)) {
-					opts.topics.push(value.map(v => encodeParameter(input.type, v)));
+					if (input.type === 'string') {
+						opts.topics.push(value.map(encodeIndexedStringTopic));
+					} else if (input.type === 'bytes') {
+						opts.topics.push(value.map(encodeIndexedBytesTopic));
+					} else {
+						opts.topics.push(value.map(topic => encodeParameter(input.type, topic)));
+					}
 				} else if (input.type === 'string') {
-					opts.topics.push(keccak256(value as string));
+					opts.topics.push(encodeIndexedStringTopic(value));
+				} else if (input.type === 'bytes') {
+					opts.topics.push(encodeIndexedBytesTopic(value));
 				} else {
 					opts.topics.push(encodeParameter(input.type, value));
 				}
@@ -136,7 +160,7 @@ export const decodeEventABI = (
 
 	// if allEvents get the right event
 	if (modifiedEvent.name === 'ALLEVENTS') {
-		const matchedEvent = jsonInterface.find(j => j.signature === data.topics[0]);
+		const matchedEvent = jsonInterface.find(j => rightPad(j.signature, 128) === data.topics[0]);
 		if (matchedEvent) {
 			modifiedEvent = matchedEvent as AbiEventFragment & { signature: string };
 		} else {
@@ -177,7 +201,7 @@ export const decodeEventABI = (
 		signature:
 			modifiedEvent.anonymous || !data.topics || data.topics.length === 0 || !data.topics[0]
 				? undefined
-				: data.topics[0],
+				: data.topics[0].slice(0, 66),
 
 		raw: {
 			data: data.data,

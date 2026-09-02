@@ -18,10 +18,14 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { HexString, AbiParameter, DecodedParams } from '@theqrl/web3-types';
 import { decodeParameter, decodeParametersWith } from './parameters_api.js';
 
-const STATIC_TYPES = ['bool', 'string', 'int', 'uint', 'address', 'fixed', 'ufixed'];
+const ARRAY_TYPE = /\[[0-9]*\]$/;
 
-const _decodeParameter = (inputType: string, clonedTopic: string) =>
-	inputType === 'string' ? clonedTopic : decodeParameter(inputType, clonedTopic);
+const isIndexedHash = (inputType: string) =>
+	inputType === 'string' ||
+	inputType === 'bytes' ||
+	inputType === 'function' ||
+	inputType === 'tuple' ||
+	ARRAY_TYPE.test(inputType);
 
 /**
  * Decodes ABI-encoded log data and indexed topic data.
@@ -49,10 +53,10 @@ const _decodeParameter = (inputType: string, clonedTopic: string) =>
  *        indexed: true,
  *      },
  *    ],
- *    "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000748656c6c6f252100000000000000000000000000000000000000000000000000",
+ *    "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000748656c6c6f2521000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
  *    [
- *      "0x000000000000000000000000000000000000000000000000000000000000f310",
- *      "0x0000000000000000000000000000000000000000000000000000000000000010",
+ *      "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f310",
+ *      "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010",
  *    ]
  *  );
  * > {
@@ -92,9 +96,9 @@ export const decodeLog = <ReturnType extends DecodedParams>(
 	const offset = clonedTopics.length - Object.keys(indexedInputs).length;
 
 	const decodedIndexedInputs = Object.values(indexedInputs).map((input, index) =>
-		STATIC_TYPES.some(s => input.type.startsWith(s))
-			? _decodeParameter(input.type, clonedTopics[index + offset])
-			: clonedTopics[index + offset],
+		isIndexedHash(input.type)
+			? clonedTopics[index + offset].slice(0, 66)
+			: decodeParameter(input.type, clonedTopics[index + offset]),
 	);
 
 	const returnValues: DecodedParams = { __length__: 0 };

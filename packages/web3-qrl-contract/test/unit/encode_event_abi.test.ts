@@ -72,11 +72,15 @@ describe('encodeEventAbi', () => {
 
 	it('should set topics array for filter to given topics array', () => {
 		const encodedEventFilter = encodeEventABI(contractOptions, abiEventFragment, {
-			topics: ['0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca'],
+			topics: [
+				'0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca0000000000000000000000000000000000000000000000000000000000000000',
+			],
 		});
 
 		expect(encodedEventFilter).toMatchObject({
-			topics: ['0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca'],
+			topics: [
+				'0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca0000000000000000000000000000000000000000000000000000000000000000',
+			],
 			address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 		});
 	});
@@ -172,8 +176,8 @@ describe('encodeEventAbi', () => {
 
 		expect(encodedEventFilter).toMatchObject({
 			topics: [
-				'0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd5',
-				'0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca',
+				'0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd50000000000000000000000000000000000000000000000000000000000000000',
+				'0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca0000000000000000000000000000000000000000000000000000000000000000',
 				// eslint-disable-next-line no-null/no-null
 				null,
 				// eslint-disable-next-line no-null/no-null
@@ -192,7 +196,7 @@ describe('encodeEventAbi', () => {
 
 		expect(encodedEventFilter).toMatchObject({
 			topics: [
-				'0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd5',
+				'0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd50000000000000000000000000000000000000000000000000000000000000000',
 				// eslint-disable-next-line no-null/no-null
 				null,
 				// eslint-disable-next-line no-null/no-null
@@ -201,5 +205,44 @@ describe('encodeEventAbi', () => {
 			],
 			address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
 		});
+	});
+
+	it('should encode zero, false, and empty string indexed filters', () => {
+		const encodedEventFilter = encodeEventABI(contractOptions, abiEventFragment, {
+			filter: { str: '', val: 0, flag: false },
+		});
+
+		expect(encodedEventFilter.topics).toStrictEqual([
+			`0x5b5730af07e266d8b4845f404beb3b193085c686b0edd8e8e20cd4b3fc2b6cd5${'0'.repeat(64)}`,
+			`0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470${'0'.repeat(64)}`,
+			`0x${'0'.repeat(128)}`,
+			`0x${'0'.repeat(128)}`,
+		]);
+	});
+
+	it('should encode dynamic string and bytes topics', () => {
+		const dynamicEventFragment: AbiEventFragment & { signature: string } = {
+			anonymous: false,
+			inputs: [
+				{ indexed: true, internalType: 'string', name: 'text', type: 'string' },
+				{ indexed: true, internalType: 'bytes', name: 'data', type: 'bytes' },
+			],
+			name: 'DynamicIndexed',
+			type: 'event',
+			signature: '0xbac4615f67d03bd638dfc37d5751fe1acbc0d951241a04b0d5e6aa6835d58880',
+		};
+		const padding = '0'.repeat(64);
+		const stringTopic = `0x77b446f7f7431b79d3ee0ee3faafefd90f1f8cc91b5c88cf21bac16ac0c8590b${padding}`;
+		const bytesTopic = `0xdbe576b4818846aa77e82f4ed5fa78f92766b141f282d36703886d196df39322${padding}`;
+
+		const topics = encodeEventABI(contractOptions, dynamicEventFragment, {
+			filter: { text: ['0xabcd'], data: ['0xabcd', '0xabc'] },
+		}).topics;
+
+		expect(topics?.[1]).toStrictEqual([stringTopic]);
+		expect(topics?.[2]).toStrictEqual([
+			bytesTopic,
+			`0xe91cf08aac85935e32397f410e48217a127b6855d41b1e3877eb4179c0904b77${padding}`,
+		]);
 	});
 });
