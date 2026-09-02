@@ -788,26 +788,22 @@ export class Contract<Abi extends ContractAbi>
 
 					const matches = (value: unknown) => {
 						let expected = value;
-						const actual = log.returnValues[key];
-						if (
-							inputAbi?.indexed &&
-							(inputAbi.type === 'string' || inputAbi.type === 'bytes')
-						) {
-							const normalizedValue =
-								inputAbi.type === 'string'
-									? new TextEncoder().encode(value as string)
-									: typeof value === 'string'
-										? formatOddHexstrings(value)
-										: value;
-							expected = keccak256(normalizedValue as string);
+						if (inputAbi?.indexed && inputAbi.type === 'string') {
+							expected = keccak256(new TextEncoder().encode(value as string));
+						} else if (inputAbi?.indexed && inputAbi.type === 'bytes') {
+							expected = keccak256(formatOddHexstrings(value as string));
 						}
 
-						return String(actual).toUpperCase() === String(expected).toUpperCase();
+						return (
+							String(log.returnValues[key]).toUpperCase() ===
+							String(expected).toUpperCase()
+						);
 					};
 
-					return Array.isArray(filter[key])
-						? (filter[key] as unknown[]).some(matches)
-						: matches(filter[key]);
+					if (Array.isArray(filter[key])) {
+						return (filter[key] as unknown[]).some(matches);
+					}
+					return matches(filter[key]);
 				});
 			});
 		}
