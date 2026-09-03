@@ -30,7 +30,6 @@ import {
 import { Wallet } from '@theqrl/web3-qrl-accounts';
 import { isHexStrict } from '@theqrl/web3-validator';
 
-import { isNullish } from '@theqrl/web3-utils';
 import { encodeParameter } from '@theqrl/web3-qrl-abi';
 import Web3QRL from '../../../src';
 import {
@@ -126,7 +125,7 @@ describe('Web3QRL.sendTransaction', () => {
 		const acc = wallet.get(0);
 		expect(minedTransactionData).toMatchObject({
 			from: tempAcc.address,
-			to: isNullish(acc) ? acc : `Q${acc.address.slice(1).toLowerCase()}`,
+			to: acc?.address,
 			value: BigInt(1),
 		});
 	});
@@ -161,7 +160,7 @@ describe('Web3QRL.sendTransaction', () => {
 		const acc = wallet.get(1);
 		expect(minedTransactionData).toMatchObject({
 			from: tempAcc.address,
-			to: isNullish(acc) ? acc : `Q${acc.address.slice(1).toLowerCase()}`,
+			to: acc?.address,
 			value: BigInt(1),
 		});
 	});
