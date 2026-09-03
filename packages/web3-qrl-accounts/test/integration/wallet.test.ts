@@ -23,8 +23,8 @@ import * as accountProvider from '../../src/account';
 const walletAccountProvider: Web3AccountProvider<any> = {
 	create: accountProvider.create,
 	seedToAccount: accountProvider.seedToAccount,
-	decrypt: (keystore, password, options) =>
-		accountProvider.decrypt(
+	decrypt: async (keystore, password, options) =>
+		await accountProvider.decrypt(
 			keystore,
 			password,
 			typeof options?.nonStrict === 'boolean' ? options.nonStrict : undefined,
