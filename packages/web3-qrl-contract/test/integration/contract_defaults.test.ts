@@ -111,8 +111,6 @@ describe('contract', () => {
 				);
 
 				// Forcefully delete this property from the contract instance
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-expect-error
 				contract.defaultBlock = undefined;
 
 				await contract.methods.greet().call(undefined, 'pending');
