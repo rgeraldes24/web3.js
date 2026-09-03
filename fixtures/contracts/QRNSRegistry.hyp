@@ -1,0 +1,80 @@
+// SPDX-License-Identifier: GNU
+pragma hyperion >=0.0;
+
+contract QRNSRegistry {
+	struct Record {
+		address owner;
+		address resolver;
+		uint64 ttl;
+	}
+
+	mapping(bytes32 => Record) records;
+
+	event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);
+	event NewResolver(bytes32 indexed node, address resolver);
+	event NewTTL(bytes32 indexed node, uint64 ttl);
+	event Transfer(bytes32 indexed node, address owner);
+
+	constructor() {
+		records[bytes32(0)].owner = msg.sender;
+	}
+
+	function owner(bytes32 node) public view returns (address) {
+		return records[node].owner;
+	}
+
+	function resolver(bytes32 node) public view returns (address) {
+		return records[node].resolver;
+	}
+
+	function ttl(bytes32 node) public view returns (uint64) {
+		return records[node].ttl;
+	}
+
+	function recordExists(bytes32 node) public view returns (bool) {
+		return records[node].owner != address(0);
+	}
+
+	function setOwner(bytes32 node, address newOwner) public {
+		records[node].owner = newOwner;
+		emit Transfer(node, newOwner);
+	}
+
+	function setResolver(bytes32 node, address newResolver) public {
+		records[node].resolver = newResolver;
+		emit NewResolver(node, newResolver);
+	}
+
+	function setTTL(bytes32 node, uint64 newTTL) public {
+		records[node].ttl = newTTL;
+		emit NewTTL(node, newTTL);
+	}
+
+	function setRecord(bytes32 node, address newOwner, address newResolver, uint64 newTTL) public {
+		records[node] = Record(newOwner, newResolver, newTTL);
+		emit Transfer(node, newOwner);
+		emit NewResolver(node, newResolver);
+		emit NewTTL(node, newTTL);
+	}
+
+	function setSubnodeOwner(bytes32 node, bytes32 label, address newOwner) public returns (bytes32) {
+		bytes32 subnode = keccak256(abi.encodePacked(node, label));
+		records[subnode].owner = newOwner;
+		emit NewOwner(node, label, newOwner);
+		return subnode;
+	}
+
+	function setSubnodeRecord(
+		bytes32 node,
+		bytes32 label,
+		address newOwner,
+		address newResolver,
+		uint64 newTTL
+	) public {
+		bytes32 subnode = keccak256(abi.encodePacked(node, label));
+		records[subnode] = Record(newOwner, newResolver, newTTL);
+		emit NewOwner(node, label, newOwner);
+		emit NewResolver(subnode, newResolver);
+		emit NewTTL(subnode, newTTL);
+	}
+}
