@@ -31,6 +31,7 @@ import {
 	hashMessage,
 	recoverTransaction,
 	sign,
+	signDeterministic,
 	signTransaction,
 	Wallet,
 	Web3Account,
@@ -77,6 +78,7 @@ export interface Web3QRLInterface extends QRL {
 		recoverTransaction: typeof recoverTransaction;
 		hashMessage: typeof hashMessage;
 		sign: typeof sign;
+		signDeterministic: typeof signDeterministic;
 		encrypt: typeof encrypt;
 		decrypt: (
 			keystore: string,

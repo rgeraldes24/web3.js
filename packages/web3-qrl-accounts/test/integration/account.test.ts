@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Address } from '@theqrl/web3-types';
 import { Web3ValidatorError, isAddressString } from '@theqrl/web3-validator';
-import { bytesToHex, hexToBytes } from '@theqrl/web3-utils';
+import { bytesToHex } from '@theqrl/web3-utils';
 import {
 	create,
 	decrypt,
@@ -25,10 +25,10 @@ import {
 	hashMessage,
 	seedToAccount,
 	recoverTransaction,
+	signDeterministic,
 	signTransaction,
 } from '../../src';
 import { TransactionFactory } from '../../src/tx/transactionFactory';
-import { newMLDSA87WalletFromExtendedSeed } from '../../src/qrl_wallet';
 import {
 	invalidDecryptData,
 	invalidEncryptData,
@@ -114,12 +114,10 @@ describe('accounts', () => {
 	describe('Sign Message', () => {
 		describe('signDeterministic', () => {
 			it.each(signatureRecoverData)('%s', (data, testObj) => {
-				const wallet = newMLDSA87WalletFromExtendedSeed(testObj.seed);
-				const signature = bytesToHex(
-					wallet.signDeterministic(hexToBytes(hashMessage(data))),
-				);
-
-				expect(signature).toBe(testObj.signature);
+				const result = signDeterministic(data, testObj.seed);
+				expect(result.message).toBe(data);
+				expect(result.messageHash).toBe(hashMessage(data));
+				expect(result.signature).toBe(testObj.signature);
 			});
 		});
 	});

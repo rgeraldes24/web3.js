@@ -33,6 +33,7 @@ import {
 	recoverTransaction,
 	signTransaction,
 	sign,
+	signDeterministic,
 	Wallet,
 	seedToAccount,
 } from '@theqrl/web3-qrl-accounts';
@@ -110,6 +111,7 @@ export const initAccountsForContext = (context: Web3Context<QRLExecutionAPI>) =>
 		recoverTransaction,
 		hashMessage,
 		sign,
+		signDeterministic,
 		encrypt,
 		wallet,
 	};

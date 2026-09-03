@@ -70,9 +70,8 @@ export const validSeedtoAccountData: [any, any][] = [
 	],
 ];
 
-// Signatures are FIPS 204 3.5 deterministic (wallet.signDeterministic
-// over hashMessage(data)). accounts.sign() is hedged and will not
-// reproduce these bytes.
+// Signatures are FIPS 204 3.5 deterministic (signDeterministic).
+// accounts.sign() is hedged and will not reproduce these bytes.
 export const signatureRecoverData: [string, any][] = [
 	[
 		'Some long text with integers 1233 and special characters and unicode \u1234 as well.',
