@@ -16,7 +16,8 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import * as httpProvider from '@theqrl/web3-providers-http';
-import { Web3Account } from '@theqrl/web3-qrl-accounts';
+import { recoverTransaction, TransactionFactory, Web3Account } from '@theqrl/web3-qrl-accounts';
+import { hexToBytes } from '@theqrl/web3-utils';
 import Web3, { DEFAULT_RETURN_FORMAT, Transaction } from '../../src';
 // TODO(youtrack/theqrl/web3.js/8)
 import testsData from '../fixtures/transactions.json';
@@ -112,7 +113,27 @@ describe('signTransaction', () => {
 				checkRevertBeforeSending: false,
 			});
 			expect(res).toBeDefined();
-			expect(sentRawTransaction).toBe(txObj.signedLondon); // validate transaction for London HF
+			expect(typeof sentRawTransaction).toBe('string');
+
+			const raw = sentRawTransaction as string;
+			const serialized = hexToBytes(raw);
+			const decoded = TransactionFactory.fromSerializedData(serialized);
+
+			expect(decoded.type).toBe(2);
+			expect(decoded.serialize()).toEqual(serialized);
+			expect(decoded.verifySignature()).toBe(true);
+			expect(decoded.signature).toHaveLength(4627);
+			expect(decoded.publicKey).toHaveLength(2592);
+			const decodedJson = decoded.toJSON();
+			expect(decodedJson).toMatchObject({
+				nonce: '0xf',
+				value: normalTx.value,
+				data: normalTx.data,
+				descriptor: '0x010000',
+			});
+			expect(decodedJson.to?.toLowerCase()).toBe(normalTx.to?.toLowerCase());
+
+			expect(recoverTransaction(raw)).toBe(account.address);
 		},
 	);
 });
