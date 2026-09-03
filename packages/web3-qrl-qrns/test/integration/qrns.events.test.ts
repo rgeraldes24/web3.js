@@ -35,17 +35,14 @@ import {
 	getSystemTestProviderUrl,
 } from '../fixtures/system_tests_utils';
 
-import { QRNSRegistryAbi } from '../fixtures/qrns/abi/QRNSRegistry';
+import { QRNSRegistryAbi } from '../../../../fixtures/build/QRNSRegistry';
 import { QRNSRegistryBytecode } from '../fixtures/qrns/bytecode/QRNSRegistryBytecode';
-import { NameWrapperAbi } from '../fixtures/qrns/abi/NameWrapper';
-import { NameWrapperBytecode } from '../fixtures/qrns/bytecode/NameWrapperBytecode';
-import { PublicResolverAbi } from '../fixtures/qrns/abi/PublicResolver';
+import { PublicResolverAbi } from '../../../../fixtures/build/PublicResolver';
 import { PublicResolverBytecode } from '../fixtures/qrns/bytecode/PublicResolverBytecode';
 
 describeIf(isSocket)('qrns events', () => {
 	let registry: Contract<typeof QRNSRegistryAbi>;
 	let resolver: Contract<typeof PublicResolverAbi>;
-	let nameWrapper: Contract<typeof NameWrapperAbi>;
 
 	type ResolverContract = Contract<typeof PublicResolverAbi>;
 
@@ -60,26 +57,19 @@ describeIf(isSocket)('qrns events', () => {
 	const node = namehash('resolver');
 	const label = sha3('resolver') as string;
 
-	let accounts: string[];
 	let qrns: QRNS;
 	let defaultAccount: string;
-	let accountOne: string;
 
 	const ZERO_NODE: Bytes = '0x0000000000000000000000000000000000000000000000000000000000000000';
-	const addressOne: Address = 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
+	const addressOne: Address =
+		'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
 
 	beforeAll(async () => {
-		accounts = await getSystemTestAccounts();
-
-		[defaultAccount, accountOne] = accounts;
+		[defaultAccount] = await getSystemTestAccounts();
 
 		sendOptions = { from: defaultAccount, gas: '10000000' };
 
 		const Registry = new Contract(QRNSRegistryAbi, undefined, {
-			provider: getSystemTestProvider(),
-		});
-
-		const NameWrapper = new Contract(NameWrapperAbi, undefined, {
 			provider: getSystemTestProvider(),
 		});
 
@@ -89,17 +79,7 @@ describeIf(isSocket)('qrns events', () => {
 
 		registry = await Registry.deploy({ data: QRNSRegistryBytecode }).send(sendOptions);
 
-		nameWrapper = await NameWrapper.deploy({ data: NameWrapperBytecode }).send(sendOptions);
-
-		resolver = await Resolver.deploy({
-			data: PublicResolverBytecode,
-			arguments: [
-				registry.options.address as string,
-				nameWrapper.options.address as string,
-				accountOne,
-				defaultAccount,
-			],
-		}).send(sendOptions);
+		resolver = await Resolver.deploy({ data: PublicResolverBytecode }).send(sendOptions);
 
 		await registry.methods.setSubnodeOwner(ZERO_NODE, label, defaultAccount).send(sendOptions);
 		await registry.methods
@@ -137,7 +117,6 @@ describeIf(isSocket)('qrns events', () => {
 		await closeOpenConnection(setQrnsResolver);
 		await closeOpenConnection(registry);
 		await closeOpenConnection(resolver);
-		await closeOpenConnection(nameWrapper);
 	});
 
 	beforeEach(async () => {
