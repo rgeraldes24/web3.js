@@ -26,9 +26,9 @@ import {
 	hashMessage,
 	seedToAccount,
 	recoverTransaction,
-	sign,
 	signTransaction,
 } from '../../src/account';
+import { newMLDSA87WalletFromExtendedSeed } from '../../src/qrl_wallet';
 import {
 	invalidDecryptData,
 	invalidEncryptData,
@@ -147,12 +147,14 @@ describe('accounts', () => {
 	});
 
 	describe('Sign Message', () => {
-		describe('sign', () => {
+		describe('signDeterministic', () => {
 			it.each(signatureRecoverData)('%s', (data, testObj) => {
-				const result = sign(data, testObj.seed);
-				expect(result.message).toEqual(data);
-				expect(result.messageHash).toEqual(hashMessage(data));
-				expect(result.signature).toMatch(/^0x[0-9a-f]+$/i);
+				const wallet = newMLDSA87WalletFromExtendedSeed(testObj.seed);
+				const signature = bytesToHex(
+					wallet.signDeterministic(hexToBytes(hashMessage(data))),
+				);
+
+				expect(signature).toEqual(testObj.signature);
 			});
 		});
 	});
