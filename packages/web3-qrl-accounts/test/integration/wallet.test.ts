@@ -20,10 +20,21 @@ import { isBrowser, isElectron, itIf } from '../fixtures/system_test_utils';
 import { Wallet } from '../../src';
 import * as accountProvider from '../../src/account';
 
+const walletAccountProvider: Web3AccountProvider<any> = {
+	create: accountProvider.create,
+	seedToAccount: accountProvider.seedToAccount,
+	decrypt: (keystore, password, options) =>
+		accountProvider.decrypt(
+			keystore,
+			password,
+			typeof options?.nonStrict === 'boolean' ? options.nonStrict : undefined,
+		),
+};
+
 describe('Wallet', () => {
 	let wallet: Wallet;
 	beforeEach(() => {
-		wallet = new Wallet(accountProvider as unknown as Web3AccountProvider<any>);
+		wallet = new Wallet(walletAccountProvider);
 	});
 
 	describe('constructor', () => {
