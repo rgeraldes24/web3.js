@@ -43,10 +43,9 @@ const makeFewTxToContract = async ({
 	sendOptions,
 	testDataString,
 }: MakeFewTxToContract): Promise<void> => {
-	const prs = [];
 	for (let i = 0; i < checkEventCount; i += 1) {
 		// eslint-disable-next-line no-await-in-loop
-		prs.push(await contract.methods?.firesStringEvent(testDataString).send(sendOptions));
+		await contract.methods?.firesStringEvent(testDataString).send(sendOptions);
 	}
 };
 describeIf(isSocket)('subscription', () => {
