@@ -274,7 +274,7 @@ export type EncryptOptions = Omit<CipherOptions, 'iv'>;
  *   '0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *    '123',
  *    {
- *      m: 8192,
+ *      m: 262144,
  *      salt: web3.utils.hexToBytes('0x210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'),
  *    }
  * ).then((res) => console.log(util.inspect(res, { depth: null })));
@@ -291,7 +291,7 @@ export type EncryptOptions = Omit<CipherOptions, 'iv'>;
  *     cipher: 'aes-256-gcm',
  *     kdf: 'argon2id',
  *     kdfparams: {
- *       m: 8192,
+ *       m: 262144,
  *       t: 8,
  *       p: 1,
  *       dklen: 32,
@@ -517,7 +517,7 @@ export const create = (): Web3Account => {
  *     cipher: 'aes-256-gcm',
  *     kdf: 'argon2id',
  *     kdfparams: {
- *       m: 8192,
+ *       m: 262144,
  *       t: 8,
  *       p: 1,
  *       dklen: 32,
