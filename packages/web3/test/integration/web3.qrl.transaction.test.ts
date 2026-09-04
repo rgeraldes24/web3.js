@@ -86,14 +86,6 @@ describe('signTransaction', () => {
 
 						case 'qrl_sendRawTransaction':
 							[sentRawTransaction] = payload.params;
-
-							// if (txObj.transaction.maxPriorityFeePerGas !== undefined) {
-							// 	// eslint-disable-next-line jest/no-conditional-expect
-							// 	expect(payload.params[0]).toBe(txObj.signedLondon); // validate transaction for London HF
-							// } else {
-							// 	// eslint-disable-next-line jest/no-conditional-expect
-							// 	expect(payload.params[0]).toBe(txObj.signedBerlin); // validate transaction for Berlin HF
-							// }
 							response.result =
 								'0x895ebb29d30e0afa891a5ca3a2687e073bd2c7ab544117ac386c8d8ff3ad583b';
 							break;
