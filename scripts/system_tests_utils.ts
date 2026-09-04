@@ -39,6 +39,7 @@ import {
 	JsonRpcNotification,
 	QRL_DATA_FORMAT,
 	SupportedProviders,
+	TransactionReceipt,
 	Web3APISpec,
 	Web3QRLExecutionAPI,
 } from '@theqrl/web3-types';
@@ -435,17 +436,19 @@ export const sendFewSampleTxs = async (cnt = 1) => {
 	const web3 = createWeb3(getSystemTestProviderUrl());
 	const fromAcc = await createLocalAccount(web3);
 	const toAcc = createAccount();
-	const res: unknown[] = [];
+	const res: TransactionReceipt[] = [];
 	for (let i = 0; i < cnt; i += 1) {
-		res.push(
-			// eslint-disable-next-line no-await-in-loop
-			await web3.qrl.sendTransaction({
-				to: toAcc.address,
-				value: '0x1',
-				from: fromAcc.address,
-				gas: '300000',
-			}),
-		);
+		// eslint-disable-next-line no-await-in-loop
+		const receipt = await web3.qrl.sendTransaction({
+			to: toAcc.address,
+			value: '0x1',
+			from: fromAcc.address,
+			gas: '300000',
+		});
+
+		if (receipt.status !== BigInt(1)) throw new Error('sendFewSampleTxs failed ');
+
+		res.push(receipt);
 	}
 	await closeOpenConnection(web3 as unknown as Web3Context);
 	return res;

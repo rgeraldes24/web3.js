@@ -63,7 +63,7 @@ describeIf(isSocket)('subscription', () => {
 						}
 					});
 					receipts = (await sendFewSampleTxs(checkTxCount)).map(r =>
-						String((r as { transactionHash?: string }).transactionHash),
+						String(r?.transactionHash),
 					);
 					if (receipts.length > 0 && waitList.length > 0) {
 						for (const hash of waitList) {
